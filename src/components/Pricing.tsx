@@ -1,87 +1,142 @@
-import React from 'react';
-import { Check } from 'lucide-react';
+import React from "react";
+import { Check } from "lucide-react";
 
-const tiers = [
-  {
-    name: 'Starter',
-    price: 0,
-    features: [
-      'Single menu QR code',
-      'Basic menu customization',
-      'Mobile-friendly design',
-      'Up to 30 menu items',
-      '24/7 customer support',
-    ],
-    cta: 'Start for free',
-  },
-  {
-    name: 'Pro',
-    price: 29,
-    features: [
-      'Multiple QR codes',
-      'Advanced menu customization',
-      'Real-time menu updates',
-      'Unlimited menu items',
-      'Analytics dashboard',
-      'Priority support',
-    ],
-    cta: 'Start free trial',
-  },
-  {
-    name: 'Enterprise',
-    price: 99,
-    features: [
-      'Multiple restaurant locations',
-      'Custom branding',
-      'API access',
-      'Advanced analytics',
-      'Dedicated account manager',
-      'Custom integration support',
-    ],
-    cta: 'Contact sales',
-  },
-];
+const features = {
+  basic: [
+    "Free website",
+    "Mobile friendly design",
+    "Image Menu",
+    "Promote deals and offers",
+    "Priority support",
+    "Advanced menu customization",
+    "Multiple QR codes design for standees",
+    "Analytics dashboard",
+  ],
+  enterprise: [
+    "All Basic features",
+    "Up to 4 reaturant menu websites",
+    "Individual QR codes per website",
+    "Analytics per website",
+    "Centralized management",
+  ],
+};
 
 const Pricing = () => {
   return (
-    <div id="pricing" className="bg-white py-24 sm:py-32">
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="mx-auto max-w-2xl sm:text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-black sm:text-4xl">Simple, transparent pricing</h2>
+    <div id="pricing" className="bg-gray-50">
+      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
+        <div className="mx-auto max-w-2xl text-center">
+          <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+            Simple, transparent pricing
+          </h2>
           <p className="mt-6 text-lg leading-8 text-gray-600">
-            Choose the perfect plan for your restaurant's needs. All plans include a 14-day free trial.
+            Choose the plan that best fits your restaurant's needs
           </p>
         </div>
-        <div className="mx-auto mt-16 grid max-w-lg grid-cols-1 gap-y-6 sm:mt-20 lg:max-w-none lg:grid-cols-3 lg:gap-x-8">
-          {tiers.map((tier) => (
-            <div
-              key={tier.name}
-              className="flex flex-col justify-between rounded-3xl bg-white p-8 ring-1 ring-gray-200 xl:p-10"
-            >
-              <div>
-                <div className="flex items-center justify-between gap-x-4">
-                  <h3 className="text-lg font-semibold leading-8 text-black">{tier.name}</h3>
-                </div>
-                <p className="mt-6 flex items-baseline gap-x-1">
-                  <span className="text-4xl font-bold tracking-tight text-black">${tier.price}</span>
-                  <span className="text-sm font-semibold leading-6 text-gray-600">/month</span>
+
+        <div className="mx-auto mt-12 max-w-7xl overflow-hidden">
+          <div className="flex flex-col gap-8 lg:flex-row lg:gap-4">
+            <div className="w-full rounded-3xl bg-white p-8 shadow-sm sm:p-10">
+              <div className="flex flex-col items-start">
+                <h3 className="mt-4 text-2xl font-bold tracking-tight text-gray-900">
+                  Basic
+                </h3>
+                <p className="mt-4 text-base leading-7 text-gray-600">
+                  Perfect for single restaurant location
                 </p>
-                <ul role="list" className="mt-8 space-y-3 text-sm leading-6 text-gray-600">
-                  {tier.features.map((feature) => (
-                    <li key={feature} className="flex gap-x-3">
-                      <Check className="h-6 w-5 flex-none text-black" aria-hidden="true" />
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
+
+                <div className="mt-6">
+                  <div className="flex items-baseline gap-x-1">
+                    <span className="text-lg font-semibold leading-6 text-gray-600 line-through">
+                      ₹1,099
+                    </span>
+                    <span className="text-sm font-semibold leading-6 text-gray-600">
+                      /year
+                    </span>
+                  </div>
+                  <div className="mt-2 flex items-baseline gap-x-2">
+                    <span className="text-4xl font-bold tracking-tight text-gray-900">
+                      Free
+                    </span>
+                    <span className="text-base font-semibold leading-6 text-gray-600">
+                      for first year
+                    </span>
+                  </div>
+                </div>
+
+                <button className="mt-8 w-full rounded-lg bg-indigo-600 px-4 py-3 text-center text-sm font-semibold text-white shadow hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-all duration-200">
+                  Get started for free
+                </button>
+
+                <div className="mt-8 w-full">
+                  <ul
+                    role="list"
+                    className="space-y-4 text-sm leading-6 text-gray-600"
+                  >
+                    {features.basic.map((feature) => (
+                      <li key={feature} className="flex gap-x-3">
+                        <Check
+                          className="h-6 w-5 flex-none text-indigo-600"
+                          aria-hidden="true"
+                        />
+                        {feature}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
-              <button
-                className="mt-8 block rounded-md bg-black px-3 py-2 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-gray-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
-              >
-                {tier.cta}
-              </button>
             </div>
-          ))}
+
+            {/* Enterprise Plan */}
+            <div className="w-full rounded-3xl bg-white p-8 shadow-sm  sm:p-10">
+              <div className="flex flex-col items-start">
+                <h3 className="mt-4 text-2xl font-bold tracking-tight text-gray-900">
+                  Advance
+                </h3>
+                <p className="mt-4 text-base leading-7 text-gray-600">
+                  For businesses with multiple restaurant menu
+                </p>
+
+                <div className="mt-6">
+                  <div className="flex items-baseline gap-x-2">
+                    <span className="text-4xl font-bold tracking-tight text-gray-900">
+                      ₹2,999
+                    </span>
+                    <span className="text-base font-semibold leading-6 text-gray-600">
+                      /year
+                    </span>
+                  </div>
+                  <p className="mt-1 text-sm text-gray-600">
+                    For up to 4 QR menu websites
+                  </p>
+                </div>
+
+                <button className="mt-8 w-full rounded-lg bg-gray-900 px-4 py-3 text-center text-sm font-semibold text-white shadow hover:bg-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900 transition-all duration-200">
+                  Contact sales
+                </button>
+                <p className="mt-3 text-sm text-center w-full text-gray-500">
+                  Custom solutions available for 5+ websites
+                </p>
+
+                <div className="mt-8 w-full">
+                  <ul
+                    role="list"
+                    className="space-y-4 text-sm leading-6 text-gray-600"
+                  >
+                    {features.enterprise.map((feature) => (
+                      <li key={feature} className="flex gap-x-3">
+                        <Check
+                          className="h-6 w-5 flex-none text-gray-900"
+                          aria-hidden="true"
+                        />
+                        {feature}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

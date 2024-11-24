@@ -1,49 +1,22 @@
-import React from 'react';
+import React from "react";
+import LogoImg from "./LogoImg";
 
-const Logo = ({ className = "h-8 w-8" }: { className?: string }) => {
+const Logo = ({
+  size = "h-8 w-8",
+  color = "text-black",
+  textSize = "text-2xl",
+}: {
+  size?: string;
+  color?: string;
+  textSize?: string;
+}) => {
   return (
-    <svg 
-      viewBox="0 0 200 200" 
-      className={className}
-      fill="currentColor"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      {/* Center dot */}
-      <circle cx="81" cy="76" r="1.5"/>
-      <circle cx="99" cy="76" r="1.5"/>
-
-      {/* Top row */}
-      <circle cx="64" cy="84" r="3"/>
-      <circle cx="80" cy="84" r="3"/>
-      <circle cx="100" cy="84" r="3"/>
-      <circle cx="116" cy="84" r="3"/>
-
-      {/* Middle row with larger dots */}
-      <circle cx="56" cy="102" r="1.5"/>
-      <circle cx="64" cy="100" r="3"/>
-      <circle cx="80" cy="100" r="8"/>
-      <circle cx="100" cy="100" r="8"/>
-      <circle cx="116" cy="100" r="3"/>
-      <circle cx="124" cy="101" r="1.5"/>
-
-      {/* Second middle row */}
-      <circle cx="56" cy="119" r="1.5"/>
-      <circle cx="64" cy="120" r="3"/>
-      <circle cx="80" cy="120" r="8"/>
-      <circle cx="100" cy="120" r="8"/>
-      <circle cx="116" cy="120" r="3"/>
-      <circle cx="124" cy="119" r="1.5"/>
-
-      {/* Bottom row */}
-      <circle cx="64" cy="136" r="3"/>
-      <circle cx="80" cy="136" r="3"/>
-      <circle cx="100" cy="136" r="3"/>
-      <circle cx="116" cy="136" r="3"/>
-
-      {/* Center bottom dot */}
-      <circle cx="81" cy="144" r="1.5"/>
-      <circle cx="99" cy="144" r="1.5"/>
-    </svg>
+    <div className="w-[140px] flex items-center">
+      <LogoImg className={`${size} ${color}`} />
+      <span className={`${textSize} font-bold ${color} font-comfortaa p-2`}>
+        druling
+      </span>
+    </div>
   );
 };
 

@@ -1,5 +1,5 @@
-import React from 'react';
-import Logo from '../Logo';
+import React from "react";
+import Logo from "../Logo";
 
 type AuthLayoutProps = {
   children: React.ReactNode;
@@ -13,9 +13,10 @@ const AuthLayout = ({ children, title, subtitle }: AuthLayoutProps) => {
       <div className="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
         <div className="mx-auto w-full max-w-sm lg:w-96">
           <div className="flex flex-col items-center text-center">
-            <Logo className="h-20 w-20 text-black" />
-            <span className="mt-2 text-3xl font-bold text-black">druling</span>
-            <h2 className="mt-6 text-3xl font-bold tracking-tight text-black">{title}</h2>
+            <Logo color="text-black" textSize="text-2xl" />
+            <h2 className="mt-6 text-3xl font-bold tracking-tight text-black">
+              {title}
+            </h2>
             <p className="mt-2 text-sm text-gray-600">{subtitle}</p>
           </div>
           {children}

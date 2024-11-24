@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
-import Logo from './Logo';
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { Menu, X } from "lucide-react";
+import Logo from "./Logo";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -15,14 +15,17 @@ const Navbar = () => {
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           <Link to="/" className="flex items-center gap-2">
-            <Logo className="h-12 w-12 text-black" />
-            <span className="text-2xl font-bold text-black">druling</span>
+            <Logo color="text-black" textSize="text-2xl" />
           </Link>
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-8">
-            <a href="#features" className="text-gray-600 hover:text-black">Features</a>
-            <a href="#pricing" className="text-gray-600 hover:text-black">Pricing</a>
+            <a href="#features" className="text-gray-600 hover:text-black">
+              Features
+            </a>
+            <a href="#pricing" className="text-gray-600 hover:text-black">
+              Pricing
+            </a>
             <Link
               to="/login"
               className="text-black bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-lg font-medium"
