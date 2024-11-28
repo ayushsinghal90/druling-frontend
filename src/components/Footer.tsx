@@ -1,26 +1,25 @@
 import React from "react";
 import Logo from "./Logo";
-import github from "../assets/github.svg";
-import twitter from "../assets/twitter.svg";
+import { TwitterIcon, GithubIcon } from "./SocialIcons";
 
 const Footer = () => {
   return (
     <footer className="bg-white">
       <div className="mx-auto max-w-7xl px-6 py-12 md:flex md:items-center md:justify-between lg:px-8">
         <div className="flex justify-center space-x-6 md:order-2">
-          <a href="#" className="group ">
+          <a
+            href="#"
+            className="text-gray-400 hover:text-black transition-colors duration-200"
+          >
             <span className="sr-only">Twitter</span>
-            <img
-              src={twitter}
-              className="h-7 w-7 text-gray-400 opacity-45 group-hover:opacity-100 transition-opacity duration-60"
-            />
+            <TwitterIcon className="h-6 w-6" />
           </a>
-          <a href="#" className="group ">
+          <a
+            href="#"
+            className="text-gray-400 hover:text-black transition-colors duration-200"
+          >
             <span className="sr-only">GitHub</span>
-            <img
-              src={github}
-              className="h-7 w-7 text-gray-400 opacity-45 group-hover:opacity-100 transition-opacity duration-60"
-            />
+            <GithubIcon className="h-6 w-6" />
           </a>
         </div>
         <div className="mt-8 md:order-1 md:mt-0">
