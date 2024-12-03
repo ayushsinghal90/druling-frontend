@@ -1,8 +1,16 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { GoogleIcon } from "../SocialIcons";
 import { useRegisterMutation } from "../../store/services/authApi";
 import { useDispatch } from "react-redux";
 import { setCredentials } from "../../store/slices/authSlice";
+import { setAuthToken } from "../../utils/storage";
+import {
+  isValidEmail,
+  isValidPassword,
+  getPasswordStrengthMessage,
+} from "../../utils/validation";
+import { config } from "../../config/env";
 
 const RegisterForm = () => {
   const navigate = useNavigate();
@@ -18,18 +26,72 @@ const RegisterForm = () => {
     acceptTerms: false,
   });
 
+  const [errors, setErrors] = useState({
+    name: "",
+    restaurantName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    form: "",
+  });
+
+  const validateForm = () => {
+    const newErrors = {
+      name: "",
+      restaurantName: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      form: "",
+    };
+
+    if (!formData.name) {
+      newErrors.name = "Name is required";
+    }
+
+    if (!formData.restaurantName) {
+      newErrors.restaurantName = "Restaurant name is required";
+    }
+
+    if (!formData.email) {
+      newErrors.email = "Email is required";
+    } else if (!isValidEmail(formData.email)) {
+      newErrors.email = "Invalid email format";
+    }
+
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+    } else if (!isValidPassword(formData.password)) {
+      newErrors.password = getPasswordStrengthMessage(formData.password);
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match";
+    }
+
+    setErrors(newErrors);
+    return !Object.values(newErrors).some((error) => error !== "");
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
+    // Clear error when user starts typing
+    if (errors[name as keyof typeof errors]) {
+      setErrors((prev) => ({
+        ...prev,
+        [name]: "",
+      }));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match");
+
+    if (!validateForm()) {
       return;
     }
 
@@ -41,16 +103,26 @@ const RegisterForm = () => {
         restaurantName: formData.restaurantName,
       }).unwrap();
 
+      setAuthToken(result.token);
       dispatch(setCredentials(result));
       navigate("/dashboard");
     } catch (err) {
-      console.error("Failed to register:", err);
+      setErrors((prev) => ({
+        ...prev,
+        form: "Registration failed. Please try again.",
+      }));
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mt-8 space-y-6">
-      <div className="space-y-6">
+    <form onSubmit={handleSubmit} className="mt-8">
+      <div className="space-y-4">
+        {errors.form && (
+          <div className="text-sm text-red-600 bg-red-50 p-3 rounded-md">
+            {errors.form}
+          </div>
+        )}
+
         <div>
           <label
             htmlFor="name"
@@ -66,8 +138,13 @@ const RegisterForm = () => {
               required
               value={formData.name}
               onChange={handleChange}
-              className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-black focus:outline-none focus:ring-black transition-all duration-200 sm:text-sm"
+              className={`block w-full appearance-none rounded-md border ${
+                errors.name ? "border-red-300" : "border-gray-300"
+              } px-3 py-2 placeholder-gray-400 shadow-sm focus:border-black focus:outline-none focus:ring-black transition-all duration-200 sm:text-sm`}
             />
+            {errors.name && (
+              <p className="mt-1 text-sm text-red-600">{errors.name}</p>
+            )}
           </div>
         </div>
 
@@ -86,8 +163,15 @@ const RegisterForm = () => {
               required
               value={formData.restaurantName}
               onChange={handleChange}
-              className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-black focus:outline-none focus:ring-black transition-all duration-200 sm:text-sm"
+              className={`block w-full appearance-none rounded-md border ${
+                errors.restaurantName ? "border-red-300" : "border-gray-300"
+              } px-3 py-2 placeholder-gray-400 shadow-sm focus:border-black focus:outline-none focus:ring-black transition-all duration-200 sm:text-sm`}
             />
+            {errors.restaurantName && (
+              <p className="mt-1 text-sm text-red-600">
+                {errors.restaurantName}
+              </p>
+            )}
           </div>
         </div>
 
@@ -107,8 +191,13 @@ const RegisterForm = () => {
               required
               value={formData.email}
               onChange={handleChange}
-              className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-black focus:outline-none focus:ring-black transition-all duration-200 sm:text-sm"
+              className={`block w-full appearance-none rounded-md border ${
+                errors.email ? "border-red-300" : "border-gray-300"
+              } px-3 py-2 placeholder-gray-400 shadow-sm focus:border-black focus:outline-none focus:ring-black transition-all duration-200 sm:text-sm`}
             />
+            {errors.email && (
+              <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+            )}
           </div>
         </div>
 
@@ -127,8 +216,13 @@ const RegisterForm = () => {
               required
               value={formData.password}
               onChange={handleChange}
-              className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-black focus:outline-none focus:ring-black transition-all duration-200 sm:text-sm"
+              className={`block w-full appearance-none rounded-md border ${
+                errors.password ? "border-red-300" : "border-gray-300"
+              } px-3 py-2 placeholder-gray-400 shadow-sm focus:border-black focus:outline-none focus:ring-black transition-all duration-200 sm:text-sm`}
             />
+            {errors.password && (
+              <p className="mt-1 text-sm text-red-600">{errors.password}</p>
+            )}
           </div>
         </div>
 
@@ -147,8 +241,15 @@ const RegisterForm = () => {
               required
               value={formData.confirmPassword}
               onChange={handleChange}
-              className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-black focus:outline-none focus:ring-black transition-all duration-200 sm:text-sm"
+              className={`block w-full appearance-none rounded-md border ${
+                errors.confirmPassword ? "border-red-300" : "border-gray-300"
+              } px-3 py-2 placeholder-gray-400 shadow-sm focus:border-black focus:outline-none focus:ring-black transition-all duration-200 sm:text-sm`}
             />
+            {errors.confirmPassword && (
+              <p className="mt-1 text-sm text-red-600">
+                {errors.confirmPassword}
+              </p>
+            )}
           </div>
         </div>
 
@@ -193,6 +294,31 @@ const RegisterForm = () => {
           </button>
         </div>
       </div>
+
+      {config.features.socialLogin && (
+        <div className="mt-6">
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300" />
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="bg-white px-2 text-gray-500">
+                Or continue with
+              </span>
+            </div>
+          </div>
+
+          <div className="mt-6">
+            <button
+              type="button"
+              className="flex w-full justify-center items-center gap-2 rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-50 hover:text-gray-700 transform hover:scale-105 transition-all duration-200"
+            >
+              <GoogleIcon className="h-5 w-5" />
+              <span>Sign up with Google</span>
+            </button>
+          </div>
+        </div>
+      )}
 
       <div className="text-center text-sm">
         <p className="text-gray-600">

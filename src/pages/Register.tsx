@@ -1,8 +1,11 @@
-import React from 'react';
-import AuthLayout from '../components/auth/AuthLayout';
-import RegisterForm from '../components/auth/RegisterForm';
+import React from "react";
+import AuthLayout from "../components/auth/AuthLayout";
+import RegisterForm from "../components/auth/RegisterForm";
+import { useRedirectIfAuthenticated } from "../hooks/useRedirectIfAuthenticated";
 
 const Register = () => {
+  useRedirectIfAuthenticated();
+
   return (
     <AuthLayout
       title="Get started"
