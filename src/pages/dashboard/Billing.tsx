@@ -1,11 +1,11 @@
-import React from 'react';
-import DashboardLayout from '../../components/dashboard/DashboardLayout';
-import { CreditCard, Receipt, Clock, Shield } from 'lucide-react';
+import React from "react";
+import DashboardLayout from "../../components/dashboard/DashboardLayout";
+import { CreditCard, Receipt, Shield } from "lucide-react";
 
 const invoices = [
-  { id: 1, date: 'Mar 15, 2024', amount: '₹1,099', status: 'Paid' },
-  { id: 2, date: 'Feb 15, 2024', amount: '₹1,099', status: 'Paid' },
-  { id: 3, date: 'Jan 15, 2024', amount: '₹1,099', status: 'Paid' },
+  { id: 1, date: "Mar 15, 2024", amount: "₹1,099", status: "Paid" },
+  { id: 2, date: "Feb 15, 2024", amount: "₹1,099", status: "Paid" },
+  { id: 3, date: "Jan 15, 2024", amount: "₹1,099", status: "Paid" },
 ];
 
 const Billing = () => {
@@ -13,8 +13,12 @@ const Billing = () => {
     <DashboardLayout>
       <div className="space-y-8">
         <div>
-          <h1 className="text-2xl font-semibold text-gray-900">Billing Settings</h1>
-          <p className="mt-1 text-sm text-gray-500">Manage your subscription and payment methods</p>
+          <h1 className="text-2xl font-semibold text-gray-900">
+            Billing Settings
+          </h1>
+          <p className="mt-1 text-sm text-gray-500">
+            Manage your subscription and payment methods
+          </p>
         </div>
 
         {/* Current Plan */}
@@ -22,22 +26,33 @@ const Billing = () => {
           <div className="p-6 border-b border-gray-100">
             <div className="flex items-center gap-3">
               <Shield className="h-5 w-5 text-gray-400" />
-              <h2 className="text-lg font-semibold text-gray-900">Current Plan</h2>
+              <h2 className="text-lg font-semibold text-gray-900">
+                Current Plan
+              </h2>
             </div>
           </div>
           <div className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-xl font-semibold text-gray-900">Basic Plan</h3>
-                <p className="mt-1 text-sm text-gray-500">Single restaurant location</p>
+                <h3 className="text-xl font-semibold text-gray-900">
+                  Basic Plan
+                </h3>
+                <p className="mt-1 text-sm text-gray-500">
+                  Single restaurant location
+                </p>
               </div>
               <span className="inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-800">
                 Active
               </span>
             </div>
             <div className="mt-4">
-              <p className="text-sm text-gray-500">Your plan will renew on March 15, 2025</p>
-              <p className="mt-2 text-2xl font-bold text-gray-900">₹1,099<span className="text-sm font-normal text-gray-500">/year</span></p>
+              <p className="text-sm text-gray-500">
+                Your plan will renew on March 15, 2025
+              </p>
+              <p className="mt-2 text-2xl font-bold text-gray-900">
+                ₹1,099
+                <span className="text-sm font-normal text-gray-500">/year</span>
+              </p>
             </div>
           </div>
         </div>
@@ -47,7 +62,9 @@ const Billing = () => {
           <div className="p-6 border-b border-gray-100">
             <div className="flex items-center gap-3">
               <CreditCard className="h-5 w-5 text-gray-400" />
-              <h2 className="text-lg font-semibold text-gray-900">Payment Method</h2>
+              <h2 className="text-lg font-semibold text-gray-900">
+                Payment Method
+              </h2>
             </div>
           </div>
           <div className="p-6">
@@ -57,7 +74,9 @@ const Billing = () => {
                   <CreditCard className="h-6 w-6 text-gray-600" />
                 </div>
                 <div>
-                  <p className="font-medium text-gray-900">•••• •••• •••• 4242</p>
+                  <p className="font-medium text-gray-900">
+                    •••• •••• •••• 4242
+                  </p>
                   <p className="text-sm text-gray-500">Expires 12/24</p>
                 </div>
               </div>
@@ -74,7 +93,9 @@ const Billing = () => {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <Receipt className="h-5 w-5 text-gray-400" />
-                <h2 className="text-lg font-semibold text-gray-900">Billing History</h2>
+                <h2 className="text-lg font-semibold text-gray-900">
+                  Billing History
+                </h2>
               </div>
               <button className="text-sm font-medium text-indigo-600 hover:text-indigo-500">
                 Download All
