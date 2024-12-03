@@ -1,50 +1,91 @@
-# React + TypeScript + Vite
+# Druling - Digital Menu Solutions
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern digital menu solution that helps restaurants create QR code-based menus easily.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- 🎯 Instant QR code generation
+- 📱 Mobile-optimized menu display
+- 📊 Analytics and insights
+- 🔄 Real-time menu updates
+- 💳 Multiple subscription tiers
+- 🔒 Secure authentication
 
-## Expanding the ESLint configuration
+## Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- React 18 with TypeScript
+- Vite for blazing fast development
+- Redux Toolkit for state management
+- TailwindCSS for styling
+- React Router for navigation
+- Zod for runtime type validation
 
-- Configure the top-level `parserOptions` property like this:
+## Getting Started
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+### Prerequisites
+
+- Node.js 18+
+- npm 9+
+
+### Installation
+
+1. Clone the repository
+2. Install dependencies:
+
+```bash
+npm install
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+3. Copy the environment template:
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+```bash
+cp .env.example .env
 ```
+
+4. Update the `.env` file with your configuration
+5. Start the development server:
+
+```bash
+npm run dev
+```
+
+## Project Structure
+
+```
+src/
+├── components/        # Reusable UI components
+│   ├── auth/         # Authentication related components
+│   ├── dashboard/    # Dashboard specific components
+│   └── shared/       # Shared components
+├── config/           # Configuration files
+├── hooks/            # Custom React hooks
+├── layouts/          # Layout components
+├── pages/            # Page components
+├── services/         # API services
+├── store/            # Redux store configuration
+├── types/            # TypeScript type definitions
+└── utils/            # Utility functions
+```
+
+## Development
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build
+- `npm run lint` - Run ESLint
+
+## Environment Variables
+
+See `.env.example` for all available configuration options.
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
+
+## License
+
+MIT License - See LICENSE file for details

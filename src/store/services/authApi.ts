@@ -1,11 +1,13 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { LoginRequest, RegisterRequest, AuthResponse } from "../../types/auth";
+import { config } from "../../config/env";
 
 export const authApi = createApi({
   reducerPath: "authApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://api.druling.com/v1",
+    baseUrl: config.api.baseUrl,
     credentials: "include",
+    timeout: config.api.timeout,
   }),
   endpoints: (builder) => ({
     login: builder.mutation<AuthResponse, LoginRequest>({
