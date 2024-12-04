@@ -45,9 +45,6 @@ export const config = {
     google: {
       clientId: env.VITE_GOOGLE_CLIENT_ID,
     },
-    github: {
-      clientId: env.VITE_GITHUB_CLIENT_ID,
-    },
   },
   app: {
     name: env.VITE_APP_NAME,

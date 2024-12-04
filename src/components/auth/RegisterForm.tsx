@@ -4,7 +4,6 @@ import { GoogleIcon } from "../SocialIcons";
 import { useRegisterMutation } from "../../store/services/authApi";
 import { useDispatch } from "react-redux";
 import { setCredentials } from "../../store/slices/authSlice";
-import { setAuthToken } from "../../utils/storage";
 import {
   isValidEmail,
   isValidPassword,
@@ -18,8 +17,8 @@ const RegisterForm = () => {
   const [register, { isLoading }] = useRegisterMutation();
 
   const [formData, setFormData] = useState({
-    name: "",
-    restaurantName: "",
+    first_name: "",
+    last_name: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -27,8 +26,8 @@ const RegisterForm = () => {
   });
 
   const [errors, setErrors] = useState({
-    name: "",
-    restaurantName: "",
+    first_name: "",
+    last_name: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -37,20 +36,20 @@ const RegisterForm = () => {
 
   const validateForm = () => {
     const newErrors = {
-      name: "",
-      restaurantName: "",
+      first_name: "",
+      last_name: "",
       email: "",
       password: "",
       confirmPassword: "",
       form: "",
     };
 
-    if (!formData.name) {
-      newErrors.name = "Name is required";
+    if (!formData.first_name) {
+      newErrors.first_name = "First name is required";
     }
 
-    if (!formData.restaurantName) {
-      newErrors.restaurantName = "Restaurant name is required";
+    if (!formData.last_name) {
+      newErrors.last_name = "Last name is required";
     }
 
     if (!formData.email) {
@@ -79,7 +78,6 @@ const RegisterForm = () => {
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
-    // Clear error when user starts typing
     if (errors[name as keyof typeof errors]) {
       setErrors((prev) => ({
         ...prev,
@@ -97,19 +95,31 @@ const RegisterForm = () => {
 
     try {
       const result = await register({
-        name: formData.name,
+        first_name: formData.first_name,
+        last_name: formData.last_name,
         email: formData.email,
         password: formData.password,
-        restaurantName: formData.restaurantName,
       }).unwrap();
 
-      setAuthToken(result.token);
-      dispatch(setCredentials(result));
-      navigate("/dashboard");
-    } catch (err) {
+      if (result.success) {
+        const { payload, access, refresh } = result.data;
+        dispatch(
+          setCredentials({
+            user: payload,
+            tokens: { access, refresh },
+          })
+        );
+        navigate("/dashboard");
+      } else {
+        setErrors((prev) => ({
+          ...prev,
+          form: result.message || "Registration failed",
+        }));
+      }
+    } catch (err: any) {
       setErrors((prev) => ({
         ...prev,
-        form: "Registration failed. Please try again.",
+        form: err?.data?.message || "Registration failed. Please try again.",
       }));
     }
   };
@@ -123,55 +133,55 @@ const RegisterForm = () => {
           </div>
         )}
 
-        <div>
-          <label
-            htmlFor="name"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Full Name
-          </label>
-          <div className="mt-1">
-            <input
-              id="name"
-              name="name"
-              type="text"
-              required
-              value={formData.name}
-              onChange={handleChange}
-              className={`block w-full appearance-none rounded-md border ${
-                errors.name ? "border-red-300" : "border-gray-300"
-              } px-3 py-2 placeholder-gray-400 shadow-sm focus:border-black focus:outline-none focus:ring-black transition-all duration-200 sm:text-sm`}
-            />
-            {errors.name && (
-              <p className="mt-1 text-sm text-red-600">{errors.name}</p>
-            )}
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label
+              htmlFor="first_name"
+              className="block text-sm font-medium text-gray-700"
+            >
+              First Name
+            </label>
+            <div className="mt-1">
+              <input
+                id="first_name"
+                name="first_name"
+                type="text"
+                required
+                value={formData.first_name}
+                onChange={handleChange}
+                className={`block w-full appearance-none rounded-md border ${
+                  errors.first_name ? "border-red-300" : "border-gray-300"
+                } px-3 py-2 placeholder-gray-400 shadow-sm focus:border-black focus:outline-none focus:ring-black transition-all duration-200 sm:text-sm`}
+              />
+              {errors.first_name && (
+                <p className="mt-1 text-sm text-red-600">{errors.first_name}</p>
+              )}
+            </div>
           </div>
-        </div>
 
-        <div>
-          <label
-            htmlFor="restaurantName"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Restaurant name
-          </label>
-          <div className="mt-1">
-            <input
-              id="restaurantName"
-              name="restaurantName"
-              type="text"
-              required
-              value={formData.restaurantName}
-              onChange={handleChange}
-              className={`block w-full appearance-none rounded-md border ${
-                errors.restaurantName ? "border-red-300" : "border-gray-300"
-              } px-3 py-2 placeholder-gray-400 shadow-sm focus:border-black focus:outline-none focus:ring-black transition-all duration-200 sm:text-sm`}
-            />
-            {errors.restaurantName && (
-              <p className="mt-1 text-sm text-red-600">
-                {errors.restaurantName}
-              </p>
-            )}
+          <div>
+            <label
+              htmlFor="last_name"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Last Name
+            </label>
+            <div className="mt-1">
+              <input
+                id="last_name"
+                name="last_name"
+                type="text"
+                required
+                value={formData.last_name}
+                onChange={handleChange}
+                className={`block w-full appearance-none rounded-md border ${
+                  errors.last_name ? "border-red-300" : "border-gray-300"
+                } px-3 py-2 placeholder-gray-400 shadow-sm focus:border-black focus:outline-none focus:ring-black transition-all duration-200 sm:text-sm`}
+              />
+              {errors.last_name && (
+                <p className="mt-1 text-sm text-red-600">{errors.last_name}</p>
+              )}
+            </div>
           </div>
         </div>
 

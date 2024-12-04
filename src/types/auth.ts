@@ -1,8 +1,25 @@
 export interface User {
   id: string;
+  first_name: string;
+  last_name: string;
   email: string;
-  name: string;
-  restaurantName?: string;
+}
+
+export interface AuthTokens {
+  access: string;
+  refresh: string;
+}
+
+export interface ApiResponse<T> {
+  success: boolean;
+  message: string;
+  data: T;
+}
+
+export interface AuthResponseData {
+  payload: User;
+  access: string;
+  refresh: string;
 }
 
 export interface LoginRequest {
@@ -13,11 +30,14 @@ export interface LoginRequest {
 export interface RegisterRequest {
   email: string;
   password: string;
-  name: string;
-  restaurantName: string;
+  first_name: string;
+  last_name: string;
 }
 
-export interface AuthResponse {
-  user: User;
-  token: string;
-}
+export interface AuthResponse extends ApiResponse<AuthResponseData> {}
+
+export interface RefreshTokenResponse
+  extends ApiResponse<{
+    access: string;
+    refresh: string;
+  }> {}
