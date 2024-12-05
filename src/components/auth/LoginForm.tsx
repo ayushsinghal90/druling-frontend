@@ -78,8 +78,11 @@ const LoginForm = () => {
         password: formData.password,
       }).unwrap();
 
-      setAuthToken(result.token);
-      dispatch(setCredentials(result));
+      const { data } = result;
+      setAuthToken(data.access);
+
+      const { payload, access, refresh } = data;
+      dispatch(setCredentials({ user: payload, tokens: { access, refresh } }));
       navigate("/dashboard");
     } catch (err: any) {
       // Check if the error indicates the account doesn't exist

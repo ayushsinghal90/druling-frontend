@@ -28,9 +28,8 @@ const SidebarNav = ({ isExpanded }: SidebarNavProps) => {
       {navigation.map((item) => {
         const isActive = location.pathname === item.href;
         return (
-          <div className="my-2">
+          <div className="my-2" key={item.name}>
             <Link
-              key={item.name}
               to={item.href}
               className={`group flex items-center rounded-lg cursor-pointer h-10 w-auto ${
                 isActive
