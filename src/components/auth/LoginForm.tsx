@@ -4,7 +4,6 @@ import { GoogleIcon } from "../SocialIcons";
 import { useLoginMutation } from "../../store/services/authApi";
 import { useDispatch } from "react-redux";
 import { setCredentials } from "../../store/slices/authSlice";
-import { setAuthToken } from "../../utils/storage";
 import { isValidEmail } from "../../utils/validation";
 import { config } from "../../config/env";
 
@@ -78,12 +77,16 @@ const LoginForm = () => {
         password: formData.password,
       }).unwrap();
 
-      const { data } = result;
-      setAuthToken(data.access);
-
-      const { payload, access, refresh } = data;
-      dispatch(setCredentials({ user: payload, tokens: { access, refresh } }));
-      navigate("/dashboard");
+      if (result.success) {
+        const { payload, access, refresh } = result.data;
+        dispatch(
+          setCredentials({
+            user: payload,
+            tokens: { access, refresh },
+          })
+        );
+        navigate("/dashboard");
+      }
     } catch (err: any) {
       // Check if the error indicates the account doesn't exist
       if (err?.data?.code === "USER_NOT_FOUND") {
