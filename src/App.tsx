@@ -1,11 +1,11 @@
-import React from "react";
+import React, { Suspense } from "react";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   Outlet,
-  Navigate,
 } from "react-router-dom";
+import LoadingScreen from "./components/common/LoadingScreen";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import Features from "./components/Features";
@@ -52,41 +52,43 @@ const DashboardLayout = () => (
 function App() {
   return (
     <Router>
-      <Routes>
-        {/* Public Routes */}
-        <Route
-          path="/login"
-          element={
-            <AuthGuard>
-              <Login />
-            </AuthGuard>
-          }
-        />
-        <Route
-          path="/register"
-          element={
-            <AuthGuard>
-              <Register />
-            </AuthGuard>
-          }
-        />
-        <Route path="/demo" element={<Demo />} />
-        <Route path="/terms" element={<Terms />} />
-        <Route path="/privacy" element={<Privacy />} />
-        <Route path="/logout" element={<Logout />} />
+      <Suspense fallback={<LoadingScreen />}>
+        <Routes>
+          {/* Public Routes */}
+          <Route
+            path="/login"
+            element={
+              <AuthGuard>
+                <Login />
+              </AuthGuard>
+            }
+          />
+          <Route
+            path="/register"
+            element={
+              <AuthGuard>
+                <Register />
+              </AuthGuard>
+            }
+          />
+          <Route path="/demo" element={<Demo />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/logout" element={<Logout />} />
 
-        {/* Main Landing Page */}
-        <Route path="/" element={<LandingPage />} />
+          {/* Main Landing Page */}
+          <Route path="/" element={<LandingPage />} />
 
-        {/* Protected Dashboard Routes */}
-        <Route path="/dashboard" element={<DashboardLayout />}>
-          <Route index element={<Dashboard />} />
-          <Route path="qr-codes" element={<QRCodes />} />
-          <Route path="analytics" element={<Analytics />} />
-          <Route path="billing" element={<Billing />} />
-          <Route path="settings" element={<Settings />} />
-        </Route>
-      </Routes>
+          {/* Protected Dashboard Routes */}
+          <Route path="/dashboard" element={<DashboardLayout />}>
+            <Route index element={<Dashboard />} />
+            <Route path="qr-codes" element={<QRCodes />} />
+            <Route path="analytics" element={<Analytics />} />
+            <Route path="billing" element={<Billing />} />
+            <Route path="settings" element={<Settings />} />
+          </Route>
+        </Routes>
+      </Suspense>
     </Router>
   );
 }

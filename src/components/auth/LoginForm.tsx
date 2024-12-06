@@ -1,16 +1,22 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { GoogleIcon } from "../SocialIcons";
 import { useLoginMutation } from "../../store/services/authApi";
 import { useDispatch } from "react-redux";
 import { setCredentials } from "../../store/slices/authSlice";
 import { isValidEmail } from "../../utils/validation";
 import { config } from "../../config/env";
+import LoadingSpinner from "../common/LoadingSpinner";
 
 const LoginForm = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch();
   const [login, { isLoading }] = useLoginMutation();
+
+  const from =
+    (location.state as { from?: { pathname: string } })?.from?.pathname ||
+    "/dashboard";
 
   const [formData, setFormData] = useState({
     email: "",
@@ -53,14 +59,12 @@ const LoginForm = () => {
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
-    // Clear error when user starts typing
     if (errors[name as keyof typeof errors]) {
       setErrors((prev) => ({
         ...prev,
         [name]: "",
       }));
     }
-    // Reset create account prompt when user modifies input
     setShowCreateAccount(false);
   };
 
@@ -85,10 +89,9 @@ const LoginForm = () => {
             tokens: { access, refresh },
           })
         );
-        navigate("/dashboard");
+        navigate(from, { replace: true });
       }
     } catch (err: any) {
-      // Check if the error indicates the account doesn't exist
       if (err?.data?.code === "USER_NOT_FOUND") {
         setShowCreateAccount(true);
         setErrors((prev) => ({
@@ -210,9 +213,16 @@ const LoginForm = () => {
           <button
             type="submit"
             disabled={isLoading}
-            className="flex w-full justify-center rounded-md border border-transparent bg-black py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-gray-800 transform hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex w-full justify-center items-center rounded-md border border-transparent bg-black py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-gray-800 transform hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isLoading ? "Signing in..." : "Sign in"}
+            {isLoading ? (
+              <>
+                <LoadingSpinner size="sm" className="mr-2 text-white" />
+                Signing in...
+              </>
+            ) : (
+              "Sign in"
+            )}
           </button>
         </div>
 
