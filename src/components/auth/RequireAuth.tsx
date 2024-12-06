@@ -6,8 +6,13 @@ interface RequireAuthProps {
 }
 
 const RequireAuth = ({ children }: RequireAuthProps) => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, loading } = useAuth();
   const location = useLocation();
+
+  if (loading) {
+    // Render a loading state (can be a spinner or null)
+    return <div>Loading...</div>;
+  }
 
   if (!isAuthenticated) {
     // Redirect to login page but save the attempted URL

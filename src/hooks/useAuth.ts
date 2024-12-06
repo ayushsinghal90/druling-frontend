@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from "react-redux";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { RootState } from "../store";
 import { setCredentials } from "../store/slices/authSlice";
 import { getStoredTokens } from "../utils/auth";
@@ -9,9 +9,9 @@ export const useAuth = () => {
   const { user, isAuthenticated } = useSelector(
     (state: RootState) => state.auth
   );
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check for stored tokens on mount
     const tokens = getStoredTokens();
     if (tokens.access && tokens.refresh) {
       dispatch(
@@ -23,7 +23,8 @@ export const useAuth = () => {
         })
       );
     }
+    setLoading(false); // Authentication check is complete
   }, [dispatch]);
 
-  return { user, isAuthenticated };
+  return { user, isAuthenticated, loading };
 };

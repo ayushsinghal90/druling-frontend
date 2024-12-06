@@ -25,26 +25,22 @@ import Billing from "./pages/dashboard/Billing";
 import { SidebarProvider } from "./components/dashboard/SidebarContext";
 import AuthGuard from "./components/auth/AuthGuard";
 import RequireAuth from "./components/auth/RequireAuth";
-import { useAuth } from "./hooks/useAuth";
 
 const LandingPage = () => {
-  const { isAuthenticated } = useAuth();
-
-  if (isAuthenticated) {
-    return <Navigate to="/dashboard" replace />;
-  }
-
   return (
-    <div className="min-h-screen bg-white">
-      <Navbar />
-      <Hero />
-      <Features />
-      <Pricing />
-      <Footer />
-    </div>
+    <AuthGuard>
+      <div className="min-h-screen bg-white">
+        <Navbar />
+        <Hero />
+        <Features />
+        <Pricing />
+        <Footer />
+      </div>
+    </AuthGuard>
   );
 };
 
+// Dashboard Layout Component
 const DashboardLayout = () => (
   <RequireAuth>
     <SidebarProvider>
@@ -57,7 +53,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* Public Routes with Auth Guard */}
+        {/* Public Routes */}
         <Route
           path="/login"
           element={

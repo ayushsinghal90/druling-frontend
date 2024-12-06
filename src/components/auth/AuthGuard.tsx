@@ -1,24 +1,28 @@
-import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
 
 interface AuthGuardProps {
   children: React.ReactNode;
   redirectTo?: string;
 }
 
-const AuthGuard: React.FC<AuthGuardProps> = ({ 
-  children, 
-  redirectTo = '/dashboard'
+const AuthGuard: React.FC<AuthGuardProps> = ({
+  children,
+  redirectTo = "/dashboard",
 }) => {
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, loading } = useAuth();
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && !loading) {
       navigate(redirectTo, { replace: true });
     }
-  }, [isAuthenticated, navigate, redirectTo]);
+  }, [isAuthenticated, loading, navigate, redirectTo]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   if (isAuthenticated) {
     return null;
