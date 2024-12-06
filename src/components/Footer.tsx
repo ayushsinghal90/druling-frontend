@@ -1,6 +1,6 @@
 import React from "react";
 import Logo from "./Logo";
-import { TwitterIcon, GithubIcon } from "./SocialIcons";
+import { XIcon, LinkedInIcon, InstagramIcon, YouTubeIcon } from "./SocialIcons";
 
 const Footer = () => {
   return (
@@ -8,18 +8,40 @@ const Footer = () => {
       <div className="mx-auto max-w-7xl px-6 py-12 md:flex md:items-center md:justify-between lg:px-8">
         <div className="flex justify-center space-x-6 md:order-2">
           <a
-            href="#"
-            className="text-gray-400 hover:text-black transition-colors duration-200"
+            href="https://x.com/druling"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-gray-500 hover:text-black transition-colors duration-200"
           >
-            <span className="sr-only">Twitter</span>
-            <TwitterIcon className="h-6 w-6" />
+            <span className="sr-only">X (formerly Twitter)</span>
+            <XIcon className="h-5 w-5" />
           </a>
           <a
-            href="#"
-            className="text-gray-400 hover:text-black transition-colors duration-200"
+            href="https://linkedin.com/company/druling"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-gray-500 hover:text-black transition-colors duration-200"
           >
-            <span className="sr-only">GitHub</span>
-            <GithubIcon className="h-6 w-6" />
+            <span className="sr-only">LinkedIn</span>
+            <LinkedInIcon className="h-5 w-5" />
+          </a>
+          <a
+            href="https://instagram.com/druling"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-gray-500 hover:text-black transition-colors duration-200"
+          >
+            <span className="sr-only">Instagram</span>
+            <InstagramIcon className="h-5 w-5" />
+          </a>
+          <a
+            href="https://youtube.com/@druling"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-gray-500 hover:text-black transition-colors duration-200"
+          >
+            <span className="sr-only">YouTube</span>
+            <YouTubeIcon className="h-7 w-7 -mt-1" />
           </a>
         </div>
         <div className="mt-8 md:order-1 md:mt-0">
