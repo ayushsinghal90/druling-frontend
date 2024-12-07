@@ -25,6 +25,8 @@ import Billing from "./pages/dashboard/Billing";
 import { SidebarProvider } from "./components/dashboard/SidebarContext";
 import AuthGuard from "./components/auth/AuthGuard";
 import RequireAuth from "./components/auth/RequireAuth";
+import Profile from "./pages/dashboard/Profile";
+import ChangePassword from "./pages/ChangePassword";
 
 const LandingPage = () => {
   return (
@@ -78,7 +80,14 @@ function App() {
 
           {/* Main Landing Page */}
           <Route path="/" element={<LandingPage />} />
-
+          <Route
+            path="/change-password"
+            element={
+              <RequireAuth>
+                <ChangePassword />
+              </RequireAuth>
+            }
+          />
           {/* Protected Dashboard Routes */}
           <Route path="/dashboard" element={<DashboardLayout />}>
             <Route index element={<Dashboard />} />
@@ -86,6 +95,7 @@ function App() {
             <Route path="analytics" element={<Analytics />} />
             <Route path="billing" element={<Billing />} />
             <Route path="settings" element={<Settings />} />
+            <Route path="profile" element={<Profile />} />
           </Route>
         </Routes>
       </Suspense>

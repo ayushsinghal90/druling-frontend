@@ -1,5 +1,6 @@
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
+import LoadingScreen from "../common/LoadingScreen";
 
 interface RequireAuthProps {
   children: JSX.Element;
@@ -10,8 +11,7 @@ const RequireAuth = ({ children }: RequireAuthProps) => {
   const location = useLocation();
 
   if (loading) {
-    // Render a loading state (can be a spinner or null)
-    return <div>Loading...</div>;
+    return <LoadingScreen />;
   }
 
   if (!isAuthenticated) {

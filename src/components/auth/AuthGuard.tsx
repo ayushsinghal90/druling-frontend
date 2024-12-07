@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
+import LoadingScreen from "../common/LoadingScreen";
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -21,7 +22,7 @@ const AuthGuard: React.FC<AuthGuardProps> = ({
   }, [isAuthenticated, loading, navigate, redirectTo]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <LoadingScreen />;
   }
 
   if (isAuthenticated) {

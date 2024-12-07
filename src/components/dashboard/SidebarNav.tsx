@@ -6,7 +6,10 @@ import {
   Settings,
   BarChart,
   CreditCard,
+  User,
 } from "lucide-react";
+import UserAvatar from "../common/UserAvatar";
+import { useAuth } from "../../hooks/useAuth";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -22,9 +25,47 @@ interface SidebarNavProps {
 
 const SidebarNav = ({ isExpanded }: SidebarNavProps) => {
   const location = useLocation();
+  const { user } = useAuth();
 
   return (
     <nav className={`flex flex-col justify-between p-3`}>
+      <div className="my-2">
+        <Link
+          to="/dashboard/profile"
+          className={`group flex items-center rounded cursor-pointer h-10 w-auto ${
+            location.pathname === "/dashboard/profile"
+              ? "bg-black text-white"
+              : "text-black hover:bg-[#ecf0f1] hover:text-gray-900"
+          }
+            ${isExpanded ? "rounded-lg" : "rounded-full"}`}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="ml-1">
+            <UserAvatar
+              imageUrl={user?.avatar_url}
+              size="sm"
+              className="items-center flex-shrink-0"
+            />
+          </div>
+          <span
+            className={`ml-2 text-sm font-medium ${
+              isExpanded
+                ? "transition-opacity opacity-100 duration-500"
+                : "opacity-0"
+            }`}
+          >
+            {user?.first_name
+              ? `${user?.first_name} ${user?.last_name}`
+              : "Profile"}
+          </span>
+          {!isExpanded && (
+            <span className="absolute left-full ml-2 w-auto min-w-max origin-left scale-0 rounded-md bg-[#ecf0f1] px-2 py-1 text-xs font-medium text-gray-900 shadow-sm transition-all duration-300 group-hover:scale-100">
+              Profile Settings
+            </span>
+          )}
+        </Link>
+      </div>
+
       {navigation.map((item) => {
         const isActive = location.pathname === item.href;
         return (
