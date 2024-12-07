@@ -31,6 +31,7 @@ import ChangePassword from "./pages/ChangePassword";
 import EditBranch from "./pages/EditBranch";
 import AddRestaurant from "./pages/AddRestaurant";
 import GenerateQR from "./pages/GenerateQR";
+import Menu from "./pages/Menu/Index";
 
 const LandingPage = () => {
   return (
@@ -81,6 +82,7 @@ function App() {
           <Route path="/terms" element={<Terms />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/logout" element={<Logout />} />
+          <Route path="/menu/:menuId" element={<Menu />} />
 
           {/* Main Landing Page */}
           <Route path="/" element={<LandingPage />} />

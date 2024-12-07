@@ -76,10 +76,7 @@ const AddRestaurant = () => {
           to="/dashboard"
           className="flex items-center hover:opacity-80 transition-opacity duration-200"
         >
-          <Logo className="h-10 w-10 text-black" />
-          <span className="text-xl font-bold text-black font-comfortaa ml-1">
-            druling
-          </span>
+          <Logo color="text-black" textSize="text-2xl" />
         </Link>
       </div>
 

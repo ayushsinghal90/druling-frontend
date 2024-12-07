@@ -10,7 +10,8 @@ import RequireAuth from "../components/auth/RequireAuth";
 import Logo from "../components/Logo";
 import RestaurantBranchSelect from "../components/qr/RestaurantBranchSelect";
 import UploadMenu from "../components/qr/UploadMenu";
-import SuccessScreen from "../components/qr/SuccessScreen";
+import PreviewStep from "../components/qr/PreviewStep";
+import SuccessModal from "../components/qr/SuccessModal";
 import {
   RestaurantProvider,
   useRestaurant,
@@ -39,8 +40,8 @@ const steps: Step[] = [
   },
   {
     number: 3,
-    title: "Complete",
-    description: "Get your QR code",
+    title: "Preview",
+    description: "Review and publish",
     icon: Check,
   },
 ];
@@ -95,7 +96,6 @@ const GenerateQR = () => {
   const { restaurantId, branchId } = useParams();
   const { restaurants } = useRestaurant();
 
-  // Use state with initial values from URL params
   const [currentStep, setCurrentStep] = useState(() => {
     return restaurantId && branchId ? 2 : 1;
   });
@@ -118,11 +118,13 @@ const GenerateQR = () => {
     return null;
   });
 
+  const [menuImage, setMenuImage] = useState<string>("");
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [qrCode, setQrCode] = useState<string>("");
+  const [menuUrl, setMenuUrl] = useState<string>("");
 
   const isAddMenu = searchParams.get("type") === "menu" || !!restaurantId;
 
-  // Effect to handle URL params changes
   useEffect(() => {
     if (restaurantId && branchId) {
       const restaurant = restaurants.find((r) => r.id === Number(restaurantId));
@@ -149,7 +151,23 @@ const GenerateQR = () => {
   };
 
   const handleMenuUpload = (file: File) => {
-    setCurrentStep(3);
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setMenuImage(reader.result as string);
+      setCurrentStep(3);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handlePublish = () => {
+    // Mock QR code generation
+    setQrCode(
+      "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=example"
+    );
+    setMenuUrl(
+      `https://menu.druling.com/${selectedRestaurant?.id}/${selectedBranch?.id}`
+    );
+    setShowSuccessModal(true);
   };
 
   const handleClose = () => {
@@ -158,18 +176,14 @@ const GenerateQR = () => {
 
   const handleBack = () => {
     if (currentStep > 1) {
-      // Keep the selected data when going back
       setCurrentStep((prev) => prev - 1);
     } else if (restaurantId && branchId) {
-      // If we came from a specific restaurant/branch, go back to restaurants
       navigate("/dashboard/restaurants");
     } else {
-      // Otherwise, just go back to previous page
       navigate(-1);
     }
   };
 
-  // Render appropriate step content
   const renderStepContent = () => {
     switch (currentStep) {
       case 1:
@@ -191,13 +205,15 @@ const GenerateQR = () => {
           />
         ) : null;
       case 3:
-        return (
-          <SuccessScreen
-            qrCode={qrCode}
-            isAddMenu={isAddMenu}
-            onClose={handleClose}
+        return selectedRestaurant && selectedBranch ? (
+          <PreviewStep
+            restaurant={selectedRestaurant}
+            branch={selectedBranch}
+            menuImage={menuImage}
+            onSubmit={handlePublish}
+            onBack={() => setCurrentStep(2)}
           />
-        );
+        ) : null;
       default:
         return null;
     }
@@ -250,6 +266,14 @@ const GenerateQR = () => {
           </div>
         </div>
       </div>
+
+      {/* Success Modal */}
+      <SuccessModal
+        isOpen={showSuccessModal}
+        onClose={handleClose}
+        qrCode={qrCode}
+        menuUrl={menuUrl}
+      />
     </div>
   );
 };
