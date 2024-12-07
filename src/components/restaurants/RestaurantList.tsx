@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Plus, Image, ChevronDown, Pencil, Trash2, Phone } from "lucide-react";
 import { Restaurant } from "../../types/restaurants";
+import ContactModal from "./ContactModal";
+import DeleteBranchModal from "./DeleteBranchModal";
 
 interface RestaurantListProps {
   restaurants: Restaurant[];
@@ -9,7 +11,6 @@ interface RestaurantListProps {
   onAddBranch: (restaurantId: number) => void;
   onEditBranch: (restaurantId: number, branchId: number) => void;
   onDeleteBranch: (restaurantId: number, branchId: number) => void;
-  onContactUs: () => void;
   onAddRestaurant: () => void;
 }
 
@@ -20,11 +21,18 @@ const RestaurantList = ({
   onAddBranch,
   onEditBranch,
   onDeleteBranch,
-  onContactUs,
   onAddRestaurant,
 }: RestaurantListProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+  const [deleteModalData, setDeleteModalData] = useState<{
+    isOpen: boolean;
+    branchId?: number;
+    branchName?: string;
+  }>({
+    isOpen: false,
+  });
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -39,6 +47,20 @@ const RestaurantList = ({
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const handleDeleteClick = (branchId: number, branchName: string) => {
+    setDeleteModalData({
+      isOpen: true,
+      branchId,
+      branchName,
+    });
+  };
+
+  const handleDeleteConfirm = () => {
+    if (selectedRestaurant && deleteModalData.branchId) {
+      onDeleteBranch(selectedRestaurant.id, deleteModalData.branchId);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -124,7 +146,7 @@ const RestaurantList = ({
 
                 {/* Contact Us Button - Desktop */}
                 <button
-                  onClick={onContactUs}
+                  onClick={() => setIsContactModalOpen(true)}
                   className="hidden sm:block px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 transition-colors duration-200"
                 >
                   Contact Us
@@ -132,19 +154,12 @@ const RestaurantList = ({
 
                 {/* Contact Us Button - Mobile */}
                 <button
-                  onClick={onContactUs}
+                  onClick={() => setIsContactModalOpen(true)}
                   className="sm:hidden p-2 text-white bg-purple-600 rounded-lg hover:bg-purple-700 transition-colors duration-200"
                   aria-label="Contact Us"
                 >
                   <Phone className="h-5 w-5" />
                 </button>
-
-                {/* <button
-                  onClick={onContactUs}
-                  className="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 transition-colors duration-200"
-                >
-                  Contact Us
-                </button> */}
               </div>
             </div>
           </div>
@@ -204,7 +219,7 @@ const RestaurantList = ({
                       </button>
                       <button
                         onClick={() =>
-                          onDeleteBranch(selectedRestaurant.id, branch.id)
+                          handleDeleteClick(branch.id, branch.name)
                         }
                         className="p-2 text-gray-400 hover:text-red-600 transition-colors duration-200"
                       >
@@ -226,6 +241,22 @@ const RestaurantList = ({
             </button>
           </div>
         </div>
+      )}
+
+      {selectedRestaurant && (
+        <>
+          <ContactModal
+            isOpen={isContactModalOpen}
+            onClose={() => setIsContactModalOpen(false)}
+            restaurant={selectedRestaurant}
+          />
+          <DeleteBranchModal
+            isOpen={deleteModalData.isOpen}
+            onClose={() => setDeleteModalData({ isOpen: false })}
+            onConfirm={handleDeleteConfirm}
+            branchName={deleteModalData.branchName || ""}
+          />
+        </>
       )}
     </div>
   );
