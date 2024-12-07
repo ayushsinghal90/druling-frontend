@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Lock, ArrowLeft } from "lucide-react";
+import Logo from "../components/Logo";
 
 const ChangePassword = () => {
   const [formData, setFormData] = useState({
@@ -15,7 +16,17 @@ const ChangePassword = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 flex flex-col py-12 sm:px-6 lg:px-8">
+      {/* Logo Section */}
+      <div className="flex justify-center mb-8">
+        <Link
+          to="/dashboard"
+          className="flex items-center hover:opacity-80 transition-opacity duration-200"
+        >
+          <Logo color="text-black" textSize="text-2xl" />
+        </Link>
+      </div>
+
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow-sm rounded-lg sm:px-10">
           <div className="mb-6">

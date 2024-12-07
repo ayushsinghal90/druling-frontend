@@ -1,38 +1,31 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { Plus, Image, ChevronDown, Pencil, Trash2, Phone } from "lucide-react";
-import { Restaurant } from "../../types/restaurants";
 import ContactModal from "./ContactModal";
 import DeleteBranchModal from "./DeleteBranchModal";
+import { useRestaurant } from "../../contexts/RestaurantContext";
 
-interface RestaurantListProps {
-  restaurants: Restaurant[];
-  selectedRestaurant: Restaurant | null;
-  onSelectRestaurant: (restaurant: Restaurant) => void;
-  onAddBranch: (restaurantId: number) => void;
-  onEditBranch: (restaurantId: number, branchId: number) => void;
-  onDeleteBranch: (restaurantId: number, branchId: number) => void;
-  onAddRestaurant: () => void;
-}
+const RestaurantList = () => {
+  const navigate = useNavigate();
 
-const RestaurantList = ({
-  restaurants,
-  selectedRestaurant,
-  onSelectRestaurant,
-  onAddBranch,
-  onEditBranch,
-  onDeleteBranch,
-  onAddRestaurant,
-}: RestaurantListProps) => {
+  const {
+    restaurants,
+    selectedRestaurant,
+    selectRestaurant,
+    addBranch,
+    editBranch,
+    deleteBranch,
+    addRestaurant,
+  } = useRestaurant();
+
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [showContactModal, setShowContactModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [branchToDelete, setBranchToDelete] = useState<{
+    id: number;
+    name: string;
+  } | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
-  const [deleteModalData, setDeleteModalData] = useState<{
-    isOpen: boolean;
-    branchId?: number;
-    branchName?: string;
-  }>({
-    isOpen: false,
-  });
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -48,26 +41,39 @@ const RestaurantList = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleDeleteClick = (branchId: number, branchName: string) => {
-    setDeleteModalData({
-      isOpen: true,
-      branchId,
-      branchName,
-    });
+  const handleDeleteClick = (
+    restaurantId: number,
+    branchId: number,
+    branchName: string
+  ) => {
+    setBranchToDelete({ id: branchId, name: branchName });
+    setShowDeleteModal(true);
   };
 
-  const handleDeleteConfirm = () => {
-    if (selectedRestaurant && deleteModalData.branchId) {
-      onDeleteBranch(selectedRestaurant.id, deleteModalData.branchId);
+  const handleConfirmDelete = () => {
+    if (branchToDelete && selectedRestaurant) {
+      deleteBranch(selectedRestaurant.id, branchToDelete.id);
+      setShowDeleteModal(false);
     }
   };
+
+  const handleMenuClick = (branch: Branch) => {
+    if (!branch.menuLink) {
+      // Navigate to GenerateQR page with restaurant and branch details
+      navigate(`/qr/menu/${selectedRestaurant?.id}/${branch.id}`);
+    } else {
+      window.open(branch.menuLink, "_blank");
+    }
+  };
+
+  if (!selectedRestaurant) return null;
 
   return (
     <div className="space-y-6">
       {/* Add Restaurant Button */}
       <div className="flex justify-end">
         <button
-          onClick={onAddRestaurant}
+          onClick={addRestaurant}
           className="px-4 py-2 text-sm font-medium text-white bg-black rounded-lg hover:bg-gray-800 transition-colors duration-200"
         >
           Add Restaurant
@@ -118,7 +124,7 @@ const RestaurantList = ({
                           <button
                             key={restaurant.id}
                             onClick={() => {
-                              onSelectRestaurant(restaurant);
+                              selectRestaurant(restaurant);
                               setIsDropdownOpen(false);
                             }}
                             className="w-full flex items-center gap-3 px-4 py-2 hover:bg-gray-50 transition-colors duration-200"
@@ -146,7 +152,7 @@ const RestaurantList = ({
 
                 {/* Contact Us Button - Desktop */}
                 <button
-                  onClick={() => setIsContactModalOpen(true)}
+                  onClick={() => setShowContactModal(true)}
                   className="hidden sm:block px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 transition-colors duration-200"
                 >
                   Contact Us
@@ -154,7 +160,7 @@ const RestaurantList = ({
 
                 {/* Contact Us Button - Mobile */}
                 <button
-                  onClick={() => setIsContactModalOpen(true)}
+                  onClick={() => setShowContactModal(true)}
                   className="sm:hidden p-2 text-white bg-purple-600 rounded-lg hover:bg-purple-700 transition-colors duration-200"
                   aria-label="Contact Us"
                 >
@@ -194,11 +200,7 @@ const RestaurantList = ({
                   <div className="flex flex-row justify-between md:pt-0 pt-4">
                     <div>
                       <button
-                        onClick={() =>
-                          branch.menuLink
-                            ? window.open(branch.menuLink, "_blank")
-                            : null
-                        }
+                        onClick={() => handleMenuClick(branch)}
                         className={`px-4 py-2 text-sm font-medium text-white rounded-lg transition-colors duration-200 ${
                           branch.menuLink
                             ? "bg-black hover:bg-gray-800"
@@ -211,7 +213,7 @@ const RestaurantList = ({
                     <div className="absolute bottom-4 right-4 flex items-center gap-2">
                       <button
                         onClick={() =>
-                          onEditBranch(selectedRestaurant.id, branch.id)
+                          editBranch(selectedRestaurant.id, branch.id)
                         }
                         className="p-2 text-gray-400 hover:text-gray-600 transition-colors duration-200"
                       >
@@ -219,7 +221,11 @@ const RestaurantList = ({
                       </button>
                       <button
                         onClick={() =>
-                          handleDeleteClick(branch.id, branch.name)
+                          handleDeleteClick(
+                            selectedRestaurant.id,
+                            branch.id,
+                            branch.name
+                          )
                         }
                         className="p-2 text-gray-400 hover:text-red-600 transition-colors duration-200"
                       >
@@ -233,7 +239,7 @@ const RestaurantList = ({
 
             {/* Add Branch Button */}
             <button
-              onClick={() => onAddBranch(selectedRestaurant.id)}
+              onClick={() => addBranch(selectedRestaurant.id)}
               className="w-full flex items-center justify-center gap-2 p-4 rounded-lg border border-dashed border-gray-300 text-sm font-medium text-gray-600 hover:border-gray-400 hover:text-gray-900"
             >
               <Plus className="h-4 w-4" />
@@ -243,20 +249,21 @@ const RestaurantList = ({
         </div>
       )}
 
-      {selectedRestaurant && (
-        <>
-          <ContactModal
-            isOpen={isContactModalOpen}
-            onClose={() => setIsContactModalOpen(false)}
-            restaurant={selectedRestaurant}
-          />
-          <DeleteBranchModal
-            isOpen={deleteModalData.isOpen}
-            onClose={() => setDeleteModalData({ isOpen: false })}
-            onConfirm={handleDeleteConfirm}
-            branchName={deleteModalData.branchName || ""}
-          />
-        </>
+      {/* Contact Modal */}
+      <ContactModal
+        isOpen={showContactModal}
+        onClose={() => setShowContactModal(false)}
+        restaurant={selectedRestaurant}
+      />
+
+      {/* Delete Branch Modal */}
+      {branchToDelete && (
+        <DeleteBranchModal
+          isOpen={showDeleteModal}
+          onClose={() => setShowDeleteModal(false)}
+          onConfirm={handleConfirmDelete}
+          branchName={branchToDelete.name}
+        />
       )}
     </div>
   );

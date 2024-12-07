@@ -28,6 +28,9 @@ import AuthGuard from "./components/auth/AuthGuard";
 import RequireAuth from "./components/auth/RequireAuth";
 import Profile from "./pages/dashboard/Profile";
 import ChangePassword from "./pages/ChangePassword";
+import EditBranch from "./pages/EditBranch";
+import AddRestaurant from "./pages/AddRestaurant";
+import GenerateQR from "./pages/GenerateQR";
 
 const LandingPage = () => {
   return (
@@ -99,6 +102,17 @@ function App() {
             <Route path="settings" element={<Settings />} />
             <Route path="profile" element={<Profile />} />
           </Route>
+
+          <Route
+            path="/restaurants/:restaurantId/branches/:branchId/edit"
+            element={<EditBranch />}
+          />
+          <Route path="/restaurants/add" element={<AddRestaurant />} />
+          <Route path="/qr/generate" element={<GenerateQR />} />
+          <Route
+            path="/qr/menu/:restaurantId/:branchId"
+            element={<GenerateQR />}
+          />
         </Routes>
       </Suspense>
     </Router>
