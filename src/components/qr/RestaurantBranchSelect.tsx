@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Building2, ChevronDown } from "lucide-react";
 import { useRestaurant } from "../../contexts/RestaurantContext";
 import { Restaurant, Branch } from "../../types/restaurant";
@@ -7,17 +7,32 @@ interface RestaurantBranchSelectProps {
   onSelect: (restaurant: Restaurant, branch: Branch) => void;
   initialRestaurantId?: string | null;
   initialBranchId?: string | null;
+  selectedRestaurant?: Restaurant | null;
+  selectedBranch?: Branch | null;
 }
 
 const RestaurantBranchSelect = ({
   onSelect,
   initialRestaurantId,
   initialBranchId,
+  selectedRestaurant: propSelectedRestaurant,
+  selectedBranch: propSelectedBranch,
 }: RestaurantBranchSelectProps) => {
   const { restaurants } = useRestaurant();
   const [selectedRestaurant, setSelectedRestaurant] =
-    useState<Restaurant | null>(null);
-  const [selectedBranch, setSelectedBranch] = useState<Branch | null>(null);
+    React.useState<Restaurant | null>(propSelectedRestaurant || null);
+  const [selectedBranch, setSelectedBranch] = React.useState<Branch | null>(
+    propSelectedBranch || null
+  );
+
+  React.useEffect(() => {
+    if (propSelectedRestaurant) {
+      setSelectedRestaurant(propSelectedRestaurant);
+    }
+    if (propSelectedBranch) {
+      setSelectedBranch(propSelectedBranch);
+    }
+  }, [propSelectedRestaurant, propSelectedBranch]);
 
   const handleRestaurantChange = (restaurant: Restaurant) => {
     setSelectedRestaurant(restaurant);

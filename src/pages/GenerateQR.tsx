@@ -94,14 +94,35 @@ const GenerateQR = () => {
   const [searchParams] = useSearchParams();
   const { restaurantId, branchId } = useParams();
   const { restaurants } = useRestaurant();
-  const [currentStep, setCurrentStep] = useState(1);
+
+  // Use state with initial values from URL params
+  const [currentStep, setCurrentStep] = useState(() => {
+    return restaurantId && branchId ? 2 : 1;
+  });
+
   const [selectedRestaurant, setSelectedRestaurant] =
-    useState<Restaurant | null>(null);
-  const [selectedBranch, setSelectedBranch] = useState<Branch | null>(null);
+    useState<Restaurant | null>(() => {
+      if (restaurantId) {
+        return restaurants.find((r) => r.id === Number(restaurantId)) || null;
+      }
+      return null;
+    });
+
+  const [selectedBranch, setSelectedBranch] = useState<Branch | null>(() => {
+    if (restaurantId && branchId && selectedRestaurant) {
+      return (
+        selectedRestaurant.branches.find((b) => b.id === Number(branchId)) ||
+        null
+      );
+    }
+    return null;
+  });
+
   const [qrCode, setQrCode] = useState<string>("");
 
   const isAddMenu = searchParams.get("type") === "menu" || !!restaurantId;
 
+  // Effect to handle URL params changes
   useEffect(() => {
     if (restaurantId && branchId) {
       const restaurant = restaurants.find((r) => r.id === Number(restaurantId));
@@ -128,13 +149,58 @@ const GenerateQR = () => {
   };
 
   const handleMenuUpload = (file: File) => {
-    // Handle menu upload logic here
-    // For demo, we'll just move to the success step
     setCurrentStep(3);
   };
 
   const handleClose = () => {
     navigate("/dashboard/restaurants");
+  };
+
+  const handleBack = () => {
+    if (currentStep > 1) {
+      // Keep the selected data when going back
+      setCurrentStep((prev) => prev - 1);
+    } else if (restaurantId && branchId) {
+      // If we came from a specific restaurant/branch, go back to restaurants
+      navigate("/dashboard/restaurants");
+    } else {
+      // Otherwise, just go back to previous page
+      navigate(-1);
+    }
+  };
+
+  // Render appropriate step content
+  const renderStepContent = () => {
+    switch (currentStep) {
+      case 1:
+        return (
+          <RestaurantBranchSelect
+            onSelect={handleRestaurantBranchSelect}
+            initialRestaurantId={restaurantId}
+            initialBranchId={branchId}
+            selectedRestaurant={selectedRestaurant}
+            selectedBranch={selectedBranch}
+          />
+        );
+      case 2:
+        return selectedRestaurant && selectedBranch ? (
+          <UploadMenu
+            restaurant={selectedRestaurant}
+            branch={selectedBranch}
+            onUpload={handleMenuUpload}
+          />
+        ) : null;
+      case 3:
+        return (
+          <SuccessScreen
+            qrCode={qrCode}
+            isAddMenu={isAddMenu}
+            onClose={handleClose}
+          />
+        );
+      default:
+        return null;
+    }
   };
 
   return (
@@ -157,12 +223,12 @@ const GenerateQR = () => {
           {/* Header */}
           <div className="border-b border-gray-200 px-4 py-4 sm:px-6">
             <div className="flex items-center">
-              <Link
-                to="/dashboard/restaurants"
+              <button
+                onClick={handleBack}
                 className="mr-4 text-gray-400 hover:text-gray-600 transition-colors duration-200"
               >
                 <ArrowLeft className="h-5 w-5" />
-              </Link>
+              </button>
               <div className="flex items-center gap-3">
                 <QrCode className="h-6 w-6 text-gray-400" />
                 <h1 className="text-lg font-semibold text-gray-900">
@@ -180,31 +246,7 @@ const GenerateQR = () => {
             </div>
 
             {/* Step Content */}
-            <div className="mt-8">
-              {currentStep === 1 && (
-                <RestaurantBranchSelect
-                  onSelect={handleRestaurantBranchSelect}
-                  initialRestaurantId={restaurantId}
-                  initialBranchId={branchId}
-                />
-              )}
-
-              {currentStep === 2 && selectedRestaurant && selectedBranch && (
-                <UploadMenu
-                  restaurant={selectedRestaurant}
-                  branch={selectedBranch}
-                  onUpload={handleMenuUpload}
-                />
-              )}
-
-              {currentStep === 3 && (
-                <SuccessScreen
-                  qrCode={qrCode}
-                  isAddMenu={isAddMenu}
-                  onClose={handleClose}
-                />
-              )}
-            </div>
+            <div className="mt-8">{renderStepContent()}</div>
           </div>
         </div>
       </div>
