@@ -1,25 +1,32 @@
-import React from 'react';
-import DashboardLayout from '../../components/dashboard/DashboardLayout';
-import { User, Building2, Bell, Shield } from 'lucide-react';
+import React from "react";
+import DashboardLayout from "../../components/dashboard/DashboardLayout";
+import { User, Building2, Bell, Shield } from "lucide-react";
 
 const settingsSections = [
   {
-    id: 'account',
-    title: 'Account Settings',
-    icon: User,
-    fields: [
-      { name: 'name', label: 'Name', type: 'text', value: 'John Doe' },
-      { name: 'email', label: 'Email', type: 'email', value: 'john@example.com' },
-    ],
-  },
-  {
-    id: 'restaurant',
-    title: 'Restaurant Details',
+    id: "restaurant",
+    title: "Restaurant Details",
     icon: Building2,
     fields: [
-      { name: 'restaurantName', label: 'Restaurant Name', type: 'text', value: 'The Fine Diner' },
-      { name: 'address', label: 'Address', type: 'text', value: '123 Food Street' },
-      { name: 'phone', label: 'Phone', type: 'tel', value: '+1 234 567 890' },
+      {
+        name: "restaurantName",
+        label: "Restaurant Name",
+        type: "text",
+        value: "The Fine Diner",
+      },
+      {
+        name: "address",
+        label: "Address",
+        type: "text",
+        value: "123 Food Street",
+      },
+      { name: "phone", label: "Phone", type: "tel", value: "+1 234 567 890" },
+      {
+        name: "email",
+        label: "Email",
+        type: "email",
+        value: "druling@gmail.com",
+      },
     ],
   },
 ];
@@ -30,21 +37,31 @@ const Settings = () => {
       <div className="space-y-8">
         <div>
           <h1 className="text-2xl font-semibold text-gray-900">Settings</h1>
-          <p className="mt-1 text-sm text-gray-500">Manage your account and restaurant settings</p>
+          <p className="mt-1 text-sm text-gray-500">
+            Manage your account and restaurant settings
+          </p>
         </div>
 
         <div className="space-y-6">
           {settingsSections.map((section) => (
-            <div key={section.id} className="overflow-hidden rounded-xl bg-white shadow-sm">
+            <div
+              key={section.id}
+              className="overflow-hidden rounded-xl bg-white shadow-sm"
+            >
               <div className="flex items-center gap-3 border-b border-gray-100 p-6">
                 <section.icon className="h-5 w-5 text-gray-400" />
-                <h2 className="text-lg font-semibold text-gray-900">{section.title}</h2>
+                <h2 className="text-lg font-semibold text-gray-900">
+                  {section.title}
+                </h2>
               </div>
               <div className="p-6">
                 <div className="grid gap-6 sm:grid-cols-2">
                   {section.fields.map((field) => (
                     <div key={field.name}>
-                      <label htmlFor={field.name} className="block text-sm font-medium text-gray-700">
+                      <label
+                        htmlFor={field.name}
+                        className="block text-sm font-medium text-gray-700"
+                      >
                         {field.label}
                       </label>
                       <input
