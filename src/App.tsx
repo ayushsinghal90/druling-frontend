@@ -22,6 +22,7 @@ import QRCodes from "./pages/dashboard/QRCodes";
 import Settings from "./pages/dashboard/Settings";
 import Analytics from "./pages/dashboard/Analytics";
 import Billing from "./pages/dashboard/Billing";
+import Restaurants from "./pages/dashboard/Restaurants";
 import { SidebarProvider } from "./components/dashboard/SidebarContext";
 import AuthGuard from "./components/auth/AuthGuard";
 import RequireAuth from "./components/auth/RequireAuth";
@@ -93,6 +94,7 @@ function App() {
             <Route index element={<Dashboard />} />
             <Route path="qr-codes" element={<QRCodes />} />
             <Route path="analytics" element={<Analytics />} />
+            <Route path="restaurants" element={<Restaurants />} />
             <Route path="billing" element={<Billing />} />
             <Route path="settings" element={<Settings />} />
             <Route path="profile" element={<Profile />} />

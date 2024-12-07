@@ -6,13 +6,14 @@ import {
   Settings,
   BarChart,
   CreditCard,
-  User,
+  Building2,
 } from "lucide-react";
 import UserAvatar from "../common/UserAvatar";
 import { useAuth } from "../../hooks/useAuth";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { name: "Restaurants", href: "/dashboard/restaurants", icon: Building2 },
   { name: "QR Codes", href: "/dashboard/qr-codes", icon: QrCode },
   { name: "Analytics", href: "/dashboard/analytics", icon: BarChart },
   { name: "Billing", href: "/dashboard/billing", icon: CreditCard },
