@@ -1,6 +1,6 @@
 import React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { MenuProps } from "./MenuTypes";
+import { MenuProps } from "./utils/MenuTypes";
 import { useMenuControls } from "./utils/useMenuControls";
 import MenuHeader from "../../components/menu/MenuHeader";
 import MenuFooter from "../../components/menu/MenuFooter";
@@ -9,12 +9,9 @@ const DefaultMenu = ({ menuData }: MenuProps) => {
   const {
     currentImageIndex,
     setCurrentImageIndex,
-    zoom,
     currentImage,
     handlePrevImage,
     handleNextImage,
-    handleZoomIn,
-    handleZoomOut,
   } = useMenuControls(menuData);
 
   return (
@@ -23,9 +20,6 @@ const DefaultMenu = ({ menuData }: MenuProps) => {
         restaurantName={menuData.restaurant.name}
         branchName={menuData.branch.name}
         imageUrl={menuData.restaurant.imageUrl}
-        zoom={zoom}
-        onZoomIn={handleZoomIn}
-        onZoomOut={handleZoomOut}
         variant="default"
       />
 
@@ -59,7 +53,6 @@ const DefaultMenu = ({ menuData }: MenuProps) => {
                 src={currentImage?.url}
                 alt={currentImage?.title}
                 className="w-full h-auto transition-transform duration-300"
-                style={{ transform: `scale(${zoom / 100})` }}
               />
             </div>
           </div>
@@ -89,8 +82,6 @@ const DefaultMenu = ({ menuData }: MenuProps) => {
       </main>
 
       <MenuFooter
-        restaurantName={menuData.restaurant.name}
-        branchName={menuData.branch.name}
         socialLinks={menuData.restaurant.socialLinks}
         variant="default"
       />

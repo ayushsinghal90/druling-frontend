@@ -1,14 +1,9 @@
 import React from "react";
-import { ZoomIn, ZoomOut } from "lucide-react";
-import Logo from "../Logo";
 
 interface RestaurantHeaderProps {
   restaurantName: string;
   branchName: string;
   imageUrl?: string;
-  zoom: number;
-  onZoomIn: () => void;
-  onZoomOut: () => void;
   variant?: "default" | "classic" | "modern";
 }
 
@@ -16,9 +11,6 @@ const RestaurantHeader = ({
   restaurantName,
   branchName,
   imageUrl,
-  zoom,
-  onZoomIn,
-  onZoomOut,
   variant = "default",
 }: RestaurantHeaderProps) => {
   const styles = {
@@ -42,6 +34,13 @@ const RestaurantHeader = ({
       subtitle: "text-[#00ff9d]/60",
       button: "text-[#00ff9d]/60 hover:text-[#00ff9d]",
       logo: "text-[#00ff9d]",
+    },
+    scrolling: {
+      wrapper: "bg-[#1a1a1a] border-b border-amber-500/20",
+      container: "text-amber-500",
+      subtitle: "text-amber-500/60",
+      button: "text-amber-500/60 hover:text-amber-500 hover:bg-[#2a2a2a]",
+      logo: "text-amber-500",
     },
   };
 

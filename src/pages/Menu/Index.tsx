@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import DefaultMenu from "./Default";
 import ClassicMenu from "./Classic";
 import ModernMenu from "./Modern";
-import { MenuData } from "../../types/menu";
+import ScrollingMenu from "./Scrolling";
 import { useMenuData } from "./utils/useMenuData";
 import LoadingScreen from "../../components/common/LoadingScreen";
 
@@ -18,20 +18,21 @@ const Menu = () => {
     return <LoadingScreen />;
   }
 
-  const renderMenu = () => {
-    const props = { loading, menuData };
+  const props = { menuData };
 
-    switch (theme) {
-      case "classic":
-        return <ClassicMenu {...props} />;
-      case "modern":
-        return <ModernMenu {...props} />;
-      default:
-        return <DefaultMenu {...props} />;
-    }
-  };
-
-  return renderMenu();
+  return (
+    <>
+      {theme === "classic" ? (
+        <ClassicMenu {...props} />
+      ) : theme === "modern" ? (
+        <ModernMenu {...props} />
+      ) : theme === "scrolling" ? (
+        <ScrollingMenu {...props} />
+      ) : (
+        <DefaultMenu {...props} />
+      )}
+    </>
+  );
 };
 
 export default Menu;

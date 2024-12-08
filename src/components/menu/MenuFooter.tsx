@@ -4,18 +4,11 @@ import Logo from "../Logo";
 import { SocialLinks } from "../../types/menu";
 
 interface MenuFooterProps {
-  restaurantName: string;
-  branchName: string;
   socialLinks?: SocialLinks;
   variant?: "default" | "classic" | "modern";
 }
 
-const MenuFooter = ({
-  restaurantName,
-  branchName,
-  socialLinks,
-  variant = "default",
-}: MenuFooterProps) => {
+const MenuFooter = ({ socialLinks, variant = "default" }: MenuFooterProps) => {
   const styles = {
     default: {
       wrapper: "bg-white border-t border-gray-200",
@@ -34,6 +27,12 @@ const MenuFooter = ({
       container: "text-[#00ff9d]/60",
       icon: "text-[#00ff9d]/60 hover:text-[#00ff9d]",
       logo: "text-[#00ff9d]",
+    },
+    scrolling: {
+      wrapper: "bg-[#1a1a1a] border-t border-amber-500/20",
+      container: "text-amber-500/60",
+      icon: "text-amber-500/60 hover:text-amber-500",
+      logo: "text-amber-500",
     },
   };
 
