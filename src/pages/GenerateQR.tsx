@@ -16,7 +16,7 @@ import {
   RestaurantProvider,
   useRestaurant,
 } from "../contexts/RestaurantContext";
-import { Restaurant, Branch } from "../types/restaurant";
+import { Restaurant, Branch } from "../types/restaurants";
 
 interface Step {
   number: number;
@@ -66,14 +66,18 @@ const StepIndicator: React.FC<{ currentStep: number }> = ({ currentStep }) => (
             >
               <step.icon className="h-5 w-5" aria-hidden="true" />
             </div>
+
+            {/* Only show the connecting line if the step has been completed or is current */}
             {stepIdx !== steps.length - 1 && (
               <div
-                className={`absolute top-4 h-0.5 w-full ${
+                className={`absolute left-8 top-4 h-0.5 w-full ${
                   step.number < currentStep ? "bg-indigo-600" : "bg-gray-200"
                 }`}
               />
             )}
           </div>
+
+          {/* Step title and description */}
           <div className="mt-3">
             <p
               className={`text-sm font-medium ${
@@ -190,8 +194,6 @@ const GenerateQR = () => {
         return (
           <RestaurantBranchSelect
             onSelect={handleRestaurantBranchSelect}
-            initialRestaurantId={restaurantId}
-            initialBranchId={branchId}
             selectedRestaurant={selectedRestaurant}
             selectedBranch={selectedBranch}
           />
@@ -227,10 +229,7 @@ const GenerateQR = () => {
           to="/dashboard"
           className="flex items-center hover:opacity-80 transition-opacity duration-200"
         >
-          <Logo className="h-10 w-10 text-black" />
-          <span className="text-xl font-bold text-black font-comfortaa ml-1">
-            druling
-          </span>
+          <Logo color="text-black" textSize="text-2xl" />
         </Link>
       </div>
 

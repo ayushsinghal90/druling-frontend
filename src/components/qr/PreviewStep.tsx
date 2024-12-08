@@ -1,6 +1,5 @@
 import React from "react";
-import { Smartphone, Download, Share2 } from "lucide-react";
-import { Restaurant, Branch } from "../../types/restaurant";
+import { Restaurant, Branch } from "../../types/restaurants";
 
 interface PreviewStepProps {
   restaurant: Restaurant;
@@ -54,16 +53,6 @@ const PreviewStep = ({
                 </div>
               </div>
             </div>
-          </div>
-
-          {/* Floating Action Buttons */}
-          <div className="absolute -right-16 top-1/2 -translate-y-1/2 space-y-4">
-            <button className="p-3 bg-white rounded-full shadow-lg hover:bg-gray-50 transition-colors duration-200">
-              <Share2 className="w-5 h-5 text-gray-600" />
-            </button>
-            <button className="p-3 bg-white rounded-full shadow-lg hover:bg-gray-50 transition-colors duration-200">
-              <Download className="w-5 h-5 text-gray-600" />
-            </button>
           </div>
         </div>
       </div>

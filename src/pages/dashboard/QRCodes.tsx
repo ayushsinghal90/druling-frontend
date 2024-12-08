@@ -44,7 +44,7 @@ const QRCodes = () => {
           <div>
             <h1 className="text-2xl font-semibold text-gray-900">QR Codes</h1>
             <p className="mt-1 text-sm text-gray-500">
-              Manage and track your menu QR codes
+              Manage your menu QR codes
             </p>
           </div>
           <button
@@ -52,7 +52,7 @@ const QRCodes = () => {
             className="inline-flex items-center rounded-lg bg-black px-4 py-2 text-sm font-semibold text-white hover:bg-gray-800 transition-colors duration-200"
           >
             <QrCode className="mr-2 h-4 w-4" />
-            Generate New QR
+            Generate QR
           </button>
         </div>
 

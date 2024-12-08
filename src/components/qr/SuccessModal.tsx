@@ -87,7 +87,7 @@ const SuccessModal = ({
                   />
                 </div>
                 {/* Action buttons */}
-                <div className="absolute -right-4 top-1/2 -translate-y-1/2 space-y-2">
+                <div className="absolute -right-24 top-1/2 -translate-y-1/2 space-y-2">
                   <button
                     onClick={handleDownloadQR}
                     className="flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-lg ring-1 ring-gray-100 transition-all hover:ring-2 hover:ring-gray-200"

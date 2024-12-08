@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { Upload, Image as ImageIcon, Loader2 } from "lucide-react";
-import { Restaurant, Branch } from "../../types/restaurant";
+import { Restaurant, Branch } from "../../types/restaurants";
 
 interface UploadMenuProps {
   restaurant: Restaurant;
@@ -34,7 +34,12 @@ const UploadMenu = ({ restaurant, branch, onUpload }: UploadMenuProps) => {
       <div>
         <h3 className="text-lg font-medium text-gray-900">Upload Menu</h3>
         <p className="mt-1 text-sm text-gray-500">
-          Upload the menu image for {restaurant.name} - {branch.name}
+          Upload the menu image for{" "}
+          <span className="font-semibold text-gray-900">
+            {restaurant.name}{" "}
+          </span>
+          <span>-</span>
+          <span className="font-semibold text-gray-600"> {branch.name}</span>
         </p>
       </div>
 

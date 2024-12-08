@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState } from "react";
 
 interface SidebarContextProps {
   isExpanded: boolean;
@@ -17,6 +17,10 @@ export const SidebarProvider = ({
   const [isExpanded, setIsExpanded] = useState(false);
 
   const toggleExpanded = () => {
+    if (window.innerWidth < 768) {
+      // Block the function execution for small screens
+      return;
+    }
     setIsExpanded((prev) => !prev);
   };
 
@@ -30,7 +34,7 @@ export const SidebarProvider = ({
 export const useSidebar = () => {
   const context = useContext(SidebarContext);
   if (!context) {
-    throw new Error('useSidebar must be used within a SidebarProvider');
+    throw new Error("useSidebar must be used within a SidebarProvider");
   }
   return context;
 };
