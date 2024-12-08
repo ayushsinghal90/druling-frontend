@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Menu as MenuIcon, X } from "lucide-react";
+import { Menu as MenuIcon, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { MenuProps } from "./utils/MenuTypes";
 import { useMenuControls } from "./utils/useMenuControls";
 import MenuHeader from "../../components/menu/MenuHeader";
@@ -7,8 +7,13 @@ import MenuFooter from "../../components/menu/MenuFooter";
 
 const ModernMenu = ({ menuData }: MenuProps) => {
   const [showThumbnails, setShowThumbnails] = useState(false);
-  const { currentImageIndex, setCurrentImageIndex, currentImage } =
-    useMenuControls(menuData);
+  const {
+    currentImageIndex,
+    setCurrentImageIndex,
+    handlePrevImage,
+    handleNextImage,
+    currentImage,
+  } = useMenuControls(menuData);
 
   return (
     <div className="min-h-screen bg-[#111] text-white flex flex-col">
@@ -28,6 +33,24 @@ const ModernMenu = ({ menuData }: MenuProps) => {
               alt={currentImage?.title}
               className="w-full h-auto transition-transform duration-300"
             />
+
+            {/* Navigation Arrows */}
+            {menuData.images.length > 1 && (
+              <>
+                <button
+                  onClick={handlePrevImage}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 p-4 bg-[#111]/90 backdrop-blur-xl rounded-full text-[#00ff9d]/60 hover:text-[#00ff9d] transition-colors duration-200 border border-[#333]"
+                >
+                  <ChevronLeft className="h-6 w-6" />
+                </button>
+                <button
+                  onClick={handleNextImage}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 p-4 bg-[#111]/90 backdrop-blur-xl rounded-full text-[#00ff9d]/60 hover:text-[#00ff9d] transition-colors duration-200 border border-[#333]"
+                >
+                  <ChevronRight className="h-6 w-6" />
+                </button>
+              </>
+            )}
           </div>
 
           {/* Page Title */}
@@ -51,7 +74,7 @@ const ModernMenu = ({ menuData }: MenuProps) => {
 
           {/* Thumbnails Panel */}
           <div
-            className={`fixed inset-y-0 right-0 w-80 bg-[#111]/90 backdrop-blur-xl border-l border-[#333] transform transition-transform duration-300 ease-in-out ${
+            className={`fixed inset-y-0 right-0 z-30 w-80 bg-[#111]/90 backdrop-blur-xl border-l border-[#333] transform transition-transform duration-300 ease-in-out ${
               showThumbnails ? "translate-x-0" : "translate-x-full"
             }`}
           >

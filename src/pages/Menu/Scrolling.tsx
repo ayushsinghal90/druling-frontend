@@ -69,12 +69,11 @@ const ScrollingMenu = ({ menuData }: MenuProps) => {
             </div>
           ))}
         </div>
-
         {/* Scroll Buttons */}
         {showUpButton && (
           <button
             onClick={() => handleScroll("up")}
-            className="fixed left-1/2 top-24 -translate-x-1/2 p-3 bg-amber-500 text-[#1a1a1a] rounded-full shadow-lg transform transition-transform hover:scale-110 hover:bg-amber-400"
+            className="fixed left-1/2 top-56 z-20 -translate-x-1/2 p-3 bg-amber-500 text-[#1a1a1a] rounded-full shadow-lg transform transition-transform hover:scale-110 hover:bg-amber-400"
           >
             <ChevronUp className="h-6 w-6" />
           </button>
@@ -82,7 +81,7 @@ const ScrollingMenu = ({ menuData }: MenuProps) => {
         {showDownButton && (
           <button
             onClick={() => handleScroll("down")}
-            className="fixed left-1/2 bottom-24 -translate-x-1/2 p-3 bg-amber-500 text-[#1a1a1a] rounded-full shadow-lg transform transition-transform hover:scale-110 hover:bg-amber-400"
+            className="fixed left-1/2 bottom-56 -translate-x-1/2 p-3 bg-amber-500 text-[#1a1a1a] rounded-full shadow-lg transform transition-transform hover:scale-110 hover:bg-amber-400"
           >
             <ChevronDown className="h-6 w-6" />
           </button>

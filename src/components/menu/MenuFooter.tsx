@@ -16,12 +16,6 @@ const MenuFooter = ({ socialLinks, variant = "default" }: MenuFooterProps) => {
       icon: "text-gray-400 hover:text-gray-600",
       logo: "text-black",
     },
-    classic: {
-      wrapper: "bg-[#f9f6f2] border-t-4 border-double border-[#8b4513]",
-      container: "text-[#8b4513]",
-      icon: "text-[#8b4513]/70 hover:text-[#8b4513]",
-      logo: "text-[#8b4513]",
-    },
     modern: {
       wrapper: "bg-[#111] border-t border-[#333]",
       container: "text-[#00ff9d]/60",

@@ -1,7 +1,6 @@
 import React from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import DefaultMenu from "./Default";
-import ClassicMenu from "./Classic";
 import ModernMenu from "./Modern";
 import ScrollingMenu from "./Scrolling";
 import { useMenuData } from "./utils/useMenuData";
@@ -22,9 +21,7 @@ const Menu = () => {
 
   return (
     <>
-      {theme === "classic" ? (
-        <ClassicMenu {...props} />
-      ) : theme === "modern" ? (
+      {theme === "modern" ? (
         <ModernMenu {...props} />
       ) : theme === "scrolling" ? (
         <ScrollingMenu {...props} />

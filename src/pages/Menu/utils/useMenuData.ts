@@ -15,19 +15,19 @@ export const useMenuData = (menuId: string | undefined) => {
           images: [
             {
               id: 1,
-              url: "https://images.unsplash.com/photo-1574966739987-27c7f024868f",
+              url: "/src/assets/img/food.png",
               title: "Main Course",
               order: 1,
             },
             {
               id: 2,
-              url: "https://images.unsplash.com/photo-1572715376701-98568319fd0b",
+              url: "/src/assets/img/drinks.png",
               title: "Beverages",
               order: 2,
             },
             {
               id: 3,
-              url: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445",
+              url: "/src/assets/img/desserts.png",
               title: "Desserts",
               order: 3,
             },
