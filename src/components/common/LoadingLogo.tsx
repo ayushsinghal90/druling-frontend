@@ -55,7 +55,7 @@ const LoadingLogo = ({ className = "h-14 w-14" }: LoadingLogoProps) => {
           <animate
             attributeName="r"
             values={`${r}; ${r + 1}; ${r}`}
-            dur="1.5s"
+            dur="1s"
             begin={`${delay}ms`}
             repeatCount="indefinite"
           />
@@ -63,7 +63,7 @@ const LoadingLogo = ({ className = "h-14 w-14" }: LoadingLogoProps) => {
           <animate
             attributeName="opacity"
             values="1; 0.35; 1"
-            dur="1.5s"
+            dur="1s"
             begin={`${delay}ms`}
             repeatCount="indefinite"
           />

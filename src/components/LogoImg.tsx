@@ -1,8 +1,8 @@
 import React from "react";
-import logo from "../assets/logo.svg";
+import { ReactSVG } from "react-svg";
 
-const LogoImg = ({ className = "h-8 w-8" }: { className?: string }) => {
-  return <img src={logo} alt={"Druling"} className={className} />;
-};
+const LogoImg = ({ className = "h-8 w-8" }: { className?: string }) => (
+  <ReactSVG src="/src/assets/logo.svg" className={className} />
+);
 
 export default LogoImg;
