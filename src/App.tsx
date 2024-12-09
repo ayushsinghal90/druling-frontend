@@ -3,6 +3,7 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
+  Navigate,
   Outlet,
 } from "react-router-dom";
 import LoadingScreen from "./components/common/LoadingScreen";
@@ -115,6 +116,9 @@ function App() {
             path="/qr/menu/:restaurantId/:branchId"
             element={<GenerateQR />}
           />
+
+          {/* Catch all route */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>
     </Router>
