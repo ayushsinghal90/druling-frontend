@@ -1,6 +1,6 @@
 import React from "react";
 import { X, Mail, Phone, MessageSquare } from "lucide-react";
-import { Restaurant } from "../../types/restaurant";
+import { Restaurant } from "../../types/restaurants";
 
 interface ContactModalProps {
   isOpen: boolean;
@@ -12,7 +12,7 @@ const ContactModal = ({ isOpen, onClose, restaurant }: ContactModalProps) => {
   if (!isOpen) return null;
 
   // Use the first branch as the main contact information
-  const mainContact = restaurant.branches[0];
+  const mainContact = restaurant.contactInfo;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
@@ -51,7 +51,9 @@ const ContactModal = ({ isOpen, onClose, restaurant }: ContactModalProps) => {
             </div>
             <div>
               <p className="text-sm font-medium text-gray-900">Phone</p>
-              <p className="text-base text-gray-600">{mainContact.phone}</p>
+              <p className="text-base text-gray-600">
+                {mainContact.phoneNumber}
+              </p>
             </div>
           </div>
 

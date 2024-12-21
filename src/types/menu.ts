@@ -24,7 +24,7 @@ export interface MenuData {
 }
 
 export interface MenuImage {
-  id: number;
+  id: string;
   url: string;
   title: string;
   order: number;

@@ -1,14 +1,14 @@
 import React, { createContext, useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Restaurant } from "../types/restaurant";
+import { Restaurant } from "../types/restaurants";
 
 interface RestaurantContextType {
   restaurants: Restaurant[];
   selectedRestaurant: Restaurant | null;
   selectRestaurant: (restaurant: Restaurant) => void;
-  addBranch: (restaurantId: number) => void;
-  editBranch: (restaurantId: number, branchId: number) => void;
-  deleteBranch: (restaurantId: number, branchId: number) => void;
+  addBranch: (restaurantId: string) => void;
+  editBranch: (restaurantId: string, branchId: string) => void;
+  deleteBranch: (restaurantId: string, branchId: string) => void;
   addRestaurant: () => void;
 }
 
@@ -22,42 +22,28 @@ export const RestaurantProvider: React.FC<{ children: React.ReactNode }> = ({
   const navigate = useNavigate();
   const [restaurants, setRestaurants] = useState<Restaurant[]>([
     {
-      id: 1,
+      id: "1",
       name: "The Fine Diner",
       imageUrl:
         "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=500&h=500&fit=crop",
       branches: [
         {
-          id: 1,
+          id: "",
           name: "Downtown Branch",
-          address: "123 Main St, Downtown",
-          phone: "+1 234-567-8900",
-          email: "downtown@finediner.com",
           manager: "John Doe",
           menuLink: "https://menu.finediner.com/downtown",
-        },
-        {
-          id: 2,
-          name: "Uptown Branch",
-          address: "456 Park Ave, Uptown",
-          phone: "+1 234-567-8901",
-          email: "uptown@finediner.com",
-          manager: "Jane Smith",
         },
       ],
     },
     {
-      id: 2,
+      id: "",
       name: "Café Bistro",
       imageUrl:
         "https://images.unsplash.com/photo-1559339352-11d035aa65de?w=500&h=500&fit=crop",
       branches: [
         {
-          id: 3,
+          id: "",
           name: "Waterfront Location",
-          address: "789 Beach Rd, Waterfront",
-          phone: "+1 234-567-8902",
-          email: "waterfront@cafebistro.com",
           manager: "Mike Johnson",
           menuLink: "https://menu.cafebistro.com/waterfront",
         },
@@ -71,7 +57,7 @@ export const RestaurantProvider: React.FC<{ children: React.ReactNode }> = ({
     setSelectedRestaurant(restaurant);
   };
 
-  const addBranch = (restaurantId: number) => {
+  const addBranch = (restaurantId: string) => {
     navigate(
       `/restaurants/add?restaurantId=${restaurantId}&restaurantName=${encodeURIComponent(
         selectedRestaurant?.name || ""
@@ -79,11 +65,11 @@ export const RestaurantProvider: React.FC<{ children: React.ReactNode }> = ({
     );
   };
 
-  const editBranch = (restaurantId: number, branchId: number) => {
+  const editBranch = (restaurantId: string, branchId: string) => {
     navigate(`/restaurants/${restaurantId}/branches/${branchId}/edit`);
   };
 
-  const deleteBranch = (restaurantId: number, branchId: number) => {
+  const deleteBranch = (restaurantId: string, branchId: string) => {
     setRestaurants((prevRestaurants) =>
       prevRestaurants.map((restaurant) => {
         if (restaurant.id === restaurantId) {

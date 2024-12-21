@@ -23,7 +23,7 @@ const RestaurantList = () => {
   const [showContactModal, setShowContactModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [branchToDelete, setBranchToDelete] = useState<{
-    id: number;
+    id: string;
     name: string;
   } | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -43,8 +43,8 @@ const RestaurantList = () => {
   }, []);
 
   const handleDeleteClick = (
-    restaurantId: number,
-    branchId: number,
+    restaurantId: string,
+    branchId: string,
     branchName: string
   ) => {
     setBranchToDelete({ id: branchId, name: branchName });
@@ -191,9 +191,11 @@ const RestaurantList = () => {
                         Manager: {branch.manager}
                       </p>
                       <p className="text-sm text-gray-500">
-                        Contact: {branch.phone}
+                        Contact: {branch?.contactInfo?.phoneNumber}
                       </p>
-                      <p className="text-sm text-gray-500">{branch.email}</p>
+                      <p className="text-sm text-gray-500">
+                        {branch?.contactInfo?.email}
+                      </p>
                     </div>
                   </div>
 
