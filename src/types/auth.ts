@@ -10,13 +10,7 @@ export interface AuthTokens {
   refresh: string;
 }
 
-export interface ApiResponse<T> {
-  success: boolean;
-  message: string;
-  data: T;
-}
-
-export interface AuthResponseData {
+export interface AuthResponse {
   payload: User;
   access: string;
   refresh: string;
@@ -34,10 +28,7 @@ export interface RegisterRequest {
   last_name: string;
 }
 
-export interface AuthResponse extends ApiResponse<AuthResponseData> {}
-
-export interface RefreshTokenResponse
-  extends ApiResponse<{
-    access: string;
-    refresh: string;
-  }> {}
+export interface RefreshTokenResponse {
+  access: string;
+  refresh: string;
+}

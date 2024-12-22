@@ -1,6 +1,8 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Restaurant } from "../types/restaurants";
+import { useGetAllRestaurantsQuery } from "../store/services/restaurantApi";
+import LoadingScreen from "../components/common/LoadingScreen";
 
 interface RestaurantContextType {
   restaurants: Restaurant[];
@@ -20,38 +22,18 @@ export const RestaurantProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const navigate = useNavigate();
-  const [restaurants, setRestaurants] = useState<Restaurant[]>([
-    {
-      id: "1",
-      name: "The Fine Diner",
-      imageUrl:
-        "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=500&h=500&fit=crop",
-      branches: [
-        {
-          id: "",
-          name: "Downtown Branch",
-          manager: "John Doe",
-          menuLink: "https://menu.finediner.com/downtown",
-        },
-      ],
-    },
-    {
-      id: "",
-      name: "Café Bistro",
-      imageUrl:
-        "https://images.unsplash.com/photo-1559339352-11d035aa65de?w=500&h=500&fit=crop",
-      branches: [
-        {
-          id: "",
-          name: "Waterfront Location",
-          manager: "Mike Johnson",
-          menuLink: "https://menu.cafebistro.com/waterfront",
-        },
-      ],
-    },
-  ]);
+  const { data: restaurantsData, isLoading } = useGetAllRestaurantsQuery();
+  const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [selectedRestaurant, setSelectedRestaurant] =
-    useState<Restaurant | null>(restaurants[0]);
+    useState<Restaurant | null>(null);
+
+  // Update restaurants state when data is fetched
+  useEffect(() => {
+    if (restaurantsData?.data) {
+      setRestaurants(restaurantsData.data);
+      setSelectedRestaurant(restaurantsData.data[0] || null); // Set the first restaurant as selected
+    }
+  }, [restaurantsData]);
 
   const selectRestaurant = (restaurant: Restaurant) => {
     setSelectedRestaurant(restaurant);
@@ -88,6 +70,10 @@ export const RestaurantProvider: React.FC<{ children: React.ReactNode }> = ({
   const addRestaurant = () => {
     navigate("/restaurants/add");
   };
+
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
 
   return (
     <RestaurantContext.Provider

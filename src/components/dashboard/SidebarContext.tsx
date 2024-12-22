@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 
 interface SidebarContextProps {
   isExpanded: boolean;
@@ -14,7 +14,30 @@ export const SidebarProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const isWindowSmall = () => {
+    return window.innerWidth < 768;
+  };
+
+  const [isExpanded, setIsExpanded] = useState(!isWindowSmall());
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (isWindowSmall()) {
+        setIsExpanded(false);
+      }
+    };
+
+    // Set initial value based on screen width
+    handleResize();
+
+    // Add resize event listener
+    window.addEventListener("resize", handleResize);
+
+    // Cleanup event listener on unmount
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   const toggleExpanded = () => {
     if (window.innerWidth < 768) {
