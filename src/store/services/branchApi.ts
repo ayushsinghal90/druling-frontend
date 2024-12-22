@@ -1,15 +1,16 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { Restaurant } from "../../types";
+import { Branch } from "../../types";
 import { ApiResponse } from "../../types/response";
+import { CreateBranch } from "../../types/request";
 import { baseQueryWithReauth } from "./baseQueries";
 
 export const branckApi = createApi({
   reducerPath: "branckApi",
   baseQuery: baseQueryWithReauth,
   endpoints: (builder) => ({
-    createBranch: builder.query<ApiResponse<Restaurant[]>, void>({
+    createBranch: builder.query<ApiResponse<Branch>, CreateBranch>({
       query: () => ({
-        url: "/restaurant/list/",
+        url: "/branch/create/",
         method: "POST",
       }),
     }),

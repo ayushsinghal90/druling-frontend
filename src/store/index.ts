@@ -1,18 +1,19 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { authApi } from "./services/authApi";
-import { restaurantApi } from "./services/restaurantApi"; // Another RTK Query API
+import { authApi, restaurantApi, branckApi } from "./services";
 import authReducer from "./slices/authSlice";
 
 export const store = configureStore({
   reducer: {
-    [authApi.reducerPath]: authApi.reducer, // Auth API slice
-    [restaurantApi.reducerPath]: restaurantApi.reducer, // Restaurant API slice
+    [authApi.reducerPath]: authApi.reducer,
+    [restaurantApi.reducerPath]: restaurantApi.reducer,
+    [branckApi.reducerPath]: branckApi.reducer,
     auth: authReducer, // Auth state slice
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
       .concat(authApi.middleware)
-      .concat(restaurantApi.middleware), // Add multiple middlewares
+      .concat(restaurantApi.middleware)
+      .concat(branckApi.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

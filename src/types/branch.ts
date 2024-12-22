@@ -9,4 +9,5 @@ export interface Branch {
   manager?: string;
   menu_link?: string;
   contact_info?: Contact;
+  restaurant_id?: string;
 }
