@@ -59,11 +59,11 @@ const RestaurantList = () => {
   };
 
   const handleMenuClick = (branch: Branch) => {
-    if (!branch.menuLink) {
+    if (!branch.menu_link) {
       // Navigate to GenerateQR page with restaurant and branch details
       navigate(`/qr/menu/${selectedRestaurant?.id}/${branch.id}`);
     } else {
-      window.open(branch.menuLink, "_blank");
+      window.open(branch.menu_link, "_blank");
     }
   };
 
@@ -88,9 +88,9 @@ const RestaurantList = () => {
             {/* Restaurant Image */}
             <div className="absolute -top-12 left-5 w-24 h-24">
               <div className="w-full h-full rounded-full border-4 border-white shadow-sm overflow-hidden bg-gray-50">
-                {selectedRestaurant?.imageUrl ? (
+                {selectedRestaurant?.image_url ? (
                   <img
-                    src={selectedRestaurant.imageUrl}
+                    src={selectedRestaurant.image_url}
                     alt={selectedRestaurant.name}
                     className="w-full h-full object-cover"
                   />
@@ -131,9 +131,9 @@ const RestaurantList = () => {
                             className="w-full flex items-center gap-3 px-4 py-2 hover:bg-gray-50 transition-colors duration-200"
                           >
                             <div className="w-8 h-8 rounded-lg border border-gray-200 overflow-hidden bg-gray-50 flex items-center justify-center">
-                              {restaurant.imageUrl ? (
+                              {restaurant.image_url ? (
                                 <img
-                                  src={restaurant.imageUrl}
+                                  src={restaurant.image_url}
                                   alt={restaurant.name}
                                   className="w-full h-full object-cover"
                                 />
@@ -191,10 +191,10 @@ const RestaurantList = () => {
                         Manager: {branch.manager}
                       </p>
                       <p className="text-sm text-gray-500">
-                        Contact: {branch?.contactInfo?.phoneNumber}
+                        Contact: {branch?.contact_info?.phone_number}
                       </p>
                       <p className="text-sm text-gray-500">
-                        {branch?.contactInfo?.email}
+                        {branch?.contact_info?.email}
                       </p>
                     </div>
                   </div>
@@ -205,12 +205,12 @@ const RestaurantList = () => {
                       <button
                         onClick={() => handleMenuClick(branch)}
                         className={`px-4 py-2 text-sm font-medium text-white rounded-lg transition-colors duration-200 ${
-                          branch.menuLink
+                          branch.menu_link
                             ? "bg-black hover:bg-gray-800"
                             : "bg-gray-500 hover:bg-gray-600"
                         }`}
                       >
-                        {branch.menuLink ? "Menu" : "Add Menu"}
+                        {branch.menu_link ? "Menu" : "Add Menu"}
                       </button>
                     </div>
                     <div className="absolute bottom-4 right-4 flex items-center gap-2">

@@ -5,7 +5,7 @@ export interface Restaurant {
   id: string;
   name: string;
   description?: string;
-  imageUrl?: string;
+  image_url?: string;
   branches: Branch[];
-  contactInfo?: Contact;
+  contact_info?: Contact;
 }

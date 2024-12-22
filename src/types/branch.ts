@@ -7,6 +7,6 @@ export interface Branch {
   description?: string;
   location?: BranchLocation;
   manager?: string;
-  menuLink?: string;
-  contactInfo?: Contact;
+  menu_link?: string;
+  contact_info?: Contact;
 }

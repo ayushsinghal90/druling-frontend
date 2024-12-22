@@ -1,5 +1,5 @@
 import { fetchBaseQuery, BaseQueryFn } from "@reduxjs/toolkit/query/react";
-import { RefreshTokenResponse, ApiResponse } from "../../types/response";
+import { RefreshTokenResponse } from "../../types/response";
 import { config } from "../../config/env";
 import { RootState } from "../index";
 import { setCredentials, logout } from "../slices/authSlice";
@@ -44,7 +44,7 @@ export const baseQueryWithReauth: BaseQueryFn = async (
     );
 
     if (refreshResult.data) {
-      const { data } = refreshResult.data as ApiResponse<RefreshTokenResponse>;
+      const data = refreshResult.data as RefreshTokenResponse;
       api.dispatch(
         setCredentials({
           tokens: {
