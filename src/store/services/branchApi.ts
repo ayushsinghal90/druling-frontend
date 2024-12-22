@@ -3,17 +3,17 @@ import { Restaurant } from "../../types";
 import { ApiResponse } from "../../types/response";
 import { baseQueryWithReauth } from "./baseQueries";
 
-export const restaurantApi = createApi({
-  reducerPath: "restaurantApi",
+export const branckApi = createApi({
+  reducerPath: "branckApi",
   baseQuery: baseQueryWithReauth,
   endpoints: (builder) => ({
-    getAllRestaurants: builder.query<ApiResponse<Restaurant[]>, void>({
+    createBranch: builder.query<ApiResponse<Restaurant[]>, void>({
       query: () => ({
         url: "/restaurant/list/",
-        method: "GET",
+        method: "POST",
       }),
     }),
   }),
 });
 
-export const { useGetAllRestaurantsQuery } = restaurantApi;
+export const { useCreateBranchQuery } = branckApi;

@@ -1,11 +1,10 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
+import { LoginRequest, RegisterRequest } from "../../types/request";
 import {
-  LoginRequest,
-  RegisterRequest,
   AuthResponse,
+  ApiResponse,
   RefreshTokenResponse,
-} from "../../types/auth";
-import { ApiResponse } from "../../types/APIResponse";
+} from "../../types/response";
 import { baseQueryWithReauth } from "./baseQueries";
 
 export const authApi = createApi({

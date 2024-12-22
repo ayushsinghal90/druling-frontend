@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Restaurant } from "../types/restaurants";
+import { Restaurant } from "../types";
 import { useGetAllRestaurantsQuery } from "../store/services/restaurantApi";
 import LoadingScreen from "../components/common/LoadingScreen";
 

@@ -1,7 +1,7 @@
 import React from "react";
 import { ChevronDown } from "lucide-react";
 import { useRestaurant } from "../../contexts/RestaurantContext";
-import { Restaurant, Branch } from "../../types/restaurants";
+import { Restaurant, Branch } from "../../types";
 
 interface RestaurantBranchSelectProps {
   onSelect: (restaurant: Restaurant, branch: Branch) => void;

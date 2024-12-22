@@ -16,7 +16,7 @@ import {
   RestaurantProvider,
   useRestaurant,
 } from "../contexts/RestaurantContext";
-import { Restaurant, Branch } from "../types/restaurants";
+import { Restaurant, Branch } from "../types";
 
 interface Step {
   number: number;

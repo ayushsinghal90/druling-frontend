@@ -1,6 +1,5 @@
 import { fetchBaseQuery, BaseQueryFn } from "@reduxjs/toolkit/query/react";
-import { RefreshTokenResponse } from "../../types/auth";
-import { ApiResponse } from "../../types/APIResponse";
+import { RefreshTokenResponse, ApiResponse } from "../../types/response";
 import { config } from "../../config/env";
 import { RootState } from "../index";
 import { setCredentials, logout } from "../slices/authSlice";

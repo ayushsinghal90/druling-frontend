@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { Upload, Image as ImageIcon, Loader2 } from "lucide-react";
-import { Restaurant, Branch } from "../../types/restaurants";
+import { Restaurant, Branch } from "../../types";
 
 interface UploadMenuProps {
   restaurant: Restaurant;

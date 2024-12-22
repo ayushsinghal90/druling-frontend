@@ -1,5 +1,5 @@
 import React from "react";
-import { Restaurant, Branch } from "../../types/restaurants";
+import { Restaurant, Branch } from "../../types";
 
 interface PreviewStepProps {
   restaurant: Restaurant;

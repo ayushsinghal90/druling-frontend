@@ -4,7 +4,7 @@ import { Plus, Image, ChevronDown, Pencil, Trash2, Phone } from "lucide-react";
 import ContactModal from "./ContactModal";
 import DeleteBranchModal from "./DeleteBranchModal";
 import { useRestaurant } from "../../contexts/RestaurantContext";
-import { Branch } from "../../types/restaurants";
+import { Branch } from "../../types";
 
 const RestaurantList = () => {
   const navigate = useNavigate();

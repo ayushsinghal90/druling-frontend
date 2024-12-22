@@ -1,6 +1,6 @@
 import React from "react";
 import { X, Mail, Phone, MessageSquare } from "lucide-react";
-import { Restaurant } from "../../types/restaurants";
+import { Restaurant } from "../../types";
 
 interface ContactModalProps {
   isOpen: boolean;

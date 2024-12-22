@@ -1,5 +1,5 @@
 import { jwtDecode } from "jwt-decode";
-import { AuthTokens } from "../types/auth";
+import { AuthTokens } from "../types/response";
 
 interface JWTPayload {
   exp: number;
