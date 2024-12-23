@@ -76,7 +76,8 @@ const AddRestaurant = () => {
   });
 
   const [previewImage, setPreviewImage] = useState<string>("");
-  const [currentStep, setCurrentStep] = useState<number>(0);
+  const initialStep = restaurantId ? 1 : 0;
+  const [currentStep, setCurrentStep] = useState<number>(initialStep);
 
   const steps = ["Restaurant", "Branch & Contact", "Location"];
 
