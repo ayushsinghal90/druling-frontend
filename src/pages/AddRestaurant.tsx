@@ -5,10 +5,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import RequireAuth from "../components/auth/RequireAuth";
 import Logo from "../components/Logo";
-import { Button } from "../components/ui/button";
-import { Input } from "../components/ui/input";
-import { Textarea } from "../components/ui/textarea";
-import { FormStepsSidebar } from "../components/form/FormStepsSidebar";
+import { Button } from "../components/ui/Button";
+import { Input } from "../components/ui/Input";
+import { Textarea } from "../components/ui/TextArea";
+import { FormStepsSidebar } from "../components/form/FormStepsSideBar";
 import { useMultiStepForm } from "../hooks/useMultiStepForm";
 import { StepHeader } from "../components/form/StepHeader";
 import {
@@ -31,6 +31,11 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "../components/ui/popover";
+import { CreateBranch } from "../types/request";
+import { useCreateBranchMutation } from "../store/services/branchApi";
+import LoadingScreen from "../components/common/LoadingScreen";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // Constants
 const FORM_STEPS = ["Restaurant", "Branch & Contact", "Location"];
@@ -44,8 +49,6 @@ const DEFAULT_VALUES = {
     name: "",
     manager: "",
     description: "",
-    email: "",
-    phone: "",
   },
   contact: {
     email: "",
@@ -70,8 +73,6 @@ const formSchema = z.object({
   branch: z.object({
     name: z.string().min(1, "Branch name is required"),
     manager: z.string().optional(),
-    email: z.string().email("Invalid email address"),
-    phone: z.string().min(1, "Phone number is required"),
     description: z.string().optional(),
   }),
   contact: z.object({
@@ -115,6 +116,11 @@ const AddRestaurant = () => {
     criteriaMode: "all",
   });
 
+  const [createBranch, { isLoading }] = useCreateBranchMutation();
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -130,11 +136,44 @@ const AddRestaurant = () => {
   const handleFormSubmit = async (data: FormData) => {
     try {
       setIsSubmitting(true);
-      // Add your API call here
-      console.log("Form data:", data);
-      navigate("/dashboard/restaurants");
+
+      const createBranchData: CreateBranch = {
+        restaurant: {
+          name: data.restaurant.name,
+          description: data.restaurant.description,
+        },
+        branch: {
+          name: data.branch.name,
+          manager: data.branch.manager,
+          description: data.branch.description,
+        },
+        contact: {
+          email: data.contact.email,
+          phone_number: data.contact.phone,
+        },
+        location: {
+          address: data.location.address,
+          city: data.location.city,
+          state: data.location.state,
+          postal_code: data.location.postalCode,
+          country: data.location.country,
+        },
+      };
+
+      const result = await createBranch(createBranchData).unwrap();
+
+      if (result?.success) {
+        navigate("/dashboard/restaurants");
+      } else {
+        const errorMessage =
+          typeof result?.message === "string"
+            ? result.message
+            : "An unexpected error occurred.";
+        toast.error(errorMessage);
+      }
     } catch (error) {
       console.error("Error submitting form:", error);
+      toast.error("An unexpected error occurred.");
     } finally {
       setIsSubmitting(false);
     }
@@ -546,7 +585,6 @@ const NavigationButtons = ({
       type="submit"
       isLoading={isSubmitting}
       onClick={(e) => {
-        // Prevent default form submission on last step
         e.preventDefault();
         form.handleSubmit(handleFormSubmit)();
       }}

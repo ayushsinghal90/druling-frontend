@@ -1,5 +1,5 @@
 import { authApi } from "./authApi";
 import { restaurantApi } from "./restaurantApi";
-import { branckApi } from "./branchApi";
+import { branchApi } from "./branchApi";
 
-export { authApi, restaurantApi, branckApi };
+export { authApi, restaurantApi, branchApi };

@@ -4,17 +4,18 @@ import { ApiResponse } from "../../types/response";
 import { CreateBranch } from "../../types/request";
 import { baseQueryWithReauth } from "./baseQueries";
 
-export const branckApi = createApi({
-  reducerPath: "branckApi",
+export const branchApi = createApi({
+  reducerPath: "branchApi",
   baseQuery: baseQueryWithReauth,
   endpoints: (builder) => ({
-    createBranch: builder.query<ApiResponse<Branch>, CreateBranch>({
-      query: () => ({
+    createBranch: builder.mutation<ApiResponse<Branch>, CreateBranch>({
+      query: (data) => ({
         url: "/branch/create/",
         method: "POST",
+        body: data,
       }),
     }),
   }),
 });
 
-export const { useCreateBranchQuery } = branckApi;
+export const { useCreateBranchMutation } = branchApi;
