@@ -2,7 +2,7 @@ import { Contact } from "./contact";
 import { BranchLocation } from "./branchLocation";
 
 export interface Branch {
-  id: string;
+  id?: string;
   name: string;
   description?: string;
   location?: BranchLocation;

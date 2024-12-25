@@ -5,9 +5,9 @@ import { Restaurant } from "../restaurants";
 
 export interface CreateBranch {
   branch: Branch;
-  restaurant_id: string;
-  location_id: string;
-  location: BranchLocation;
-  restarant: Restaurant;
+  restaurant_id?: string;
+  location_id?: string;
+  location?: BranchLocation;
+  restaurant?: Restaurant;
   contact: Contact;
 }

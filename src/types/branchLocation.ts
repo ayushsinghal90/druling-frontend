@@ -1,5 +1,5 @@
 export interface BranchLocation {
-  id: string;
+  id?: string;
   address: string;
   postal_code: string;
   city: string;
