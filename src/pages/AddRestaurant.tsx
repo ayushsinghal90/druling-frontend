@@ -196,18 +196,18 @@ const AddRestaurant = () => {
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="flex max-w-6xl mx-auto py-8">
           <div className="px-4 flex-auto">
-            <div className="bg-white rounded-lg shadow-sm">
-              <div className="border-b border-gray-200 px-4 pb-4 sm:px-6">
-                <div className="w-full p-6">
+            <div className="">
+              <div className="">
+                <div className="w-full">
                   {currentStep === 0 && (
-                    <div className="space-y-6">
+                    <div className="space-y-6 border-b border-gray-200 p-8 bg-white rounded-lg shadow-sm">
                       <StepHeader
                         header="Restaurant Information"
                         description="Select an existing restaurant or create a new one."
                       />
 
                       {!restaurantId && (
-                        <div className="space-y-4 border-b border-gray-200 px-4 pb-4 sm:px-6">
+                        <div className="space-y-4">
                           <Popover open={open} onOpenChange={setOpen}>
                             <PopoverTrigger asChild>
                               <Button
@@ -330,48 +330,62 @@ const AddRestaurant = () => {
 
                   {currentStep === 1 && (
                     <div className="space-y-6">
-                      <StepHeader
-                        header="Branch Information"
-                        description="Add details about the branch information."
-                      />
-                      <div className="space-y-4">
-                        <Input
-                          label="Branch Name"
-                          placeholder="Downtown Branch"
-                          required
-                          {...form.register("branch.name")}
-                          error={form.formState.errors.branch?.name?.message}
+                      <div className=" border-b border-gray-200 p-8 bg-white rounded-lg shadow-sm">
+                        <StepHeader
+                          header="Branch Information"
+                          description="Add details about the branch information."
                         />
-                        <Textarea
-                          label="Branch Description"
-                          placeholder="This branch is located in the heart of the city..."
-                          {...form.register("branch.description")}
-                          error={
-                            form.formState.errors.branch?.description?.message
-                          }
+                        <div className="space-y-4">
+                          <Input
+                            label="Branch Name"
+                            placeholder="Downtown Branch"
+                            required
+                            {...form.register("branch.name")}
+                            error={form.formState.errors.branch?.name?.message}
+                          />
+                          <Textarea
+                            label="Branch Description"
+                            placeholder="This branch is located in the heart of the city..."
+                            {...form.register("branch.description")}
+                            error={
+                              form.formState.errors.branch?.description?.message
+                            }
+                          />
+                        </div>
+                      </div>
+                      <div className="border-b border-gray-200 p-8 bg-white rounded-lg shadow-sm">
+                        <StepHeader
+                          header="Contact Information"
+                          description="Add details about the branch contact information."
                         />
-                        <Input
-                          label="Contact Email"
-                          type="email"
-                          placeholder="contact@branch.com"
-                          required
-                          {...form.register("contact.email")}
-                          error={form.formState.errors.contact?.email?.message}
-                        />
-                        <Input
-                          label="Contact Phone"
-                          type="tel"
-                          placeholder="+1 234 567 890"
-                          required
-                          {...form.register("contact.phone")}
-                          error={form.formState.errors.contact?.phone?.message}
-                        />
+                        <div className="space-y-4">
+                          <Input
+                            label="Contact Email"
+                            type="email"
+                            placeholder="contact@branch.com"
+                            required
+                            {...form.register("contact.email")}
+                            error={
+                              form.formState.errors.contact?.email?.message
+                            }
+                          />
+                          <Input
+                            label="Contact Phone"
+                            type="tel"
+                            placeholder="+1 234 567 890"
+                            required
+                            {...form.register("contact.phone")}
+                            error={
+                              form.formState.errors.contact?.phone?.message
+                            }
+                          />
+                        </div>
                       </div>
                     </div>
                   )}
 
                   {currentStep === 2 && (
-                    <div className="space-y-6">
+                    <div className="space-y-6 border-b border-gray-200 p-8  bg-white rounded-lg shadow-sm">
                       <StepHeader
                         header="Location Information"
                         description="Add location details for the branch."
