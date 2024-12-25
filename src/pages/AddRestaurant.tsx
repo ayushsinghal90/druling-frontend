@@ -207,7 +207,7 @@ const AddRestaurant = () => {
                       />
 
                       {!restaurantId && (
-                        <div className="space-y-4">
+                        <div className="space-y-4 border-b border-gray-200 px-4 pb-4 sm:px-6">
                           <Popover open={open} onOpenChange={setOpen}>
                             <PopoverTrigger asChild>
                               <Button
@@ -306,6 +306,8 @@ const AddRestaurant = () => {
                           <div className="flex-1 space-y-6">
                             <Input
                               label="Restaurant Name"
+                              placeholder="The Great Eatery"
+                              required
                               {...form.register("restaurant.name")}
                               error={
                                 form.formState.errors.restaurant?.name?.message
@@ -313,6 +315,7 @@ const AddRestaurant = () => {
                             />
                             <Textarea
                               label="Restaurant Description"
+                              placeholder="A cozy place with a variety of dishes..."
                               {...form.register("restaurant.description")}
                               error={
                                 form.formState.errors.restaurant?.description
@@ -334,11 +337,14 @@ const AddRestaurant = () => {
                       <div className="space-y-4">
                         <Input
                           label="Branch Name"
+                          placeholder="Downtown Branch"
+                          required
                           {...form.register("branch.name")}
                           error={form.formState.errors.branch?.name?.message}
                         />
                         <Textarea
                           label="Branch Description"
+                          placeholder="This branch is located in the heart of the city..."
                           {...form.register("branch.description")}
                           error={
                             form.formState.errors.branch?.description?.message
@@ -347,12 +353,16 @@ const AddRestaurant = () => {
                         <Input
                           label="Contact Email"
                           type="email"
+                          placeholder="contact@branch.com"
+                          required
                           {...form.register("contact.email")}
                           error={form.formState.errors.contact?.email?.message}
                         />
                         <Input
                           label="Contact Phone"
                           type="tel"
+                          placeholder="+1 234 567 890"
+                          required
                           {...form.register("contact.phone")}
                           error={form.formState.errors.contact?.phone?.message}
                         />
@@ -369,6 +379,8 @@ const AddRestaurant = () => {
                       <div className="space-y-4">
                         <Textarea
                           label="Address"
+                          placeholder="123 Main St, Suite 100"
+                          required
                           {...form.register("location.address")}
                           error={
                             form.formState.errors.location?.address?.message
@@ -376,16 +388,22 @@ const AddRestaurant = () => {
                         />
                         <Input
                           label="City"
+                          placeholder="New York"
+                          required
                           {...form.register("location.city")}
                           error={form.formState.errors.location?.city?.message}
                         />
                         <Input
                           label="State"
+                          placeholder="NY"
+                          required
                           {...form.register("location.state")}
                           error={form.formState.errors.location?.state?.message}
                         />
                         <Input
                           label="Postal Code"
+                          placeholder="10001"
+                          required
                           {...form.register("location.postalCode")}
                           error={
                             form.formState.errors.location?.postalCode?.message
@@ -393,6 +411,8 @@ const AddRestaurant = () => {
                         />
                         <Input
                           label="Country"
+                          placeholder="United States"
+                          required
                           {...form.register("location.country")}
                           error={
                             form.formState.errors.location?.country?.message

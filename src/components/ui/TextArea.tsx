@@ -7,12 +7,13 @@ interface TextareaProps
 }
 
 export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
-  ({ className, label, error, ...props }, ref) => {
+  ({ className, label, error, required, ...props }, ref) => {
     return (
       <div className="space-y-1">
         {label && (
           <label className="block text-sm font-medium text-gray-700">
             {label}
+            {required && <span className="text-gray-500">*</span>}
           </label>
         )}
         <textarea
@@ -22,6 +23,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
               ? "border-red-500 focus:border-red-500 focus:ring-red-500"
               : ""
           } ${className}`}
+          required={required}
           {...props}
         />
         {error && <p className="text-sm text-red-500">{error}</p>}
