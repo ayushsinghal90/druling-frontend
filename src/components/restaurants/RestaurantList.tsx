@@ -5,6 +5,7 @@ import ContactModal from "./ContactModal";
 import DeleteBranchModal from "./DeleteBranchModal";
 import { useRestaurant } from "../../contexts/RestaurantContext";
 import { Branch, Restaurant } from "../../types";
+import { Button } from "../ui/Button";
 
 const RestaurantList = () => {
   const navigate = useNavigate();
@@ -45,7 +46,7 @@ const RestaurantList = () => {
 
   const handleConfirmDelete = () => {
     if (branchToDelete && selectedRestaurant) {
-      deleteBranch(selectedRestaurant.id, branchToDelete.id);
+      deleteBranch(selectedRestaurant?.id ?? "", branchToDelete.id ?? "");
       setShowDeleteModal(false);
     }
   };
@@ -103,7 +104,7 @@ const AddRestaurantButton = ({ onClick }: { onClick: () => void }) => (
   <div className="flex justify-end">
     <button
       onClick={onClick}
-      className="px-4 py-2 text-sm font-medium text-white bg-black rounded-lg hover:bg-gray-800 transition-colors duration-200"
+      className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-500 transition-colors duration-200"
     >
       Add Restaurant
     </button>
@@ -228,19 +229,23 @@ const ContactUsButton = ({
   setShowContactModal: React.Dispatch<React.SetStateAction<boolean>>;
 }) => (
   <>
-    <button
+    <Button
       onClick={() => setShowContactModal(true)}
-      className="hidden sm:block px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 transition-colors duration-200"
+      type="button"
+      variant="outline"
+      className="hidden sm:block px-4 py-2 text-sm font-medium"
     >
       Contact Us
-    </button>
-    <button
+    </Button>
+    <Button
       onClick={() => setShowContactModal(true)}
-      className="sm:hidden p-2 text-white bg-purple-600 rounded-lg hover:bg-purple-700 transition-colors duration-200"
+      type="button"
+      variant="outline"
+      className="sm:hidden"
       aria-label="Contact Us"
     >
       <Phone className="h-5 w-5" />
-    </button>
+    </Button>
   </>
 );
 
@@ -256,7 +261,7 @@ const BranchesList = ({
   handleMenuClick: (branch: Branch) => void;
   handleDeleteClick: (branch: Branch) => void;
   editBranch: (restaurantId: string, branchId: string) => void;
-  selectedRestaurantId: string;
+  selectedRestaurantId: string | undefined;
   addBranch: (restaurantId: string) => void;
 }) => (
   <div className="p-4 md:p-6 space-y-4">
@@ -270,7 +275,7 @@ const BranchesList = ({
         selectedRestaurantId={selectedRestaurantId}
       />
     ))}
-    <AddBranchButton onClick={() => addBranch(selectedRestaurantId)} />
+    <AddBranchButton onClick={() => addBranch(selectedRestaurantId ?? "")} />
   </div>
 );
 
@@ -285,11 +290,11 @@ const BranchItem = ({
   handleMenuClick: (branch: Branch) => void;
   handleDeleteClick: (branch: Branch) => void;
   editBranch: (restaurantId: string, branchId: string) => void;
-  selectedRestaurantId: string;
+  selectedRestaurantId: string | undefined;
 }) => (
   <div
     className="relative p-4 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors duration-200"
-    onClick={() => editBranch(selectedRestaurantId, branch.id)}
+    onClick={() => editBranch(selectedRestaurantId ?? "", branch?.id ?? "")}
   >
     <div className="flex flex-col md:flex-row justify-between md:pt-0 pt-2">
       <div className="flex flex-col md:flex-row gap-4">
@@ -307,20 +312,23 @@ const BranchItem = ({
       </div>
       <div className="flex flex-row justify-between md:pt-0 pt-4">
         <div>
-          <button
-            onClick={() => handleMenuClick(branch)}
-            className={`px-4 py-2 text-sm font-medium text-white rounded-lg transition-colors duration-200 ${
-              branch.menu_link
-                ? "bg-black hover:bg-gray-800"
-                : "bg-gray-500 hover:bg-gray-600"
-            }`}
+          <Button
+            onClick={(event) => {
+              event.stopPropagation();
+              handleMenuClick(branch);
+            }}
+            className="px-4 py-2 text-sm font-medium text-white rounded-lg transition-colors duration-200 
+                 bg-gray-900 hover:bg-gray-800"
           >
             {branch.menu_link ? "Menu" : "Add Menu"}
-          </button>
+          </Button>
         </div>
         <div className="absolute bottom-4 right-4 flex items-center gap-2">
           <button
-            onClick={() => editBranch(selectedRestaurantId, branch.id)}
+            onClick={(event) => {
+              event.stopPropagation();
+              editBranch(selectedRestaurantId ?? "", branch?.id ?? "");
+            }}
             className="p-2 text-gray-400 hover:text-gray-600 transition-colors duration-200"
           >
             <Pencil className="h-4 w-4" />

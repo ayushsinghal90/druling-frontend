@@ -57,7 +57,7 @@ export const RestaurantProvider: React.FC<{ children: React.ReactNode }> = ({
         if (restaurant.id === restaurantId) {
           return {
             ...restaurant,
-            branches: restaurant.branches.filter(
+            branches: restaurant?.branches?.filter(
               (branch) => branch.id !== branchId
             ),
           };
