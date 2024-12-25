@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,31 +11,16 @@ import { Textarea } from "../components/ui/TextArea";
 import { FormStepsSidebar } from "../components/form/FormStepsSideBar";
 import { useMultiStepForm } from "../hooks/useMultiStepForm";
 import { StepHeader } from "../components/form/StepHeader";
-import {
-  ImageIcon,
-  Save,
-  ChevronDown,
-  Plus,
-  ArrowLeft,
-  Building2,
-} from "lucide-react";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "../components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "../components/ui/popover";
+import { ImageIcon, Save, Plus, ArrowLeft, Building2 } from "lucide-react";
 import { CreateBranch } from "../types/request";
 import { useCreateBranchMutation } from "../store/services/branchApi";
 import LoadingScreen from "../components/common/LoadingScreen";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useRestaurant } from "../contexts/RestaurantContext";
+import { Restaurant } from "../types";
+import { RestaurantProvider } from "../contexts/RestaurantContext";
+import Select from "react-select";
 
 // Constants
 const FORM_STEPS = ["Restaurant", "Branch & Contact", "Location"];
@@ -90,11 +75,6 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
-interface Restaurant {
-  id: string;
-  name: string;
-}
-
 const AddRestaurant = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -104,7 +84,6 @@ const AddRestaurant = () => {
   const [isAddingNew, setIsAddingNew] = useState(false);
   const [selectedRestaurant, setSelectedRestaurant] =
     useState<Restaurant | null>(null);
-  const [open, setOpen] = useState(false);
 
   const { currentStep, next, previous, isLastStep, isFirstStep, goTo } =
     useMultiStepForm(FORM_STEPS, restaurantId ? 1 : 0);
@@ -120,6 +99,15 @@ const AddRestaurant = () => {
   if (isLoading) {
     return <LoadingScreen />;
   }
+
+  const { restaurants } = useRestaurant();
+
+  useEffect(() => {
+    if (restaurantId) {
+      const restaurant = restaurants.find((r) => r.id === restaurantId);
+      setSelectedRestaurant(restaurant || null);
+    }
+  }, [restaurantId, restaurants]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -138,10 +126,14 @@ const AddRestaurant = () => {
       setIsSubmitting(true);
 
       const createBranchData: CreateBranch = {
-        restaurant: {
-          name: data.restaurant.name,
-          description: data.restaurant.description,
-        },
+        ...(selectedRestaurant
+          ? { restaurant_id: selectedRestaurant?.id }
+          : {
+              restaurant: {
+                name: data.restaurant.name,
+                description: data.restaurant.description,
+              },
+            }),
         branch: {
           name: data.branch.name,
           manager: data.branch.manager,
@@ -180,36 +172,36 @@ const AddRestaurant = () => {
   };
 
   const handleNext = async () => {
-    const fieldsToValidate =
-      currentStep === 0
-        ? (["restaurant.name"] as const)
-        : currentStep === 1
-        ? (["branch.name", "contact.email", "contact.phone"] as const)
-        : ([
-            "location.address",
-            "location.city",
-            "location.state",
-            "location.postalCode",
-            "location.country",
-          ] as const);
+    console.log(selectedRestaurant);
+    if (currentStep === 0) {
+      const isValid = await form.trigger(["restaurant.name"]);
+      if (isValid || selectedRestaurant) {
+        next();
+      }
+    } else {
+      const fieldsToValidate =
+        currentStep === 1
+          ? (["branch.name", "contact.email", "contact.phone"] as const)
+          : ([
+              "location.address",
+              "location.city",
+              "location.state",
+              "location.postalCode",
+              "location.country",
+            ] as const);
 
-    const isValid = await form.trigger(fieldsToValidate);
-    if (isValid) {
-      next();
+      const isValid = await form.trigger(fieldsToValidate);
+      if (isValid) {
+        next();
+      }
     }
   };
-
-  const restaurants: Restaurant[] = [
-    { id: "1", name: "Restaurant 1" },
-    { id: "2", name: "Restaurant 2" },
-    // ... more restaurants
-  ];
 
   return (
     <div className="min-h-screen bg-gray-50">
       <LogoSection />
       <div className="max-w-6xl mx-auto px-4">
-        <Header restaurantId={restaurantId} />
+        <Header selectedRestaurant={selectedRestaurant} />
       </div>
 
       <form onSubmit={form.handleSubmit(handleFormSubmit)}>
@@ -220,9 +212,6 @@ const AddRestaurant = () => {
                 <div className="w-full">
                   {currentStep === 0 && (
                     <RestaurantStep
-                      restaurantId={restaurantId}
-                      open={open}
-                      setOpen={setOpen}
                       selectedRestaurant={selectedRestaurant}
                       setSelectedRestaurant={setSelectedRestaurant}
                       isAddingNew={isAddingNew}
@@ -246,7 +235,7 @@ const AddRestaurant = () => {
                     isSubmitting={isSubmitting}
                     form={form}
                     handleFormSubmit={handleFormSubmit}
-                    restaurantId={restaurantId}
+                    selectedRestaurant={selectedRestaurant}
                   />
                 </div>
               </div>
@@ -281,7 +270,11 @@ const LogoSection = () => (
   </div>
 );
 
-const Header = ({ restaurantId }: { restaurantId: string | null }) => (
+const Header = ({
+  selectedRestaurant,
+}: {
+  selectedRestaurant: Restaurant | null;
+}) => (
   <div className="flex items-center justify-between bg-white rounded-lg shadow-sm p-4">
     <div className="flex items-center">
       <Link
@@ -293,7 +286,7 @@ const Header = ({ restaurantId }: { restaurantId: string | null }) => (
       <div className="flex items-center gap-3">
         <Building2 className="h-6 w-6 text-gray-400" />
         <h1 className="text-lg font-semibold text-gray-900">
-          {restaurantId ? "Add New Branch" : "Add New Restaurant"}
+          {selectedRestaurant ? "Add New Branch" : "Add New Restaurant"}
         </h1>
       </div>
     </div>
@@ -301,9 +294,6 @@ const Header = ({ restaurantId }: { restaurantId: string | null }) => (
 );
 
 const RestaurantStep = ({
-  restaurantId,
-  open,
-  setOpen,
   selectedRestaurant,
   setSelectedRestaurant,
   isAddingNew,
@@ -313,9 +303,6 @@ const RestaurantStep = ({
   form,
   restaurants,
 }: {
-  restaurantId: string | null;
-  open: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   selectedRestaurant: Restaurant | null;
   setSelectedRestaurant: React.Dispatch<
     React.SetStateAction<Restaurant | null>
@@ -326,121 +313,117 @@ const RestaurantStep = ({
   previewImage: string;
   form: ReturnType<typeof useForm<FormData>>;
   restaurants: Restaurant[];
-}) => (
-  <div className="space-y-6 border-b border-gray-200 p-8 bg-white rounded-lg shadow-sm">
-    <StepHeader
-      header="Restaurant Information"
-      description="Select an existing restaurant or create a new one."
-    />
+}) => {
+  const options = restaurants.map((restaurant) => ({
+    value: restaurant.id,
+    label: restaurant.name,
+  }));
 
-    {!restaurantId && (
-      <div className="space-y-4">
-        <Popover open={open} onOpenChange={setOpen}>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              role="combobox"
-              aria-expanded={open}
-              className="w-full justify-between"
-            >
-              {selectedRestaurant
-                ? selectedRestaurant.name
-                : "Select restaurant..."}
-              <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-full p-0">
-            <Command>
-              <CommandInput placeholder="Search restaurants..." />
-              <CommandEmpty>No restaurant found.</CommandEmpty>
-              <CommandGroup>
-                {restaurants.map((restaurant) => (
-                  <CommandItem
-                    key={restaurant.id}
-                    onSelect={() => {
-                      setSelectedRestaurant(restaurant);
-                      setOpen(false);
-                      setIsAddingNew(false);
-                    }}
-                  >
-                    {restaurant.name}
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            </Command>
-          </PopoverContent>
-        </Popover>
+  return (
+    <div className="space-y-6 border-b border-gray-200 p-8 bg-white rounded-lg shadow-sm">
+      <StepHeader
+        header="Restaurant Information"
+        description="Select an existing restaurant or create a new one."
+      />
 
-        <div className="flex items-center">
-          <div className="flex-grow border-t border-gray-200" />
-          <span className="px-4 text-sm text-gray-500">or</span>
-          <div className="flex-grow border-t border-gray-200" />
+      {
+        <div className="space-y-4">
+          <Select
+            options={options}
+            value={
+              options.find(
+                (option) => option.value === selectedRestaurant?.id
+              ) || null
+            }
+            onChange={(selectedOption) => {
+              const restaurant = restaurants.find(
+                (r) => r.id === selectedOption?.value
+              );
+              setSelectedRestaurant(restaurant || null);
+              setIsAddingNew(false);
+            }}
+            placeholder="Select restaurant..."
+            isClearable
+            className="basic-single"
+            classNamePrefix="select"
+            filterOption={(option, inputValue) =>
+              option.label.toLowerCase().includes(inputValue.toLowerCase())
+            }
+          />
+
+          <div className="flex items-center">
+            <div className="flex-grow border-t border-gray-200" />
+            <span className="px-4 text-sm text-gray-500">or</span>
+            <div className="flex-grow border-t border-gray-200" />
+          </div>
+
+          <Button
+            type="button"
+            variant="outline"
+            className={` ${isAddingNew ? "hidden" : "w-full"}`}
+            onClick={() => {
+              setIsAddingNew(true);
+              setSelectedRestaurant(null);
+            }}
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            Add New Restaurant
+          </Button>
         </div>
+      }
 
-        <Button
-          type="button"
-          variant="outline"
-          className={` ${isAddingNew ? "hidden" : "w-full"}`}
-          onClick={() => {
-            setIsAddingNew(true);
-            setSelectedRestaurant(null);
-          }}
-        >
-          <Plus className="mr-2 h-4 w-4" />
-          Add New Restaurant
-        </Button>
-      </div>
-    )}
-
-    {(isAddingNew || restaurantId) && (
-      <div className="flex flex-col md:flex-row gap-6 mt-6">
-        <div className="w-1/3 md:w-1/4">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Restaurant Image
-          </label>
-          <div className="relative">
-            <div className="aspect-square w-full rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden">
-              {previewImage ? (
-                <img
-                  src={previewImage}
-                  alt="Preview"
-                  className="h-full w-full object-cover"
+      {isAddingNew && (
+        <div className="flex flex-col md:flex-row gap-6 mt-6">
+          <div className="w-1/3 md:w-1/4">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Restaurant Image
+            </label>
+            <div className="relative">
+              <div className="aspect-square w-full rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden">
+                {previewImage ? (
+                  <img
+                    src={previewImage}
+                    alt="Preview"
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <div className="text-center p-4">
+                    <ImageIcon className="mx-auto h-8 w-8 text-gray-400" />
+                    <p className="mt-1 text-sm text-gray-500">
+                      Click to upload
+                    </p>
+                    <p className="text-xs text-gray-400">PNG, JPG up to 10MB</p>
+                  </div>
+                )}
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                 />
-              ) : (
-                <div className="text-center p-4">
-                  <ImageIcon className="mx-auto h-8 w-8 text-gray-400" />
-                  <p className="mt-1 text-sm text-gray-500">Click to upload</p>
-                  <p className="text-xs text-gray-400">PNG, JPG up to 10MB</p>
-                </div>
-              )}
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-              />
+              </div>
             </div>
           </div>
+          <div className="flex-1 space-y-6">
+            <Input
+              label="Restaurant Name"
+              placeholder="The Great Eatery"
+              required
+              {...form.register("restaurant.name")}
+              error={form.formState.errors.restaurant?.name?.message}
+            />
+            <Textarea
+              label="Restaurant Description"
+              placeholder="A cozy place with a variety of dishes..."
+              {...form.register("restaurant.description")}
+              error={form.formState.errors.restaurant?.description?.message}
+            />
+          </div>
         </div>
-        <div className="flex-1 space-y-6">
-          <Input
-            label="Restaurant Name"
-            placeholder="The Great Eatery"
-            required
-            {...form.register("restaurant.name")}
-            error={form.formState.errors.restaurant?.name?.message}
-          />
-          <Textarea
-            label="Restaurant Description"
-            placeholder="A cozy place with a variety of dishes..."
-            {...form.register("restaurant.description")}
-            error={form.formState.errors.restaurant?.description?.message}
-          />
-        </div>
-      </div>
-    )}
-  </div>
-);
+      )}
+    </div>
+  );
+};
 
 const BranchContactStep = ({
   form,
@@ -554,7 +537,7 @@ const NavigationButtons = ({
   isSubmitting,
   form,
   handleFormSubmit,
-  restaurantId,
+  selectedRestaurant,
 }: {
   isFirstStep: boolean;
   isLastStep: boolean;
@@ -563,7 +546,7 @@ const NavigationButtons = ({
   isSubmitting: boolean;
   form: ReturnType<typeof useForm<FormData>>;
   handleFormSubmit: (data: FormData) => void;
-  restaurantId: string | null;
+  selectedRestaurant: Restaurant | null;
 }) => (
   <div className="mt-6 flex justify-end gap-3">
     {!isFirstStep && (
@@ -590,15 +573,17 @@ const NavigationButtons = ({
       }}
     >
       <Save className="h-4 w-4 mr-2" />
-      {restaurantId ? "Add Branch" : "Create Restaurant"}
+      {selectedRestaurant ? "Add Branch" : "Create Restaurant"}
     </Button>
   </div>
 );
 
-// Wrap with RequireAuth HOC
+// Wrap with RequireAuth and RestaurantProvider HOCs
 const ProtectedAddRestaurant = () => (
   <RequireAuth>
-    <AddRestaurant />
+    <RestaurantProvider>
+      <AddRestaurant />
+    </RestaurantProvider>
   </RequireAuth>
 );
 
