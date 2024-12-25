@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Save, Building2 } from "lucide-react";
 import RequireAuth from "../components/auth/RequireAuth";
@@ -9,6 +9,12 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "../components/ui/Button";
+import {
+  RestaurantProvider,
+  useRestaurant,
+} from "../contexts/RestaurantContext";
+import { Branch } from "../types";
+import LoadingScreen from "../components/common/LoadingScreen";
 
 // Constants
 const FORM_SECTIONS = {
@@ -34,7 +40,11 @@ type FormData = z.infer<typeof formSchema>;
 
 const EditBranch = () => {
   const { restaurantId, branchId } = useParams();
+  const [selectedBranch, setSelectedBranch] = useState<Branch | null>(null);
+  const [allowSave, setAllowSave] = useState(false);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const { restaurants } = useRestaurant();
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -53,10 +63,78 @@ const EditBranch = () => {
     criteriaMode: "all",
   });
 
+  const { reset, watch } = form;
+
+  const isFormChanged = useCallback(() => {
+    const currentValues = form.getValues();
+    const initialValues = {
+      name: selectedBranch?.name || "",
+      description: selectedBranch?.description || "",
+      email: selectedBranch?.contact_info?.email || "",
+      phone: selectedBranch?.contact_info?.phone_number || "",
+      address: selectedBranch?.location?.address || "",
+      city: selectedBranch?.location?.city || "",
+      state: selectedBranch?.location?.state || "",
+      postalCode: selectedBranch?.location?.postal_code || "",
+      country: selectedBranch?.location?.country || "",
+    };
+
+    return Object.keys(currentValues).some((key) => {
+      const typedKey = key as keyof typeof currentValues; // Type assertion
+      return (
+        String(currentValues[typedKey]).trim() !==
+        String(initialValues[typedKey]).trim()
+      );
+    });
+  }, [form, selectedBranch]);
+
+  useEffect(() => {
+    if (restaurantId && branchId) {
+      const fetchBranch = async () => {
+        setLoading(true);
+        const restaurant = restaurants.find((r) => r.id === restaurantId);
+        if (restaurant) {
+          const branch = restaurant?.branches?.find((b) => b.id === branchId);
+          if (branch) {
+            setSelectedBranch(branch);
+            reset({
+              name: branch.name || "",
+              description: branch.description || "",
+              email: branch.contact_info?.email || "",
+              phone: branch.contact_info?.phone_number || "",
+              address: branch.location?.address || "",
+              city: branch.location?.city || "",
+              state: branch.location?.state || "",
+              postalCode: branch.location?.postal_code || "",
+              country: branch.location?.country || "",
+            });
+            setAllowSave(!isFormChanged());
+          } else {
+            navigate(`/dashboard/restaurants`);
+          }
+        }
+        setLoading(false);
+      };
+
+      fetchBranch();
+    }
+  }, [restaurantId, branchId, restaurants, isFormChanged, navigate, reset]);
+
+  useEffect(() => {
+    const subscription = watch(() => {
+      setAllowSave(!isFormChanged());
+    });
+    return () => subscription.unsubscribe();
+  }, [watch, isFormChanged]);
+
   const handleFormSubmit = (data: FormData) => {
     // Handle form submission
     navigate(`/dashboard/restaurants`);
   };
+
+  if (loading) {
+    return <LoadingScreen />;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -66,108 +144,124 @@ const EditBranch = () => {
           title="Edit Branch"
           icon={<Building2 className="h-6 w-6 text-gray-400" />}
         />
-        <form onSubmit={form.handleSubmit(handleFormSubmit)} className="mt-6">
-          <div className="space-y-8">
-            <FormSection title={FORM_SECTIONS.BRANCH_DETAILS}>
-              <Input
-                label="Branch Name"
-                placeholder="Downtown Branch"
-                required
-                {...form.register("name")}
-                error={form.formState.errors.name?.message}
-              />
-              <Textarea
-                label="Branch Description"
-                placeholder="This branch is located in the heart of the city..."
-                {...form.register("description")}
-                error={form.formState.errors.description?.message}
-              />
-            </FormSection>
-
-            <FormSection title={FORM_SECTIONS.CONTACT_INFO}>
-              <Input
-                label="Email Address"
-                type="email"
-                placeholder="contact@branch.com"
-                required
-                {...form.register("email")}
-                error={form.formState.errors.email?.message}
-              />
-              <Input
-                label="Phone Number"
-                type="tel"
-                placeholder="+1 234 567 890"
-                required
-                {...form.register("phone")}
-                error={form.formState.errors.phone?.message}
-              />
-            </FormSection>
-
-            <FormSection title={FORM_SECTIONS.LOCATION_INFO}>
-              <Textarea
-                label="Address"
-                placeholder="123 Main St, Suite 100"
-                required
-                {...form.register("address")}
-                error={form.formState.errors.address?.message}
-              />
-              <Input
-                label="City"
-                placeholder="New York"
-                required
-                {...form.register("city")}
-                error={form.formState.errors.city?.message}
-              />
-              <Input
-                label="State"
-                placeholder="NY"
-                required
-                {...form.register("state")}
-                error={form.formState.errors.state?.message}
-              />
-              <Input
-                label="Postal Code"
-                placeholder="10001"
-                required
-                {...form.register("postalCode")}
-                error={form.formState.errors.postalCode?.message}
-              />
-              <Input
-                label="Country"
-                placeholder="United States"
-                required
-                {...form.register("country")}
-                error={form.formState.errors.country?.message}
-              />
-            </FormSection>
-          </div>
-
-          <div className="mt-6 flex justify-end gap-3">
-            <Link
-              to="/dashboard/restaurants"
-              className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900"
-            >
-              Cancel
-            </Link>
-            <Button
-              type="submit"
-              variant="default"
-              className="rounded-lg px-4 py-2 text-sm font-medium"
-              onClick={(e) => {
-                // Prevent default form submission on last step
-                e.preventDefault();
-                form.handleSubmit(handleFormSubmit)();
-              }}
-            >
-              <Save className="h-4 w-4 mr-2" />
-              Save Changes
-            </Button>
-          </div>
-        </form>
+        <BranchForm
+          form={form}
+          handleFormSubmit={handleFormSubmit}
+          allowSave={allowSave}
+        />
       </div>
     </div>
   );
 };
+
+const BranchForm = ({
+  form,
+  handleFormSubmit,
+  allowSave,
+}: {
+  form: ReturnType<typeof useForm<FormData>>;
+  handleFormSubmit: (data: FormData) => void;
+  allowSave: boolean;
+}) => (
+  <form onSubmit={form.handleSubmit(handleFormSubmit)} className="mt-6">
+    <div className="space-y-8">
+      <FormSection title={FORM_SECTIONS.BRANCH_DETAILS}>
+        <Input
+          label="Branch Name"
+          placeholder="Downtown Branch"
+          required
+          {...form.register("name")}
+          error={form.formState.errors.name?.message}
+        />
+        <Textarea
+          label="Branch Description"
+          placeholder="This branch is located in the heart of the city..."
+          {...form.register("description")}
+          error={form.formState.errors.description?.message}
+        />
+      </FormSection>
+
+      <FormSection title={FORM_SECTIONS.CONTACT_INFO}>
+        <Input
+          label="Email Address"
+          type="email"
+          placeholder="contact@branch.com"
+          required
+          {...form.register("email")}
+          error={form.formState.errors.email?.message}
+        />
+        <Input
+          label="Phone Number"
+          type="tel"
+          placeholder="+1 234 567 890"
+          required
+          {...form.register("phone")}
+          error={form.formState.errors.phone?.message}
+        />
+      </FormSection>
+
+      <FormSection title={FORM_SECTIONS.LOCATION_INFO}>
+        <Textarea
+          label="Address"
+          placeholder="123 Main St, Suite 100"
+          required
+          {...form.register("address")}
+          error={form.formState.errors.address?.message}
+        />
+        <Input
+          label="City"
+          placeholder="New York"
+          required
+          {...form.register("city")}
+          error={form.formState.errors.city?.message}
+        />
+        <Input
+          label="State"
+          placeholder="NY"
+          required
+          {...form.register("state")}
+          error={form.formState.errors.state?.message}
+        />
+        <Input
+          label="Postal Code"
+          placeholder="10001"
+          required
+          {...form.register("postalCode")}
+          error={form.formState.errors.postalCode?.message}
+        />
+        <Input
+          label="Country"
+          placeholder="United States"
+          required
+          {...form.register("country")}
+          error={form.formState.errors.country?.message}
+        />
+      </FormSection>
+    </div>
+
+    <div className="mt-6 flex justify-end gap-3">
+      <Link
+        to="/dashboard/restaurants"
+        className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900"
+      >
+        Cancel
+      </Link>
+      <Button
+        type="submit"
+        variant="default"
+        className="rounded-lg px-4 py-2 text-sm font-medium"
+        onClick={(e) => {
+          e.preventDefault();
+          form.handleSubmit(handleFormSubmit)();
+        }}
+        disabled={allowSave}
+      >
+        <Save className="h-4 w-4 mr-2" />
+        Save Changes
+      </Button>
+    </div>
+  </form>
+);
 
 const LogoSection = () => (
   <div className="flex justify-center py-8">
@@ -217,7 +311,9 @@ const FormSection = ({
 // Wrap with RequireAuth HOC
 const ProtectedEditBranch = () => (
   <RequireAuth>
-    <EditBranch />
+    <RestaurantProvider>
+      <EditBranch />
+    </RestaurantProvider>
   </RequireAuth>
 );
 

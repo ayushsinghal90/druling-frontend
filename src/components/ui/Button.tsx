@@ -18,6 +18,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       size = "default",
       asChild = false,
       isLoading,
+      disabled,
+      onClick,
       ...props
     },
     ref
@@ -35,10 +37,13 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             "h-9 px-4 py-2": size === "default",
             "h-8 px-3 text-sm": size === "sm",
             "h-10 px-8": size === "lg",
+            "bg-gray-300 text-gray-500": disabled,
           },
           className
         )}
         ref={ref}
+        disabled={disabled || isLoading}
+        onClick={disabled || isLoading ? () => {} : onClick}
         {...props}
       />
     );

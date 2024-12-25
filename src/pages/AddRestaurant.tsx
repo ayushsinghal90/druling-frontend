@@ -17,9 +17,11 @@ import { useCreateBranchMutation } from "../store/services/branchApi";
 import LoadingScreen from "../components/common/LoadingScreen";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useRestaurant } from "../contexts/RestaurantContext";
 import { Restaurant } from "../types";
-import { RestaurantProvider } from "../contexts/RestaurantContext";
+import {
+  RestaurantProvider,
+  useRestaurant,
+} from "../contexts/RestaurantContext";
 import Select from "react-select";
 
 // Constants
