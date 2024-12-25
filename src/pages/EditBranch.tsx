@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Save, Building2 } from "lucide-react";
 import RequireAuth from "../components/auth/RequireAuth";
@@ -9,6 +9,13 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "../components/ui/Button";
+
+// Constants
+const FORM_SECTIONS = {
+  BRANCH_DETAILS: "Branch Details",
+  CONTACT_INFO: "Contact Information",
+  LOCATION_INFO: "Location Information",
+};
 
 // Define schema for form validation
 const formSchema = z.object({
@@ -42,51 +49,26 @@ const EditBranch = () => {
       postalCode: "",
       country: "",
     },
-    mode: "onTouched",
-    criteriaMode: "firstError",
+    mode: "onSubmit",
+    criteriaMode: "all",
   });
 
-  const handleSubmit = form.handleSubmit((data) => {
+  const handleFormSubmit = (data: FormData) => {
     // Handle form submission
     navigate(`/dashboard/restaurants`);
-  });
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Logo Section */}
-      <div className="flex justify-center py-8">
-        <Link
-          to="/dashboard"
-          className="flex items-center hover:opacity-80 transition-opacity duration-200"
-        >
-          <Logo color="text-black" textSize="text-2xl" />
-        </Link>
-      </div>
-
+      <LogoSection />
       <div className="max-w-4xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="border-b border-gray-200 px-4 py-4 sm:px-6 bg-white rounded-lg shadow-sm">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <div className="flex items-center gap-3">
-                <Building2 className="h-6 w-6 text-gray-400" />
-                <h1 className="text-lg font-semibold text-gray-900">
-                  Edit Branch
-                </h1>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="mt-6">
+        <FormHeader
+          title="Edit Branch"
+          icon={<Building2 className="h-6 w-6 text-gray-400" />}
+        />
+        <form onSubmit={form.handleSubmit(handleFormSubmit)} className="mt-6">
           <div className="space-y-8">
-            {/* Branch Details Section */}
-            <div className="space-y-4 pb-6 px-4 py-6 sm:px-6 bg-white rounded-lg shadow-sm">
-              <h2 className="border-b border-gray-200 pb-4 text-md font-semibold text-gray-900">
-                Branch Details
-              </h2>
-
+            <FormSection title={FORM_SECTIONS.BRANCH_DETAILS}>
               <Input
                 label="Branch Name"
                 placeholder="Downtown Branch"
@@ -100,13 +82,9 @@ const EditBranch = () => {
                 {...form.register("description")}
                 error={form.formState.errors.description?.message}
               />
-            </div>
+            </FormSection>
 
-            {/* Contact Section */}
-            <div className="space-y-4 pb-6 px-4 py-6 sm:px-6 bg-white rounded-lg shadow-sm">
-              <h2 className="border-b border-gray-200 pb-4 text-md font-semibold text-gray-900">
-                Contact Information
-              </h2>
+            <FormSection title={FORM_SECTIONS.CONTACT_INFO}>
               <Input
                 label="Email Address"
                 type="email"
@@ -123,13 +101,9 @@ const EditBranch = () => {
                 {...form.register("phone")}
                 error={form.formState.errors.phone?.message}
               />
-            </div>
+            </FormSection>
 
-            {/* Location Section */}
-            <div className="space-y-4 px-4 py-6 sm:px-6 bg-white rounded-lg shadow-sm">
-              <h2 className="border-b border-gray-200 pb-4 text-md font-semibold text-gray-900">
-                Location Information
-              </h2>
+            <FormSection title={FORM_SECTIONS.LOCATION_INFO}>
               <Textarea
                 label="Address"
                 placeholder="123 Main St, Suite 100"
@@ -165,7 +139,7 @@ const EditBranch = () => {
                 {...form.register("country")}
                 error={form.formState.errors.country?.message}
               />
-            </div>
+            </FormSection>
           </div>
 
           <div className="mt-6 flex justify-end gap-3">
@@ -179,6 +153,11 @@ const EditBranch = () => {
               type="submit"
               variant="default"
               className="rounded-lg px-4 py-2 text-sm font-medium"
+              onClick={(e) => {
+                // Prevent default form submission on last step
+                e.preventDefault();
+                form.handleSubmit(handleFormSubmit)();
+              }}
             >
               <Save className="h-4 w-4 mr-2" />
               Save Changes
@@ -189,6 +168,51 @@ const EditBranch = () => {
     </div>
   );
 };
+
+const LogoSection = () => (
+  <div className="flex justify-center py-8">
+    <Link
+      to="/dashboard"
+      className="flex items-center hover:opacity-80 transition-opacity duration-200"
+    >
+      <Logo color="text-black" textSize="text-2xl" />
+    </Link>
+  </div>
+);
+
+const FormHeader = ({
+  title,
+  icon,
+}: {
+  title: string;
+  icon: React.ReactNode;
+}) => (
+  <div className="border-b border-gray-200 px-4 py-4 sm:px-6 bg-white rounded-lg shadow-sm">
+    <div className="flex items-center justify-between">
+      <div className="flex items-center">
+        <div className="flex items-center gap-3">
+          {icon}
+          <h1 className="text-lg font-semibold text-gray-900">{title}</h1>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+const FormSection = ({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) => (
+  <div className="space-y-4 pb-6 px-4 py-6 sm:px-6 bg-white rounded-lg shadow-sm">
+    <h2 className="border-b border-gray-200 pb-4 text-md font-semibold text-gray-900">
+      {title}
+    </h2>
+    {children}
+  </div>
+);
 
 // Wrap with RequireAuth HOC
 const ProtectedEditBranch = () => (
