@@ -11,3 +11,10 @@ export interface CreateBranch {
   restaurant?: Restaurant;
   contact: Contact;
 }
+
+export interface UpdateBranch {
+  branch: Branch;
+  location?: BranchLocation;
+  restaurant?: Restaurant;
+  contact: Contact;
+}

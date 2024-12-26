@@ -15,6 +15,9 @@ import {
 } from "../contexts/RestaurantContext";
 import { Branch } from "../types";
 import LoadingScreen from "../components/common/LoadingScreen";
+import { useUpdateBranchMutation } from "../store/services/branchApi";
+import { UpdateBranch } from "../types/request";
+import { toast } from "react-toastify";
 
 // Constants
 const FORM_SECTIONS = {
@@ -45,6 +48,8 @@ const EditBranch = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { restaurants } = useRestaurant();
+
+  const [updateBranch, { isLoading }] = useUpdateBranchMutation();
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -127,12 +132,47 @@ const EditBranch = () => {
     return () => subscription.unsubscribe();
   }, [watch, isFormChanged]);
 
-  const handleFormSubmit = (data: FormData) => {
-    // Handle form submission
-    navigate(`/dashboard/restaurants`);
+  const handleFormSubmit = async (data: FormData) => {
+    try {
+      const updateBranchData: UpdateBranch = {
+        branch: {
+          name: data.name,
+          description: data.description,
+        },
+        contact: {
+          email: data.email,
+          phone_number: data.phone,
+        },
+        location: {
+          address: data.address,
+          city: data.city,
+          state: data.state,
+          postal_code: data.postalCode,
+          country: data.country,
+        },
+      };
+
+      const result = await updateBranch({
+        id: selectedBranch?.id || "",
+        data: updateBranchData,
+      }).unwrap();
+
+      if (result?.success) {
+        navigate("/dashboard/restaurants");
+      } else {
+        const errorMessage =
+          typeof result?.message === "string"
+            ? result.message
+            : "An unexpected error occurred.";
+        toast.error(errorMessage);
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast.error("An unexpected error occurred.");
+    }
   };
 
-  if (loading) {
+  if (loading || isLoading) {
     return <LoadingScreen />;
   }
 
