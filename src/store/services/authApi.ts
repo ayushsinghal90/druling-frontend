@@ -20,7 +20,7 @@ export const authApi = createApi({
     }),
     register: builder.mutation<ApiResponse<AuthResponse>, RegisterRequest>({
       query: (data) => ({
-        url: "/user/sign-up/",
+        url: "/user/sign_up/",
         method: "POST",
         body: data,
       }),
