@@ -23,7 +23,7 @@ const GenerateQRModal = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsGenerating(true);
-
+    console.log("restaurantId", restaurantId);
     // Navigate to the QR generation page with restaurant and branch details
     navigate(
       `/qr/generate${

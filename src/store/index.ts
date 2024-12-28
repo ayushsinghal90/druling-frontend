@@ -1,5 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { authApi, restaurantApi, branchApi } from "./services";
+import {
+  authApi,
+  restaurantApi,
+  branchApi,
+  fileUpload,
+  qrMenuApi,
+} from "./services";
 import authReducer from "./slices/authSlice";
 
 export const store = configureStore({
@@ -7,13 +13,17 @@ export const store = configureStore({
     [authApi.reducerPath]: authApi.reducer,
     [restaurantApi.reducerPath]: restaurantApi.reducer,
     [branchApi.reducerPath]: branchApi.reducer,
+    [fileUpload.reducerPath]: fileUpload.reducer,
+    [qrMenuApi.reducerPath]: qrMenuApi.reducer,
     auth: authReducer, // Auth state slice
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
       .concat(authApi.middleware)
       .concat(restaurantApi.middleware)
-      .concat(branchApi.middleware),
+      .concat(branchApi.middleware)
+      .concat(fileUpload.middleware)
+      .concat(qrMenuApi.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

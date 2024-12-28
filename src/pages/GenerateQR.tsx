@@ -16,7 +16,9 @@ import {
   RestaurantProvider,
   useRestaurant,
 } from "../contexts/RestaurantContext";
-import { Restaurant, Branch } from "../types";
+import { Restaurant, Branch, QrMenu } from "../types";
+import { useCreateQrMenu } from "../hooks/useCreateQrMenu";
+import { toast } from "react-toastify";
 
 interface Step {
   number: number;
@@ -99,6 +101,7 @@ const GenerateQR = () => {
   const [searchParams] = useSearchParams();
   const { restaurantId, branchId } = useParams();
   const { restaurants } = useRestaurant();
+  const { createMenu, loading, error } = useCreateQrMenu();
 
   const [currentStep, setCurrentStep] = useState(() => {
     return restaurantId && branchId ? 2 : 1;
@@ -123,6 +126,7 @@ const GenerateQR = () => {
   });
 
   const [menuImage, setMenuImage] = useState<string>("");
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [qrCode, setQrCode] = useState<string>("");
   const [menuUrl, setMenuUrl] = useState<string>("");
@@ -158,20 +162,44 @@ const GenerateQR = () => {
     const reader = new FileReader();
     reader.onloadend = () => {
       setMenuImage(reader.result as string);
+      setUploadedFile(file);
       setCurrentStep(3);
     };
     reader.readAsDataURL(file);
   };
 
-  const handlePublish = () => {
-    // Mock QR code generation
-    setQrCode(
-      "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=example"
-    );
-    setMenuUrl(
-      `https://menu.druling.com/${selectedRestaurant?.id}/${selectedBranch?.id}`
-    );
-    setShowSuccessModal(true);
+  const handlePublish = async () => {
+    if (!uploadedFile) {
+      toast.error("No file uploaded.");
+      return;
+    }
+
+    try {
+      const menuData: QrMenu = {
+        branch_id: selectedBranch?.id || "",
+        file_key: uploadedFile.name,
+      };
+      const result = await createMenu(menuData, uploadedFile);
+
+      if (result?.success) {
+        setQrCode(
+          "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=example"
+        );
+        setMenuUrl(
+          `https://menu.druling.com/${selectedRestaurant?.id}/${selectedBranch?.id}`
+        );
+        setShowSuccessModal(true);
+      } else {
+        const errorMessage =
+          typeof result?.message === "string"
+            ? result.message
+            : "An unexpected error occurred.";
+        toast.error(errorMessage);
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast.error("An unexpected error occurred.");
+    }
   };
 
   const handleClose = () => {
