@@ -1,32 +1,10 @@
-import { Restaurant } from "./restaurants";
 import { Branch } from "./branch";
-
-export interface SocialLinks {
-  facebook?: string;
-  instagram?: string;
-  twitter?: string;
-  website?: string;
-}
+import { MenuImage } from "./menuImage";
 
 export interface MenuData {
   id: string;
-  title: string;
-  images: MenuImage[];
-  restaurant: Pick<Restaurant, "id" | "name"> & {
-    imageUrl?: string;
-    socialLinks?: SocialLinks;
-  };
-  branch: Pick<Branch, "id" | "name"> & {
-    imageUrl?: string;
-    socialLinks?: SocialLinks;
-  };
+  files: MenuImage[];
+  branch: Branch;
   createdAt: string;
   updatedAt: string;
-}
-
-export interface MenuImage {
-  id: string;
-  url: string;
-  title: string;
-  order: number;
 }
