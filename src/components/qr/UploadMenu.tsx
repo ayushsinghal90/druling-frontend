@@ -1,4 +1,10 @@
-import React, { useState, useRef, DragEvent, useCallback } from "react";
+import React, {
+  useState,
+  useRef,
+  DragEvent,
+  useCallback,
+  useEffect,
+} from "react";
 import { Upload, Image as ImageIcon, GripHorizontal } from "lucide-react";
 import {
   DndContext,
@@ -18,7 +24,6 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Restaurant, Branch } from "../../types";
-import { set } from "zod";
 
 interface UploadMenuProps {
   restaurant: Restaurant;
@@ -30,26 +35,21 @@ interface ImageData {
   file: File;
   preview: string;
   label: string;
+  order: number; // New property
 }
 
 const SortableItem = ({
   id,
   image,
   index,
-  groupIndex,
   handleLabelChange,
   removeImage,
 }: {
   id: string;
   image: ImageData;
   index: number;
-  groupIndex: number;
-  handleLabelChange: (
-    groupIndex: number,
-    imageIndex: number,
-    label: string
-  ) => void;
-  removeImage: (groupIndex: number, imageIndex: number) => void;
+  handleLabelChange: (imageIndex: number, label: string) => void;
+  removeImage: (imageIndex: number) => void;
 }) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id });
@@ -80,11 +80,11 @@ const SortableItem = ({
         type="text"
         placeholder="Add a label"
         value={image.label}
-        onChange={(e) => handleLabelChange(groupIndex, index, e.target.value)}
-        className="mt-2 block w-full text-sm text-gray-600"
+        onChange={(e) => handleLabelChange(index, e.target.value)}
+        className="mt-2 block w-full text-sm text-gray-600 focus:outline-none"
       />
       <button
-        onClick={() => removeImage(groupIndex, index)}
+        onClick={() => removeImage(index)}
         className="absolute -top-1 -right-1 bg-red-600 text-white text-xs rounded-full px-2 py-1"
       >
         X
@@ -94,9 +94,9 @@ const SortableItem = ({
 };
 
 const UploadMenu = ({ restaurant, branch, onUpload }: UploadMenuProps) => {
-  const [imageGroups, setImageGroups] = useState<ImageData[][]>([[]]);
-  const [allowMore, setAllowMore] = useState(false);
+  const [images, setImages] = useState<ImageData[]>([{} as ImageData]);
   const [isDragging, setIsDragging] = useState(false);
+  const [allowMore, setAllowMore] = useState(false);
   const fileInputRefs = useRef<HTMLInputElement[]>([]);
 
   const sensors = useSensors(
@@ -106,14 +106,23 @@ const UploadMenu = ({ restaurant, branch, onUpload }: UploadMenuProps) => {
     })
   );
 
-  const allowMoreGroups = () => {
-    if (!imageGroups.every((group) => group.length > 0)) {
+  const allowMoreSpots = useCallback(() => {
+    if (
+      images.length > 0 &&
+      images.filter((img) => img.file).length < images.length
+    ) {
+      setAllowMore(false);
+    } else {
       setAllowMore(true);
     }
-  };
+  }, [images]);
+
+  useEffect(() => {
+    allowMoreSpots();
+  }, [images, allowMoreSpots]);
 
   const processFiles = useCallback(
-    async (files: File[], groupIndex: number) => {
+    async (files: File[]) => {
       const validFiles = Array.from(files).filter(
         (file) => file.size <= 2 * 1024 * 1024
       );
@@ -124,56 +133,47 @@ const UploadMenu = ({ restaurant, branch, onUpload }: UploadMenuProps) => {
 
       const imageData = await Promise.all(
         validFiles.map(
-          (file) =>
+          (file, index) =>
             new Promise<ImageData>((resolve) => {
               const reader = new FileReader();
               reader.onloadend = () => {
-                resolve({ file, preview: reader.result as string, label: "" });
+                resolve({
+                  file,
+                  preview: reader.result as string,
+                  label: "",
+                  order: images.length + index,
+                });
               };
               reader.readAsDataURL(file);
             })
         )
       );
 
-      setImageGroups((prevGroups) => {
-        const newGroups = [...prevGroups];
-        newGroups[groupIndex] = [...newGroups[groupIndex], ...imageData];
-        return newGroups;
+      setImages((prevImages) => {
+        const filled = prevImages.filter((img) => img.file);
+        const newImages = [...filled, ...imageData];
+        return newImages;
       });
     },
-    []
+    [images]
   );
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
 
-    const [sourceGroupIndex, sourceIndex] = active.id.split("-").map(Number);
-    const [destGroupIndex, destIndex] = over.id.split("-").map(Number);
+    const sourceIndex = parseInt(active.id);
+    const destIndex = parseInt(over.id);
 
-    setImageGroups((prevGroups) => {
-      const newGroups = [...prevGroups];
-      if (sourceGroupIndex === destGroupIndex) {
-        newGroups[sourceGroupIndex] = arrayMove(
-          newGroups[sourceGroupIndex],
-          sourceIndex,
-          destIndex
-        );
-      } else {
-        const [movedItem] = newGroups[sourceGroupIndex].splice(sourceIndex, 1);
-        newGroups[destGroupIndex].splice(destIndex, 0, movedItem);
-      }
-      return newGroups;
+    setImages((prevImages) => {
+      const newImages = arrayMove(prevImages, sourceIndex, destIndex);
+      return newImages.map((img, idx) => ({ ...img, order: idx }));
     });
   };
 
-  const handleFileChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    groupIndex: number
-  ) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
-    processFiles(files, groupIndex);
-    allowMoreGroups();
+    processFiles(files);
   };
 
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
@@ -186,59 +186,33 @@ const UploadMenu = ({ restaurant, branch, onUpload }: UploadMenuProps) => {
     setIsDragging(false);
   };
 
-  const handleDrop = async (
-    e: DragEvent<HTMLDivElement>,
-    groupIndex: number
-  ) => {
+  const handleDrop = async (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(false);
 
     const files = Array.from(e.dataTransfer.files);
-    processFiles(files, groupIndex);
+    processFiles(files);
   };
 
-  const removeImage = (groupIndex: number, imageIndex: number) => {
-    setImageGroups((prevGroups) => {
-      const newGroups = prevGroups.map((group, gIdx) =>
-        gIdx === groupIndex
-          ? group.filter((_, iIdx) => iIdx !== imageIndex)
-          : group
-      );
-
-      // Ensure only one empty spot
-      if (newGroups[groupIndex].length === 0 && newGroups.length > 1) {
-        newGroups.splice(groupIndex, 1);
-      }
-
-      return newGroups;
-    });
+  const removeImage = (imageIndex: number) => {
+    setImages((prevImages) =>
+      prevImages.filter((_, iIdx) => iIdx !== imageIndex)
+    );
+    allowMoreSpots();
   };
 
-  const handleLabelChange = (
-    groupIndex: number,
-    imageIndex: number,
-    label: string
-  ) => {
-    setImageGroups((prevGroups) =>
-      prevGroups.map((group, gIdx) =>
-        gIdx === groupIndex
-          ? group.map((img, iIdx) =>
-              iIdx === imageIndex ? { ...img, label } : img
-            )
-          : group
+  const handleLabelChange = (imageIndex: number, label: string) => {
+    setImages((prevImages) =>
+      prevImages.map((img, iIdx) =>
+        iIdx === imageIndex ? { ...img, label } : img
       )
     );
   };
 
-  const addImageGroup = () => {
-    if (imageGroups.every((group) => group.length > 0)) {
-      setImageGroups((prevGroups) => [...prevGroups, []]);
-      setAllowMore(false);
-    }
-  };
-
   const handleContinue = () => {
-    const allFiles = imageGroups.flat().map((image) => image.file);
+    const allFiles = images
+      .filter((img) => img.file)
+      .map((image) => image.file);
     onUpload(allFiles);
   };
 
@@ -262,8 +236,8 @@ const UploadMenu = ({ restaurant, branch, onUpload }: UploadMenuProps) => {
         onDragEnd={handleDragEnd}
       >
         <div className="grid grid-cols-3 gap-4">
-          {imageGroups.map((images, groupIndex) => (
-            <div key={groupIndex} className="w-full max-w-lg">
+          {images.map((image, index) => (
+            <div key={index} className="w-full max-w-lg">
               <label className="block">
                 <div
                   className={`mt-1 flex justify-center p-5 bg-white border-1 rounded-lg shadow-lg ${
@@ -273,27 +247,22 @@ const UploadMenu = ({ restaurant, branch, onUpload }: UploadMenuProps) => {
                   }  rounded-lg cursor-pointer transition-colors duration-200`}
                   onDragOver={handleDragOver}
                   onDragLeave={handleDragLeave}
-                  onDrop={(e) => handleDrop(e, groupIndex)}
+                  onDrop={handleDrop}
                 >
                   <div className="space-y-1 text-center">
-                    {images.length > 0 ? (
+                    {image.file ? (
                       <SortableContext
-                        items={images.map(
-                          (_, index) => `${groupIndex}-${index}`
-                        )}
+                        items={images.map((_, idx) => idx.toString())}
                         strategy={verticalListSortingStrategy}
                       >
-                        {images.map((image, index) => (
-                          <SortableItem
-                            key={`${groupIndex}-${index}`}
-                            id={`${groupIndex}-${index}`}
-                            index={index}
-                            image={image}
-                            groupIndex={groupIndex}
-                            handleLabelChange={handleLabelChange}
-                            removeImage={removeImage}
-                          />
-                        ))}
+                        <SortableItem
+                          key={index.toString()}
+                          id={index.toString()}
+                          index={index}
+                          image={image}
+                          handleLabelChange={handleLabelChange}
+                          removeImage={removeImage}
+                        />
                       </SortableContext>
                     ) : (
                       <>
@@ -302,14 +271,12 @@ const UploadMenu = ({ restaurant, branch, onUpload }: UploadMenuProps) => {
                           <label className="relative cursor-pointer rounded-md font-medium text-indigo-600 hover:text-indigo-500">
                             <span>Upload files</span>
                             <input
-                              ref={(el) =>
-                                (fileInputRefs.current[groupIndex] = el!)
-                              }
+                              ref={(el) => (fileInputRefs.current[index] = el!)}
                               type="file"
                               className="sr-only"
                               accept="image/*"
                               multiple
-                              onChange={(e) => handleFileChange(e, groupIndex)}
+                              onChange={handleFileChange}
                             />
                           </label>
                           <p className="pl-1">or drag and drop</p>
@@ -329,7 +296,9 @@ const UploadMenu = ({ restaurant, branch, onUpload }: UploadMenuProps) => {
 
       <div className="flex justify-end space-x-4">
         <button
-          onClick={addImageGroup}
+          onClick={() => {
+            setImages((prevImages) => [...prevImages, {} as ImageData]);
+          }}
           disabled={!allowMore}
           className="inline-flex items-center rounded-lg bg-black px-4 py-2 text-sm font-medium text-white disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-gray-800 transition-colors duration-200"
         >
