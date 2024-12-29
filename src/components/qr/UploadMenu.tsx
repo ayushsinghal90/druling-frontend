@@ -18,6 +18,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Restaurant, Branch } from "../../types";
+import { set } from "zod";
 
 interface UploadMenuProps {
   restaurant: Restaurant;
@@ -94,6 +95,7 @@ const SortableItem = ({
 
 const UploadMenu = ({ restaurant, branch, onUpload }: UploadMenuProps) => {
   const [imageGroups, setImageGroups] = useState<ImageData[][]>([[]]);
+  const [allowMore, setAllowMore] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRefs = useRef<HTMLInputElement[]>([]);
 
@@ -103,6 +105,12 @@ const UploadMenu = ({ restaurant, branch, onUpload }: UploadMenuProps) => {
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
+
+  const allowMoreGroups = () => {
+    if (!imageGroups.every((group) => group.length > 0)) {
+      setAllowMore(true);
+    }
+  };
 
   const processFiles = useCallback(
     async (files: File[], groupIndex: number) => {
@@ -165,6 +173,7 @@ const UploadMenu = ({ restaurant, branch, onUpload }: UploadMenuProps) => {
   ) => {
     const files = Array.from(e.target.files || []);
     processFiles(files, groupIndex);
+    allowMoreGroups();
   };
 
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
@@ -189,13 +198,20 @@ const UploadMenu = ({ restaurant, branch, onUpload }: UploadMenuProps) => {
   };
 
   const removeImage = (groupIndex: number, imageIndex: number) => {
-    setImageGroups((prevGroups) =>
-      prevGroups.map((group, gIdx) =>
+    setImageGroups((prevGroups) => {
+      const newGroups = prevGroups.map((group, gIdx) =>
         gIdx === groupIndex
           ? group.filter((_, iIdx) => iIdx !== imageIndex)
           : group
-      )
-    );
+      );
+
+      // Ensure only one empty spot
+      if (newGroups[groupIndex].length === 0 && newGroups.length > 1) {
+        newGroups.splice(groupIndex, 1);
+      }
+
+      return newGroups;
+    });
   };
 
   const handleLabelChange = (
@@ -215,7 +231,10 @@ const UploadMenu = ({ restaurant, branch, onUpload }: UploadMenuProps) => {
   };
 
   const addImageGroup = () => {
-    setImageGroups((prevGroups) => [...prevGroups, []]);
+    if (imageGroups.every((group) => group.length > 0)) {
+      setImageGroups((prevGroups) => [...prevGroups, []]);
+      setAllowMore(false);
+    }
   };
 
   const handleContinue = () => {
@@ -311,7 +330,8 @@ const UploadMenu = ({ restaurant, branch, onUpload }: UploadMenuProps) => {
       <div className="flex justify-end space-x-4">
         <button
           onClick={addImageGroup}
-          className="inline-flex items-center rounded-lg bg-black px-4 py-2 text-sm font-medium text-white hover:bg-gray-800 transition-colors duration-200"
+          disabled={!allowMore}
+          className="inline-flex items-center rounded-lg bg-black px-4 py-2 text-sm font-medium text-white disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-gray-800 transition-colors duration-200"
         >
           <Upload className="h-4 w-4 mr-2" />
           Add More Images
