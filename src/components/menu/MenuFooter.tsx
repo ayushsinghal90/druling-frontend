@@ -1,5 +1,12 @@
 import React from "react";
-import { Facebook, Instagram, Twitter, Globe, Mail } from "lucide-react";
+import {
+  XIcon,
+  LinkedInIcon,
+  InstagramIcon,
+  YouTubeIcon,
+  FacebookIcon,
+  GlobalIcon,
+} from "../icons/SocialIcons";
 import Logo from "../Logo";
 import { SocialLinks } from "../../types/menu";
 
@@ -37,55 +44,77 @@ const MenuFooter = ({ socialLinks, variant = "default" }: MenuFooterProps) => {
       <div
         className={`max-w-7xl mx-auto px-4 flex flex-col items-center ${style.container}`}
       >
-        <div className="mb-6 text-center">
-          <p className="font-medium font-comfortaa">Connect With us</p>
-        </div>
         {/* Social Links */}
         {socialLinks && (
-          <div className="flex space-x-6 mb-6">
-            {socialLinks.facebook && (
-              <a
-                href={socialLinks.facebook}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`transition-colors duration-200 ${style.icon}`}
-              >
-                <Facebook className="h-5 w-5" />
-              </a>
-            )}
-            {socialLinks.instagram && (
-              <a
-                href={socialLinks.instagram}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`transition-colors duration-200 ${style.icon}`}
-              >
-                <Instagram className="h-5 w-5" />
-              </a>
-            )}
-            {socialLinks.twitter && (
-              <a
-                href={socialLinks.twitter}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`transition-colors duration-200 ${style.icon}`}
-              >
-                <Twitter className="h-5 w-5" />
-              </a>
-            )}
-            {socialLinks.website && (
-              <a
-                href={socialLinks.website}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`transition-colors duration-200 ${style.icon}`}
-              >
-                <Globe className="h-5 w-5" />
-              </a>
-            )}
+          <div>
+            <div className="mb-6 text-center">
+              <p className="font-medium font-comfortaa">Connect With us</p>
+            </div>
+
+            <div className="flex space-x-6 mb-6">
+              {socialLinks.facebook && (
+                <a
+                  href={socialLinks.facebook}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`transition-colors duration-200 ${style.icon}`}
+                >
+                  <FacebookIcon className="h-5 w-5" />
+                </a>
+              )}
+              {socialLinks.instagram && (
+                <a
+                  href={socialLinks.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`transition-colors duration-200 ${style.icon}`}
+                >
+                  <InstagramIcon className="h-5 w-5" />
+                </a>
+              )}
+              {socialLinks.twitter && (
+                <a
+                  href={socialLinks.twitter}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`transition-colors duration-200 ${style.icon}`}
+                >
+                  <XIcon className="h-5 w-5" />
+                </a>
+              )}
+              {socialLinks.youtube && (
+                <a
+                  href={socialLinks.youtube}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`transition-colors duration-200 ${style.icon}`}
+                >
+                  <YouTubeIcon className="h-5 w-5" />
+                </a>
+              )}
+              {socialLinks.linkedIn && (
+                <a
+                  href={socialLinks.linkedIn}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`transition-colors duration-200 ${style.icon}`}
+                >
+                  <LinkedInIcon className="h-5 w-5" />
+                </a>
+              )}
+              {socialLinks.website && (
+                <a
+                  href={socialLinks.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`transition-colors duration-200 ${style.icon}`}
+                >
+                  <GlobalIcon className="h-5 w-5" />
+                </a>
+              )}
+            </div>
           </div>
         )}
-
         {/* Powered by */}
         <div className="mt-2 text-xs">Powered by</div>
         {/* Logo and Restaurant Info */}

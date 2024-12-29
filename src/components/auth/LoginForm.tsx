@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { GoogleIcon } from "../SocialIcons";
+import { GoogleIcon } from "../icons/SocialIcons";
 import { useLoginMutation } from "../../store/services/authApi";
 import { useDispatch } from "react-redux";
 import { setCredentials } from "../../store/slices/authSlice";
