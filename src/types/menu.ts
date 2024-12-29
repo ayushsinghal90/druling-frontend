@@ -1,4 +1,5 @@
-import { Restaurant, Branch } from "./restaurant";
+import { Restaurant } from "./restaurants";
+import { Branch } from "./branch";
 
 export interface SocialLinks {
   facebook?: string;

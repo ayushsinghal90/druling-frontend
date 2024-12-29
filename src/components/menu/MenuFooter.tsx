@@ -89,9 +89,9 @@ const MenuFooter = ({ socialLinks, variant = "default" }: MenuFooterProps) => {
         {/* Powered by */}
         <div className="mt-2 text-xs">Powered by</div>
         {/* Logo and Restaurant Info */}
-        <a href="https://druling.com" target="_blank" rel="noopener noreferrer">
+        <a href="/" target="_blank" rel="noopener noreferrer">
           <div className="flex flex-col items-center">
-            <Logo color="text-black" textSize="text-2xl" />
+            <Logo color={`${style.logo}`} textSize="text-2xl" />
           </div>
         </a>
       </div>

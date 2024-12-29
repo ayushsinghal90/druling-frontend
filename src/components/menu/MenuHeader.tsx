@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 interface RestaurantHeaderProps {
   restaurantName: string;
@@ -15,6 +15,29 @@ const RestaurantHeader = ({
   imageUrl,
   variant = "default",
 }: RestaurantHeaderProps) => {
+  const [showImage, setShowImage] = useState(true);
+
+  useEffect(() => {
+    let timeoutId: number;
+
+    const handleScroll = () => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        if (window.scrollY > 55) {
+          setShowImage(false);
+        } else if (window.scrollY < 45) {
+          setShowImage(true);
+        }
+      }, 100);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      clearTimeout(timeoutId);
+    };
+  }, []);
+
   const styles = {
     default: {
       wrapper: "bg-white shadow-sm",
@@ -49,7 +72,7 @@ const RestaurantHeader = ({
       <div className="max-w-7xl mx-auto px-4 py-4">
         <div className="relative flex flex-col items-center">
           {/* Restaurant Image */}
-          {imageUrl && (
+          {imageUrl && showImage && (
             <div className="w-16 h-16 md:h-24 md:w-24 rounded-full overflow-hidden border-4 border-white shadow-lg mb-4">
               <img
                 src={imageUrl}
