@@ -1,10 +1,11 @@
 import React from "react";
 import { Restaurant, Branch } from "../../types";
+import { ImageData } from "./ImageData";
 
 interface PreviewStepProps {
   restaurant: Restaurant;
   branch: Branch;
-  menuImage: string;
+  imagesData: ImageData[];
   onSubmit: () => void;
   onBack: () => void;
 }
@@ -12,7 +13,7 @@ interface PreviewStepProps {
 const PreviewStep = ({
   restaurant,
   branch,
-  menuImage,
+  imagesData,
   onSubmit,
   onBack,
 }: PreviewStepProps) => {

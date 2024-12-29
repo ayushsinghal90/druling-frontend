@@ -1,29 +1,23 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import { Image as ImageIcon, GripHorizontal } from "lucide-react";
 import { Restaurant, Branch } from "../../types";
+import { ImageData } from "./ImageData";
 
 interface UploadMenuProps {
   restaurant: Restaurant;
   branch: Branch;
-  onUpload: (files: File[]) => void;
-}
-
-interface ImageData {
-  file: File;
-  preview: string;
-  label: string;
-  order: number; // New property
+  onUpload: (imagesData: ImageData[]) => void;
 }
 
 const Item = ({
   image,
   index,
-  handleLabelChange,
+  handleCategoryChange,
   removeImage,
 }: {
   image: ImageData;
   index: number;
-  handleLabelChange: (imageIndex: number, label: string) => void;
+  handleCategoryChange: (imageIndex: number, category: string) => void;
   removeImage: (imageIndex: number) => void;
 }) => {
   return (
@@ -42,9 +36,9 @@ const Item = ({
       </span>
       <input
         type="text"
-        placeholder="Add a label"
-        value={image.label}
-        onChange={(e) => handleLabelChange(index, e.target.value)}
+        placeholder="Add a category"
+        value={image.category}
+        onChange={(e) => handleCategoryChange(index, e.target.value)}
         className="mt-2 block w-full text-sm text-gray-600 focus:outline-none"
       />
       <button
@@ -94,7 +88,7 @@ const UploadMenu = ({ restaurant, branch, onUpload }: UploadMenuProps) => {
                 resolve({
                   file,
                   preview: reader.result as string,
-                  label: "",
+                  category: "",
                   order: images.length + index,
                 });
               };
@@ -142,19 +136,16 @@ const UploadMenu = ({ restaurant, branch, onUpload }: UploadMenuProps) => {
     allowMoreSpots();
   };
 
-  const handleLabelChange = (imageIndex: number, label: string) => {
+  const handleCategoryChange = (imageIndex: number, category: string) => {
     setImages((prevImages) =>
       prevImages.map((img, iIdx) =>
-        iIdx === imageIndex ? { ...img, label } : img
+        iIdx === imageIndex ? { ...img, category } : img
       )
     );
   };
 
   const handleContinue = () => {
-    const allFiles = images
-      .filter((img) => img.file)
-      .map((image) => image.file);
-    onUpload(allFiles);
+    onUpload(images.map((image) => image.file));
   };
 
   return (
@@ -188,7 +179,7 @@ const UploadMenu = ({ restaurant, branch, onUpload }: UploadMenuProps) => {
                       key={index.toString()}
                       index={index}
                       image={image}
-                      handleLabelChange={handleLabelChange}
+                      handleCategoryChange={handleCategoryChange}
                       removeImage={removeImage}
                     />
                   ) : (
