@@ -6,6 +6,7 @@ import { User } from "./user";
 import { QrMenu } from "./qrMenu";
 import { SocialContacts } from "./socialContact";
 import { MenuImage } from "./menuImage";
+import { MenuData } from "./menu";
 export type {
   Branch,
   BranchLocation,
@@ -15,4 +16,5 @@ export type {
   QrMenu,
   SocialContacts,
   MenuImage,
+  MenuData,
 };

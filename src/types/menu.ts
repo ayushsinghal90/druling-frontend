@@ -3,8 +3,7 @@ import { MenuImage } from "./menuImage";
 
 export interface MenuData {
   id: string;
-  title: string;
-  images: MenuImage[];
+  files: MenuImage[];
   branch: Branch;
   createdAt: string;
   updatedAt: string;

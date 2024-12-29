@@ -89,3 +89,7 @@ See `.env.example` for all available configuration options.
 ## License
 
 MIT License - See LICENSE file for details
+
+## Resources
+
+- [icons](https://hugeicons.com/icon/global-stroke-rounded)
