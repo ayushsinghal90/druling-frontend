@@ -56,13 +56,13 @@ const ScrollingMenu = ({ menuData }: MenuProps) => {
             >
               <div className="p-6 border-b border-amber-500/20">
                 <h2 className="text-xl font-medium text-amber-500">
-                  {image.title}
+                  {image.category}
                 </h2>
               </div>
               <div className="relative">
                 <img
-                  src={image.url}
-                  alt={image.title}
+                  src={image.file_url}
+                  alt={image.category}
                   className="w-full h-auto transition-transform duration-300"
                 />
               </div>
@@ -89,7 +89,7 @@ const ScrollingMenu = ({ menuData }: MenuProps) => {
       </div>
 
       <MenuFooter
-        socialLinks={menuData.restaurant.socialLinks}
+        socialContacts={menuData?.branch.contact_info?.social_contacts}
         variant="scrolling"
       />
     </div>

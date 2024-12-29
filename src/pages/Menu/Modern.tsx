@@ -98,8 +98,8 @@ const ModernMenu = ({ menuData }: MenuProps) => {
                   >
                     <div className="relative rounded-lg overflow-hidden border border-[#333] bg-[#222]">
                       <img
-                        src={image.url}
-                        alt={image.title}
+                        src={image.file_url}
+                        alt={image.category}
                         className="w-full h-40 object-cover"
                       />
                       {index === currentImageIndex && (
@@ -107,7 +107,7 @@ const ModernMenu = ({ menuData }: MenuProps) => {
                       )}
                     </div>
                     <p className="mt-3 text-sm font-mono text-[#00ff9d]">
-                      {image.title}
+                      {image.category}
                     </p>
                   </button>
                 ))}
@@ -118,7 +118,7 @@ const ModernMenu = ({ menuData }: MenuProps) => {
       </main>
 
       <MenuFooter
-        socialLinks={menuData.restaurant.socialLinks}
+        socialContacts={menuData?.branch.contact_info?.social_contacts}
         variant="modern"
       />
     </div>

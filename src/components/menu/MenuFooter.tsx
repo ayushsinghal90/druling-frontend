@@ -8,14 +8,17 @@ import {
   GlobalIcon,
 } from "../icons/SocialIcons";
 import Logo from "../Logo";
-import { SocialLinks } from "../../types/menu";
+import { SocialContacts } from "../../types";
 
 interface MenuFooterProps {
-  socialLinks?: SocialLinks;
+  socialContacts?: SocialContacts;
   variant?: "default" | "classic" | "modern";
 }
 
-const MenuFooter = ({ socialLinks, variant = "default" }: MenuFooterProps) => {
+const MenuFooter = ({
+  socialContacts,
+  variant = "default",
+}: MenuFooterProps) => {
   const styles = {
     default: {
       wrapper: "bg-white border-t border-gray-200",
@@ -45,16 +48,16 @@ const MenuFooter = ({ socialLinks, variant = "default" }: MenuFooterProps) => {
         className={`max-w-7xl mx-auto px-4 flex flex-col items-center ${style.container}`}
       >
         {/* Social Links */}
-        {socialLinks && (
+        {socialContacts && (
           <div>
             <div className="mb-6 text-center">
               <p className="font-medium font-comfortaa">Connect With us</p>
             </div>
 
             <div className="flex space-x-6 mb-6">
-              {socialLinks.facebook && (
+              {socialContacts.facebook && (
                 <a
-                  href={socialLinks.facebook}
+                  href={socialContacts.facebook}
                   target="_blank"
                   rel="noopener noreferrer"
                   className={`transition-colors duration-200 ${style.icon}`}
@@ -62,9 +65,9 @@ const MenuFooter = ({ socialLinks, variant = "default" }: MenuFooterProps) => {
                   <FacebookIcon className="h-5 w-5" />
                 </a>
               )}
-              {socialLinks.instagram && (
+              {socialContacts.instagram && (
                 <a
-                  href={socialLinks.instagram}
+                  href={socialContacts.instagram}
                   target="_blank"
                   rel="noopener noreferrer"
                   className={`transition-colors duration-200 ${style.icon}`}
@@ -72,9 +75,9 @@ const MenuFooter = ({ socialLinks, variant = "default" }: MenuFooterProps) => {
                   <InstagramIcon className="h-5 w-5" />
                 </a>
               )}
-              {socialLinks.twitter && (
+              {socialContacts.x_link && (
                 <a
-                  href={socialLinks.twitter}
+                  href={socialContacts.x_link}
                   target="_blank"
                   rel="noopener noreferrer"
                   className={`transition-colors duration-200 ${style.icon}`}
@@ -82,9 +85,9 @@ const MenuFooter = ({ socialLinks, variant = "default" }: MenuFooterProps) => {
                   <XIcon className="h-5 w-5" />
                 </a>
               )}
-              {socialLinks.youtube && (
+              {socialContacts.youtube && (
                 <a
-                  href={socialLinks.youtube}
+                  href={socialContacts.youtube}
                   target="_blank"
                   rel="noopener noreferrer"
                   className={`transition-colors duration-200 ${style.icon}`}
@@ -92,9 +95,9 @@ const MenuFooter = ({ socialLinks, variant = "default" }: MenuFooterProps) => {
                   <YouTubeIcon className="h-5 w-5" />
                 </a>
               )}
-              {socialLinks.linkedIn && (
+              {socialContacts.linkedIn && (
                 <a
-                  href={socialLinks.linkedIn}
+                  href={socialContacts.linkedIn}
                   target="_blank"
                   rel="noopener noreferrer"
                   className={`transition-colors duration-200 ${style.icon}`}
@@ -102,9 +105,9 @@ const MenuFooter = ({ socialLinks, variant = "default" }: MenuFooterProps) => {
                   <LinkedInIcon className="h-5 w-5" />
                 </a>
               )}
-              {socialLinks.website && (
+              {socialContacts.website && (
                 <a
-                  href={socialLinks.website}
+                  href={socialContacts.website}
                   target="_blank"
                   rel="noopener noreferrer"
                   className={`transition-colors duration-200 ${style.icon}`}

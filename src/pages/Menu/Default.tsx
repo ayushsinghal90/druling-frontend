@@ -115,8 +115,8 @@ const DefaultMenu = ({ menuData }: MenuProps) => {
                 >
                   <div className="relative rounded-lg overflow-hidden border border-[#333] bg-[#222]">
                     <img
-                      src={image.url}
-                      alt={image.title}
+                      src={image.file_url}
+                      alt={image.category}
                       className="w-full h-40 object-cover"
                     />
                     {index === currentImageIndex && (
@@ -124,7 +124,7 @@ const DefaultMenu = ({ menuData }: MenuProps) => {
                     )}
                   </div>
                   <p className="mt-3 text-sm font-mono text-black">
-                    {image.title}
+                    {image.category}
                   </p>
                 </button>
               ))}
@@ -134,7 +134,7 @@ const DefaultMenu = ({ menuData }: MenuProps) => {
       </main>
 
       <MenuFooter
-        socialLinks={menuData.restaurant.socialLinks}
+        socialContacts={menuData?.branch.contact_info?.social_contacts}
         variant="default"
       />
     </div>
