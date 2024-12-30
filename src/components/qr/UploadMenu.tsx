@@ -145,7 +145,16 @@ const UploadMenu = ({ restaurant, branch, onUpload }: UploadMenuProps) => {
   };
 
   const handleContinue = () => {
-    onUpload(images.map((image) => image.file));
+    onUpload(
+      images
+        .map((image) => {
+          if (image.file) {
+            return image;
+          }
+          return undefined;
+        })
+        .filter((image): image is ImageData => image !== undefined)
+    );
   };
 
   return (

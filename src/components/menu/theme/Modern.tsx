@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { Menu as MenuIcon, X, ChevronLeft, ChevronRight } from "lucide-react";
-import { MenuProps } from "./utils/MenuTypes";
-import { useMenuControls } from "./utils/useMenuControls";
-import MenuHeader from "../../components/menu/MenuHeader";
-import MenuFooter from "../../components/menu/MenuFooter";
+import { MenuProps } from "../utils/MenuProps";
+import { useMenuControls } from "../utils/useMenuControls";
+import MenuHeader from "../MenuHeader";
+import MenuFooter from "../MenuFooter";
+import { MenuTypes } from "../utils/MenuTypes";
 
 const ModernMenu = ({ menuData }: MenuProps) => {
   const [showThumbnails, setShowThumbnails] = useState(false);
@@ -18,10 +19,10 @@ const ModernMenu = ({ menuData }: MenuProps) => {
   return (
     <div className="min-h-screen bg-[#111] text-white flex flex-col">
       <MenuHeader
-        restaurantName={menuData.restaurant.name}
-        branchName={menuData.branch.name}
-        imageUrl={menuData.restaurant.imageUrl}
-        variant="modern"
+        restaurantName={menuData?.branch?.restaurant?.name || ""}
+        branchName={menuData?.branch.name || ""}
+        imageUrl={menuData?.branch?.restaurant?.image_url || ""}
+        variant={MenuTypes.MODERN}
       />
 
       <main className="flex-1 pt-8 pb-8">
@@ -29,13 +30,13 @@ const ModernMenu = ({ menuData }: MenuProps) => {
           {/* Main Image */}
           <div className="relative rounded-2xl overflow-hidden border border-[#333] bg-[#222]">
             <img
-              src={currentImage?.url}
-              alt={currentImage?.title}
+              src={currentImage?.file_url}
+              alt={currentImage?.category}
               className="w-full h-auto transition-transform duration-300"
             />
 
             {/* Navigation Arrows */}
-            {menuData.images.length > 1 && (
+            {(menuData?.files?.length ?? 0) > 1 && (
               <>
                 <button
                   onClick={handlePrevImage}
@@ -56,7 +57,7 @@ const ModernMenu = ({ menuData }: MenuProps) => {
           {/* Page Title */}
           <div className="mt-6 text-center">
             <h2 className="text-xl font-mono text-[#00ff9d]">
-              {currentImage?.title}
+              {currentImage?.category}
             </h2>
           </div>
 
@@ -83,9 +84,9 @@ const ModernMenu = ({ menuData }: MenuProps) => {
                 Menu Pages
               </h3>
               <div className="space-y-6">
-                {menuData.images.map((image, index) => (
+                {menuData?.files.map((file, index) => (
                   <button
-                    key={image.id}
+                    key={file.id}
                     onClick={() => {
                       setCurrentImageIndex(index);
                       setShowThumbnails(false);
@@ -98,8 +99,8 @@ const ModernMenu = ({ menuData }: MenuProps) => {
                   >
                     <div className="relative rounded-lg overflow-hidden border border-[#333] bg-[#222]">
                       <img
-                        src={image.file_url}
-                        alt={image.category}
+                        src={file.file_url}
+                        alt={file.category}
                         className="w-full h-40 object-cover"
                       />
                       {index === currentImageIndex && (
@@ -107,7 +108,7 @@ const ModernMenu = ({ menuData }: MenuProps) => {
                       )}
                     </div>
                     <p className="mt-3 text-sm font-mono text-[#00ff9d]">
-                      {image.category}
+                      {file.category}
                     </p>
                   </button>
                 ))}
@@ -119,7 +120,7 @@ const ModernMenu = ({ menuData }: MenuProps) => {
 
       <MenuFooter
         socialContacts={menuData?.branch.contact_info?.social_contacts}
-        variant="modern"
+        variant={MenuTypes.MODERN}
       />
     </div>
   );

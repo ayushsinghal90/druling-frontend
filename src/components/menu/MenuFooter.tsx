@@ -9,15 +9,16 @@ import {
 } from "../icons/SocialIcons";
 import Logo from "../Logo";
 import { SocialContacts } from "../../types";
+import { MenuTypes } from "./utils/MenuTypes";
 
 interface MenuFooterProps {
   socialContacts?: SocialContacts;
-  variant?: "default" | "classic" | "modern";
+  variant?: MenuTypes;
 }
 
 const MenuFooter = ({
   socialContacts,
-  variant = "default",
+  variant = MenuTypes.DEFAULT,
 }: MenuFooterProps) => {
   const styles = {
     default: {

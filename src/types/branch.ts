@@ -1,5 +1,6 @@
 import { Contact } from "./contact";
 import { BranchLocation } from "./branchLocation";
+import { Restaurant } from "./restaurants";
 
 export interface Branch {
   id?: string;
@@ -10,4 +11,5 @@ export interface Branch {
   menu_link?: string;
   contact_info?: Contact;
   restaurant_id?: string;
+  restaurant?: Restaurant;
 }

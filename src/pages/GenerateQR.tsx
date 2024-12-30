@@ -160,13 +160,8 @@ const GenerateQR = () => {
   };
 
   const handleMenuUpload = (imagesData: ImageData[]) => {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setMenuImage(reader.result as string);
-      setUploadedFiles(imagesData);
-      setCurrentStep(3);
-    };
-    reader.readAsDataURL(file);
+    setUploadedFiles(imagesData);
+    setCurrentStep(3);
   };
 
   const handlePublish = async () => {

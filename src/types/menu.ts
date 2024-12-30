@@ -5,6 +5,6 @@ export interface MenuData {
   id: string;
   files: MenuImage[];
   branch: Branch;
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
