@@ -2,6 +2,7 @@ import React, { useState, useRef, useCallback, useEffect } from "react";
 import { Image as ImageIcon, GripHorizontal } from "lucide-react";
 import { Restaurant, Branch } from "../../types";
 import { ImageData } from "./ImageData";
+import { validateFile } from "./useValidateFile";
 
 interface UploadMenuProps {
   restaurant: Restaurant;
@@ -29,7 +30,7 @@ const Item = ({
         src={image.preview}
         alt={`Menu preview ${index}`}
         id={index.toString()}
-        className="w-full h-32 rounded-lg"
+        className="w-full h-52 rounded-lg"
       />
       <span className="absolute top-1 left-1 bg-indigo-600 text-white text-xs rounded-full px-2 py-1">
         {index + 1}
@@ -42,7 +43,10 @@ const Item = ({
         className="mt-2 block w-full text-sm text-gray-600 focus:outline-none"
       />
       <button
-        onClick={() => removeImage(index)}
+        onClick={(e) => {
+          e.preventDefault();
+          removeImage(index);
+        }}
         className="absolute -top-1 -right-1 bg-red-600 text-white text-xs rounded-full px-2 py-1"
       >
         X
@@ -71,12 +75,17 @@ const UploadMenu = ({ restaurant, branch, onUpload }: UploadMenuProps) => {
 
   const processFiles = useCallback(
     async (files: File[]) => {
-      const validFiles = Array.from(files).filter(
-        (file) => file.size <= 2 * 1024 * 1024
-      );
+      const validFiles = [];
+      for (const file of files) {
+        if (await validateFile(file)) {
+          validFiles.push(file);
+        }
+      }
 
       if (validFiles.length !== files.length) {
-        alert("Some files were too large and were not added.");
+        alert(
+          "Some files either too large or were not in correct ratio and were not added."
+        );
       }
 
       const imageData = await Promise.all(
@@ -193,7 +202,7 @@ const UploadMenu = ({ restaurant, branch, onUpload }: UploadMenuProps) => {
                     />
                   ) : (
                     <>
-                      <ImageIcon className="mx-auto h-32 w-full text-gray-100" />
+                      <ImageIcon className="mx-auto h-52 p-10 w-full text-gray-100" />
                       <div className="flex text-sm text-gray-600">
                         <label className="relative cursor-pointer rounded-md font-medium text-indigo-600 hover:text-indigo-500">
                           <span>Upload files</span>
