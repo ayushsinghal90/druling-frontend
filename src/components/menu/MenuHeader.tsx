@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { MenuTypes } from "./utils/MenuTypes";
 
 interface RestaurantHeaderProps {
   restaurantName: string;
@@ -6,14 +7,14 @@ interface RestaurantHeaderProps {
   imageUrl?: string;
   showMenu?: boolean;
   onToggleMenu?: () => void;
-  variant?: "default" | "classic" | "modern" | "scrolling";
+  variant?: MenuTypes;
 }
 
 const RestaurantHeader = ({
   restaurantName,
   branchName,
   imageUrl,
-  variant = "default",
+  variant = MenuTypes.DEFAULT,
 }: RestaurantHeaderProps) => {
   const [showImage, setShowImage] = useState(true);
 

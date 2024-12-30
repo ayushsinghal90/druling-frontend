@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { ChevronUp, ChevronDown } from "lucide-react";
-import { MenuProps } from "./utils/MenuTypes";
-import MenuHeader from "../../components/menu/MenuHeader";
-import MenuFooter from "../../components/menu/MenuFooter";
+import { MenuProps } from "../utils/MenuProps";
+import MenuHeader from "../MenuHeader";
+import MenuFooter from "../MenuFooter";
+import { MenuTypes } from "../utils/MenuTypes";
 
 const ScrollingMenu = ({ menuData }: MenuProps) => {
   const [showUpButton, setShowUpButton] = useState(false);
@@ -25,7 +26,7 @@ const ScrollingMenu = ({ menuData }: MenuProps) => {
     };
   }, []);
 
-  const handleScroll = (direction) => {
+  const handleScroll = (direction: string) => {
     const scrollAmount = 150; // Adjust scroll amount as needed
     const newScrollPosition =
       direction === "up"
@@ -41,28 +42,28 @@ const ScrollingMenu = ({ menuData }: MenuProps) => {
   return (
     <div className="min-h-screen bg-[#1a1a1a] flex flex-col">
       <MenuHeader
-        restaurantName={menuData.restaurant.name}
-        branchName={menuData.branch.name}
-        imageUrl={menuData.restaurant.imageUrl}
-        variant="scrolling"
+        restaurantName={menuData?.branch?.restaurant?.name || ""}
+        branchName={menuData?.branch?.name || ""}
+        imageUrl={menuData?.branch?.restaurant?.image_url || ""}
+        variant={MenuTypes.SCROLLING}
       />
 
       <div className="flex-1">
         <div className="max-w-5xl mx-auto px-4 py-8 space-y-8">
-          {menuData.images.map((image, index) => (
+          {menuData?.files?.map((file) => (
             <div
-              key={image.id}
+              key={file.id}
               className="bg-[#2a2a2a] rounded-xl overflow-hidden shadow-2xl transform transition-transform duration-300 hover:scale-[1.02]"
             >
               <div className="p-6 border-b border-amber-500/20">
                 <h2 className="text-xl font-medium text-amber-500">
-                  {image.category}
+                  {file.category}
                 </h2>
               </div>
               <div className="relative">
                 <img
-                  src={image.file_url}
-                  alt={image.category}
+                  src={file.file_url}
+                  alt={file.category}
                   className="w-full h-auto transition-transform duration-300"
                 />
               </div>
@@ -89,8 +90,8 @@ const ScrollingMenu = ({ menuData }: MenuProps) => {
       </div>
 
       <MenuFooter
-        socialContacts={menuData?.branch.contact_info?.social_contacts}
-        variant="scrolling"
+        socialContacts={menuData?.branch?.contact_info?.social_contacts}
+        variant={MenuTypes.SCROLLING}
       />
     </div>
   );

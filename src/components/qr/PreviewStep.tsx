@@ -1,10 +1,14 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { Restaurant, Branch } from "../../types";
+import { ImageData } from "./ImageData";
+import { menuMap } from "../menu/utils/MenuMap";
+import { MenuProps } from "../menu/utils/MenuProps";
 
 interface PreviewStepProps {
   restaurant: Restaurant;
   branch: Branch;
-  menuImage: string;
+  imagesData: ImageData[];
   onSubmit: () => void;
   onBack: () => void;
 }
@@ -12,10 +16,29 @@ interface PreviewStepProps {
 const PreviewStep = ({
   restaurant,
   branch,
-  menuImage,
+  imagesData,
   onSubmit,
   onBack,
 }: PreviewStepProps) => {
+  const navigate = useNavigate();
+  const menuData: MenuProps = {
+    menuData: {
+      id: "1",
+      branch: {
+        ...branch,
+        restaurant,
+      },
+      files: imagesData
+        .sort((a, b) => a.order - b.order)
+        .map((image) => ({
+          id: image.file.name,
+          file_url: image.preview,
+          order: image.order,
+          category: image.category,
+        })),
+    },
+  };
+
   return (
     <div className="space-y-6">
       <div className="text-center">
@@ -27,34 +50,25 @@ const PreviewStep = ({
         </p>
       </div>
 
-      <div className="flex justify-center">
-        <div className="relative w-[320px]">
-          {/* Phone Frame */}
-          <div className="relative mx-auto border-gray-800 dark:border-gray-800 bg-gray-800 border-[14px] rounded-[2.5rem] h-[600px] w-[300px] shadow-xl">
-            <div className="w-[148px] h-[18px] bg-gray-800 top-0 rounded-b-[1rem] left-1/2 -translate-x-1/2 absolute"></div>
-            <div className="h-[46px] w-[3px] bg-gray-800 absolute -left-[17px] top-[124px] rounded-l-lg"></div>
-            <div className="h-[46px] w-[3px] bg-gray-800 absolute -left-[17px] top-[178px] rounded-l-lg"></div>
-            <div className="h-[64px] w-[3px] bg-gray-800 absolute -right-[17px] top-[142px] rounded-r-lg"></div>
-            <div className="rounded-[2rem] overflow-hidden w-[272px] h-[572px] bg-white">
-              {/* Menu Content */}
-              <div className="w-full h-full flex flex-col">
-                <div className="bg-gray-100 px-4 py-2">
-                  <h4 className="font-medium text-gray-900">
-                    {restaurant.name}
-                  </h4>
-                  <p className="text-sm text-gray-500">{branch.name}</p>
-                </div>
-                <div className="flex-1 overflow-y-auto">
-                  <img
-                    src={menuImage}
-                    alt="Menu preview"
-                    className="w-full h-auto"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div className="grid grid-cols-3 gap-4">
+        {Object.keys(menuMap).map((key) => {
+          return (
+            <button
+              key={key}
+              className="border-1 bg-gray-50 rounded-lg shadow-xl p-4 duration-200 ease-in-out 
+              transform hover:scale-105 hover:shadow-2xl
+               hover:bg-indigo-300 text-gray-700 hover:text-white"
+              onClick={() => {
+                localStorage.setItem("menuData", JSON.stringify(menuData));
+                window.open(`/menu/preview?theme=${key}`, "_blank");
+              }}
+            >
+              <span className="text-sm font-sans font-semibold tracking-wider">
+                {key.toUpperCase()}
+              </span>
+            </button>
+          );
+        })}
       </div>
 
       <div className="flex justify-end space-x-4 pt-6">

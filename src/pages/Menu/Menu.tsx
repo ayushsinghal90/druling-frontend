@@ -1,9 +1,7 @@
 import React from "react";
 import { useParams, useSearchParams } from "react-router-dom";
-import DefaultMenu from "./Default";
-import ModernMenu from "./Modern";
-import ScrollingMenu from "./Scrolling";
-import { useMenuData } from "./utils/useMenuData";
+import IndexMenu from "../../components/menu/Index";
+import { useMenuData } from "../../components/menu/utils/useMenuData";
 import LoadingScreen from "../../components/common/LoadingScreen";
 
 const Menu = () => {
@@ -17,19 +15,9 @@ const Menu = () => {
     return <LoadingScreen />;
   }
 
-  const props = { menuData };
+  const props = { menuData: { menuData }, type: theme };
 
-  return (
-    <>
-      {theme === "modern" ? (
-        <ModernMenu {...props} />
-      ) : theme === "scrolling" ? (
-        <ScrollingMenu {...props} />
-      ) : (
-        <DefaultMenu {...props} />
-      )}
-    </>
-  );
+  return <IndexMenu {...props} />;
 };
 
 export default Menu;

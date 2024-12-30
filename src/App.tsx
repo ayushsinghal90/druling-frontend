@@ -23,7 +23,8 @@ import Logout from "./pages/Logout";
 import Demo from "./pages/Demo";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
-import Menu from "./pages/Menu/Index";
+import Menu from "./pages/Menu/Menu";
+import PreviewMenu from "./pages/Menu/PreviewMenu";
 
 import Dashboard from "./pages/dashboard/Dashboard";
 import QRCodes from "./pages/dashboard/QRCodes";
@@ -89,6 +90,7 @@ function App() {
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/logout" element={<Logout />} />
           <Route path="/menu/:menuId" element={<Menu />} />
+          <Route path="/menu/preview" element={<PreviewMenu />} />
 
           <Route path="/" element={<LandingPage />} />
           <Route

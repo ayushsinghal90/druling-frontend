@@ -19,6 +19,7 @@ import {
 import { Restaurant, Branch, QrMenu } from "../types";
 import { useCreateQrMenu } from "../hooks/useCreateQrMenu";
 import { toast } from "react-toastify";
+import { ImageData } from "../components/qr/ImageData";
 
 interface Step {
   number: number;
@@ -126,7 +127,7 @@ const GenerateQR = () => {
   });
 
   const [menuImage, setMenuImage] = useState<string>("");
-  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [uploadedFiles, setUploadedFiles] = useState<ImageData[]>([]);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [qrCode, setQrCode] = useState<string>("");
   const [menuUrl, setMenuUrl] = useState<string>("");
@@ -158,48 +159,43 @@ const GenerateQR = () => {
     setCurrentStep(2);
   };
 
-  const handleMenuUpload = (file: File) => {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setMenuImage(reader.result as string);
-      setUploadedFile(file);
-      setCurrentStep(3);
-    };
-    reader.readAsDataURL(file);
+  const handleMenuUpload = (imagesData: ImageData[]) => {
+    setUploadedFiles(imagesData);
+    setCurrentStep(3);
   };
 
   const handlePublish = async () => {
-    if (!uploadedFile) {
+    if (!uploadedFiles.length) {
       toast.error("No file uploaded.");
       return;
     }
 
-    try {
-      const menuData: QrMenu = {
-        branch_id: selectedBranch?.id || "",
-        file_key: uploadedFile.name,
-      };
-      const result = await createMenu(menuData, uploadedFile);
+    // try {
+    //   const menuData: QrMenu = {
+    //     branch_id: selectedBranch?.id || "",
+    //     file_key: uploadedFile.name,
+    //   };
+    //   const result = await createMenu(menuData, uploadedFile);
 
-      if (result?.success) {
-        setQrCode(
-          "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=example"
-        );
-        setMenuUrl(
-          `https://menu.druling.com/${selectedRestaurant?.id}/${selectedBranch?.id}`
-        );
-        setShowSuccessModal(true);
-      } else {
-        const errorMessage =
-          typeof result?.message === "string"
-            ? result.message
-            : "An unexpected error occurred.";
-        toast.error(errorMessage);
-      }
-    } catch (error) {
-      console.error("Error submitting form:", error);
-      toast.error("An unexpected error occurred.");
-    }
+    //   if (result?.success) {
+    //     setQrCode(
+    //       "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=example"
+    //     );
+    //     setMenuUrl(
+    //       `https://menu.druling.com/${selectedRestaurant?.id}/${selectedBranch?.id}`
+    //     );
+    //     setShowSuccessModal(true);
+    //   } else {
+    //     const errorMessage =
+    //       typeof result?.message === "string"
+    //         ? result.message
+    //         : "An unexpected error occurred.";
+    //     toast.error(errorMessage);
+    //   }
+    // } catch (error) {
+    //   console.error("Error submitting form:", error);
+    //   toast.error("An unexpected error occurred.");
+    // }
   };
 
   const handleClose = () => {
@@ -239,7 +235,7 @@ const GenerateQR = () => {
           <PreviewStep
             restaurant={selectedRestaurant}
             branch={selectedBranch}
-            menuImage={menuImage}
+            imagesData={uploadedFiles}
             onSubmit={handlePublish}
             onBack={() => setCurrentStep(2)}
           />
