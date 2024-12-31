@@ -91,5 +91,5 @@ export const useCreateQrMenu = () => {
     }
   };
 
-  return { createMenu, loading, error };
+  return { createMenu, loading };
 };
