@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { GoogleIcon } from "../icons/SocialIcons";
 import { useRegisterMutation } from "../../store/services/authApi";
 import { useDispatch } from "react-redux";
 import { setCredentials } from "../../store/slices/authSlice";
@@ -10,6 +9,7 @@ import {
   getPasswordStrengthMessage,
 } from "../../utils/validation";
 import { config } from "../../config/env";
+import GoogleAuth from "./GoogleAuth";
 
 const RegisterForm = () => {
   const navigate = useNavigate();
@@ -319,18 +319,14 @@ const RegisterForm = () => {
           </div>
 
           <div className="mt-6">
-            <button
-              type="button"
-              className="flex w-full justify-center items-center gap-2 rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-50 hover:text-gray-700 transform hover:scale-105 transition-all duration-200"
-            >
-              <GoogleIcon className="h-5 w-5" />
-              <span>Sign up with Google</span>
-            </button>
+            <div className="flex justify-center text-center">
+              <GoogleAuth />
+            </div>
           </div>
         </div>
       )}
 
-      <div className="text-center text-sm">
+      <div className="text-center text-sm mt-5">
         <p className="text-gray-600">
           Already have an account?{" "}
           <Link

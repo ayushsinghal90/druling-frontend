@@ -25,6 +25,15 @@ export const authApi = createApi({
         body: data,
       }),
     }),
+    googleLogin: builder.mutation<ApiResponse<AuthResponse>, { token: string }>(
+      {
+        query: ({ token }) => ({
+          url: "/user/google_login/",
+          method: "POST",
+          body: { token },
+        }),
+      }
+    ),
     logout: builder.mutation<void, void>({
       query: () => ({
         url: "/auth/logout/",
@@ -46,4 +55,5 @@ export const {
   useRegisterMutation,
   useLogoutMutation,
   useRefreshMutation,
+  useGoogleLoginMutation,
 } = authApi;

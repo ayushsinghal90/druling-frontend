@@ -51,6 +51,9 @@ export const config = {
     description: env.VITE_APP_DESCRIPTION,
     supportEmail: env.VITE_SUPPORT_EMAIL,
   },
+  googleAuth: {
+    clientId: env.VITE_GOOGLE_CLIENT_ID,
+  },
 } as const;
 
 // Type for the entire config object
