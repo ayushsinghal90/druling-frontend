@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { useLogoutMutation } from "../store/services/authApi";
-import { logout } from "../store/slices/authSlice";
+import { useLogoutMutation } from "../../store/services/authApi";
+import { logout } from "../../store/slices/authSlice";
 
 const Logout = () => {
   const navigate = useNavigate();
