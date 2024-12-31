@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Restaurant } from "../types";
 import { useGetAllRestaurantsQuery } from "../store/services/restaurantApi";
 import LoadingScreen from "../components/common/LoadingScreen";
@@ -22,7 +22,12 @@ export const RestaurantProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const navigate = useNavigate();
-  const { data: restaurantsData, isLoading } = useGetAllRestaurantsQuery();
+  const location = useLocation();
+  const {
+    data: restaurantsData,
+    isLoading,
+    refetch,
+  } = useGetAllRestaurantsQuery();
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [selectedRestaurant, setSelectedRestaurant] =
     useState<Restaurant | null>(null);
@@ -34,6 +39,10 @@ export const RestaurantProvider: React.FC<{ children: React.ReactNode }> = ({
       setSelectedRestaurant(restaurantsData.data[0] || null); // Set the first restaurant as selected
     }
   }, [restaurantsData]);
+
+  useEffect(() => {
+    refetch();
+  }, [location, refetch]);
 
   const selectRestaurant = (restaurant: Restaurant) => {
     setSelectedRestaurant(restaurant);

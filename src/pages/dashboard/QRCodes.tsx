@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { QrCode, Download, Share2 } from "lucide-react";
 import DashboardLayout from "../../components/dashboard/DashboardLayout";
 import { useGetAllMenusQuery } from "../../store/services/qrMenuApi";
@@ -16,8 +16,9 @@ const QRCode = ({ menu }: { menu: MenuData }) => {
 
 const QRCodes = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [menuData, setMenuData] = useState<MenuData[]>([]);
-  const { data: qrCodesResponse, isLoading } = useGetAllMenusQuery();
+  const { data: qrCodesResponse, isLoading, refetch } = useGetAllMenusQuery();
 
   const handleGenerateQR = () => {
     navigate("/qr/generate");
@@ -28,6 +29,10 @@ const QRCodes = () => {
       setMenuData(qrCodesResponse.data);
     }
   }, [qrCodesResponse]);
+
+  useEffect(() => {
+    refetch();
+  }, [location, refetch]);
 
   if (isLoading) {
     return <LoadingScreen />;
