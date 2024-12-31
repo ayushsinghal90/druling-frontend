@@ -16,9 +16,9 @@ import Hero from "./components/Hero";
 import Features from "./components/Features";
 import Pricing from "./components/Pricing";
 
-import Login from "./pages/Login";
+import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
-import Logout from "./pages/Logout";
+import Logout from "./pages/auth/Logout";
 
 import Demo from "./pages/Demo";
 import Terms from "./pages/document/Terms";
