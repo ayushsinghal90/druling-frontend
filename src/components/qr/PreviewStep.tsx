@@ -1,13 +1,14 @@
 import React from "react";
 import { Restaurant, Branch } from "../../types";
-import { ImageData } from "./utils/ImageData";
 import { menuMap } from "../menu/utils/MenuMap";
 import { MenuProps } from "../menu/utils/MenuProps";
+import { MenuTypes } from "../menu/utils/MenuTypes";
+import { MenuDetails } from "./utils/MenuDetails";
 
 interface PreviewStepProps {
   restaurant: Restaurant;
   branch: Branch;
-  imagesData: ImageData[];
+  menuDetails: MenuDetails;
   onSubmit: () => void;
   onBack: () => void;
 }
@@ -15,7 +16,7 @@ interface PreviewStepProps {
 const PreviewStep = ({
   restaurant,
   branch,
-  imagesData,
+  menuDetails,
   onSubmit,
   onBack,
 }: PreviewStepProps) => {
@@ -26,7 +27,7 @@ const PreviewStep = ({
         ...branch,
         restaurant,
       },
-      files: imagesData
+      files: menuDetails.imagesData
         .sort((a, b) => a.order - b.order)
         .map((image) => ({
           id: image.file.name,
@@ -44,7 +45,7 @@ const PreviewStep = ({
           Preview Your Digital Menu
         </h3>
         <p className="mt-1 text-sm text-gray-500">
-          Here's how your menu will look on mobile devices
+          Review your menu before publishing and select a theme
         </p>
       </div>
 
@@ -55,11 +56,12 @@ const PreviewStep = ({
               key={key}
               className="border-1 bg-gray-50 rounded-lg shadow-xl p-4 duration-200 ease-in-out 
               transform hover:scale-105 hover:shadow-2xl
-               hover:bg-indigo-300 text-gray-700 hover:text-white"
+               hover:bg-indigo-300 text-gray-700 hover:text-white focus:bg-indigo-300 focus:text-white"
               onClick={() => {
                 localStorage.setItem("menuData", JSON.stringify(menuData));
                 window.open(`/menu/preview?theme=${key}`, "_blank");
               }}
+              onFocus={() => (menuDetails.theme = key as MenuTypes)}
             >
               <span className="text-sm font-sans font-semibold tracking-wider">
                 {key.toUpperCase()}

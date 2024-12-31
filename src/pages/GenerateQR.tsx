@@ -21,6 +21,8 @@ import { useCreateQrMenu } from "../hooks/useCreateQrMenu";
 import { toast } from "react-toastify";
 import { ImageData } from "../components/qr/utils/ImageData";
 import LoadingScreen from "../components/common/LoadingScreen";
+import { MenuTypes } from "../components/menu/utils/MenuTypes";
+import { MenuDetails } from "../components/qr/utils/MenuDetails";
 
 interface Step {
   number: number;
@@ -126,7 +128,10 @@ const GenerateQR = () => {
     return null;
   });
 
-  const [uploadedFiles, setUploadedFiles] = useState<ImageData[]>([]);
+  const [menuDetails, setMenuDetails] = useState<MenuDetails>({
+    theme: MenuTypes.DEFAULT,
+    imagesData: [],
+  });
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [menuId, setMenuId] = useState<string>("");
 
@@ -156,12 +161,13 @@ const GenerateQR = () => {
   };
 
   const handleMenuUpload = (imagesData: ImageData[]) => {
-    setUploadedFiles(imagesData);
+    menuDetails.imagesData = imagesData;
+    setMenuDetails(menuDetails);
     setCurrentStep(3);
   };
 
   const handlePublish = async () => {
-    if (!uploadedFiles.length) {
+    if (!menuDetails.imagesData.length) {
       toast.error("No file uploaded.");
       return;
     }
@@ -172,7 +178,7 @@ const GenerateQR = () => {
     }
 
     try {
-      const result = await createMenu(selectedBranch, uploadedFiles);
+      const result = await createMenu(selectedBranch, menuDetails.imagesData);
 
       if (result?.success) {
         setMenuId(result.data.id);
@@ -231,7 +237,7 @@ const GenerateQR = () => {
           <PreviewStep
             restaurant={selectedRestaurant}
             branch={selectedBranch}
-            imagesData={uploadedFiles}
+            menuDetails={menuDetails}
             onSubmit={handlePublish}
             onBack={() => setCurrentStep(2)}
           />
@@ -291,6 +297,7 @@ const GenerateQR = () => {
         isOpen={showSuccessModal}
         onClose={handleClose}
         menuId={menuId}
+        theme={menuDetails.theme}
       />
     </div>
   );
