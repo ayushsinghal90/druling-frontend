@@ -5,6 +5,7 @@ import DashboardLayout from "../../components/dashboard/DashboardLayout";
 import { useGetAllMenusQuery } from "../../store/services/qrMenuApi";
 import LoadingScreen from "../../components/common/LoadingScreen";
 import { MenuData } from "../../types";
+import ActionRequired from "../../components/common/ActionRequired";
 
 const QRCode = ({ menu }: { menu: MenuData }) => {
   const url = `${window.location.origin}/menu/${menu.id}?theme=${menu.theme}`;
@@ -30,6 +31,21 @@ const QRCodes = () => {
 
   if (isLoading) {
     return <LoadingScreen />;
+  }
+
+  if (menuData.length === 0) {
+    return (
+      <DashboardLayout>
+        <ActionRequired
+          icon={<QrCode className="h-32 w-32 text-gray-400" />}
+          description={"Create new QR codes to share your menu"}
+          buttonClassName="inline-flex items-center rounded-lg bg-black px-4 py-2 text-sm font-semibold text-white hover:bg-gray-800 transition-colors duration-200"
+          buttonText="Generate QR"
+          onButtonClick={handleGenerateQR}
+          buttonIcon={<QrCode className="mr-2 h-4 w-4" />}
+        />
+      </DashboardLayout>
+    );
   }
 
   return (
