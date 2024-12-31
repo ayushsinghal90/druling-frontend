@@ -20,6 +20,7 @@ import { Restaurant, Branch, QrMenu } from "../types";
 import { useCreateQrMenu } from "../hooks/useCreateQrMenu";
 import { toast } from "react-toastify";
 import { ImageData } from "../components/qr/utils/ImageData";
+import LoadingScreen from "../components/common/LoadingScreen";
 
 interface Step {
   number: number;
@@ -125,7 +126,6 @@ const GenerateQR = () => {
     return null;
   });
 
-  const [menuImage, setMenuImage] = useState<string>("");
   const [uploadedFiles, setUploadedFiles] = useState<ImageData[]>([]);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [qrCode, setQrCode] = useState<string>("");
@@ -199,6 +199,10 @@ const GenerateQR = () => {
   const handleClose = () => {
     navigate("/dashboard/restaurants");
   };
+
+  if (loading) {
+    return <LoadingScreen />;
+  }
 
   const handleBack = () => {
     if (currentStep > 1) {
