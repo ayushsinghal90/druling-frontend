@@ -7,7 +7,7 @@ import {
 } from "react-router-dom";
 import { ArrowLeft, Upload, QrCode, Check } from "lucide-react";
 import RequireAuth from "../components/auth/RequireAuth";
-import Logo from "../components/Logo";
+import Logo from "../components/common/Logo";
 import RestaurantBranchSelect from "../components/qr/RestaurantBranchSelect";
 import UploadMenu from "../components/qr/UploadMenu";
 import PreviewStep from "../components/qr/PreviewStep";
@@ -19,7 +19,7 @@ import {
 import { Restaurant, Branch, QrMenu } from "../types";
 import { useCreateQrMenu } from "../hooks/useCreateQrMenu";
 import { toast } from "react-toastify";
-import { ImageData } from "../components/qr/ImageData";
+import { ImageData } from "../components/qr/utils/ImageData";
 
 interface Step {
   number: number;

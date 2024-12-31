@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Restaurant, Branch } from "../../types";
-import { ImageData } from "./ImageData";
+import { ImageData } from "./utils/ImageData";
 import { menuMap } from "../menu/utils/MenuMap";
 import { MenuProps } from "../menu/utils/MenuProps";
 

@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import RequireAuth from "../components/auth/RequireAuth";
-import Logo from "../components/Logo";
+import Logo from "../components/common/Logo";
 import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Input";
 import { Textarea } from "../components/ui/TextArea";

@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import LogoImg from "../LogoImg";
+import LogoImg from "../common/LogoImg";
 import SidebarNav from "./SidebarNav";
 import { LogOut } from "lucide-react";
 

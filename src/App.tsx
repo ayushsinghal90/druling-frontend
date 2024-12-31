@@ -9,12 +9,12 @@ import {
 import { ToastContainer } from "react-toastify";
 
 import LoadingScreen from "./components/common/LoadingScreen";
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
+import Navbar from "./components/hero/Navbar";
+import Footer from "./components/hero/Footer";
 
 import Hero from "./components/Hero";
-import Features from "./components/Features";
-import Pricing from "./components/Pricing";
+import Features from "./components/hero/Features";
+import Pricing from "./components/hero/Pricing";
 
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";

@@ -1,8 +1,8 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import { Image as ImageIcon, GripHorizontal } from "lucide-react";
 import { Restaurant, Branch } from "../../types";
-import { ImageData } from "./ImageData";
-import { validateFile } from "./useValidateFile";
+import { ImageData } from "./utils/ImageData";
+import { validateFile } from "./utils/useValidateFile";
 
 interface UploadMenuProps {
   restaurant: Restaurant;

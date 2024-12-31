@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Save, Building2 } from "lucide-react";
 import RequireAuth from "../components/auth/RequireAuth";
-import Logo from "../components/Logo";
+import Logo from "../components/common/Logo";
 import { Input } from "../components/ui/Input";
 import { Textarea } from "../components/ui/TextArea";
 import { useForm } from "react-hook-form";

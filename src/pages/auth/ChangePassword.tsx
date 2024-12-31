@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Lock, ArrowLeft } from "lucide-react";
-import Logo from "../../components/Logo";
+import Logo from "../../components/common/Logo";
 
 const ChangePassword = () => {
   const [formData, setFormData] = useState({

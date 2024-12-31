@@ -7,7 +7,7 @@ import {
   FacebookIcon,
   GlobalIcon,
 } from "../icons/SocialIcons";
-import Logo from "../Logo";
+import Logo from "../common/Logo";
 import { SocialContacts } from "../../types";
 import { MenuTypes } from "./utils/MenuTypes";
 

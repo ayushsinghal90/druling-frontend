@@ -1,11 +1,11 @@
 import React from "react";
-import Logo from "./Logo";
+import Logo from "../common/Logo";
 import {
   XIcon,
   LinkedInIcon,
   InstagramIcon,
   YouTubeIcon,
-} from "./icons/SocialIcons";
+} from "../icons/SocialIcons";
 
 const Footer = () => {
   return (
