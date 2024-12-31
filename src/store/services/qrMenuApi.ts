@@ -22,7 +22,31 @@ export const qrMenuApi = createApi({
         body: data,
       }),
     }),
+    getAllMenus: builder.query<ApiResponse<MenuData[]>, void>({
+      query: () => ({
+        url: "/menu/qr/list/",
+        method: "GET",
+      }),
+    }),
+    getMenuById: builder.query<ApiResponse<MenuData>, { id: string }>({
+      query: ({ id }) => ({
+        url: `/menu/qr/${id}/`,
+        method: "GET",
+      }),
+    }),
+    getMenuByBranchId: builder.query<ApiResponse<MenuData>, { id: string }>({
+      query: ({ id }) => ({
+        url: `/menu/qr/branch/${id}/`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
-export const { useGetUploadUrlMutation, useCreateQrMenuMutation } = qrMenuApi;
+export const {
+  useGetUploadUrlMutation,
+  useCreateQrMenuMutation,
+  useGetAllMenusQuery,
+  useGetMenuByIdQuery,
+  useGetMenuByBranchIdQuery,
+} = qrMenuApi;
