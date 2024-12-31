@@ -9,9 +9,9 @@ const Menu = () => {
   const [searchParams] = useSearchParams();
   const theme = searchParams.get("theme") || "default";
 
-  const { loading, menuData } = useMenuData(menuId);
+  const { isLoading, menuData } = useMenuData(menuId);
 
-  if (loading || !menuData) {
+  if (isLoading || !menuData) {
     return <LoadingScreen />;
   }
 
