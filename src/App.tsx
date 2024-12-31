@@ -17,12 +17,12 @@ import Features from "./components/Features";
 import Pricing from "./components/Pricing";
 
 import Login from "./pages/Login";
-import Register from "./pages/Register";
+import Register from "./pages/auth/Register";
 import Logout from "./pages/Logout";
 
 import Demo from "./pages/Demo";
-import Terms from "./pages/Terms";
-import Privacy from "./pages/Privacy";
+import Terms from "./pages/document/Terms";
+import Privacy from "./pages/document/Privacy";
 import Menu from "./pages/Menu/Menu";
 import PreviewMenu from "./pages/Menu/PreviewMenu";
 
@@ -34,7 +34,7 @@ import Billing from "./pages/dashboard/Billing";
 import Restaurants from "./pages/dashboard/Restaurants";
 import Profile from "./pages/dashboard/Profile";
 
-import ChangePassword from "./pages/ChangePassword";
+import ChangePassword from "./pages/auth/ChangePassword";
 import EditBranch from "./pages/EditBranch";
 import AddRestaurant from "./pages/AddRestaurant";
 import GenerateQR from "./pages/GenerateQR";
