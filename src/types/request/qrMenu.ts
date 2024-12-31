@@ -2,7 +2,7 @@ import { MenuImage } from "../menuImage";
 
 export interface UploadMenu {
   branch_id: string;
-  files: UploadMenuImage;
+  files: UploadMenuImage[];
 }
 
 export interface UploadMenuImage extends Omit<MenuImage, "file_url"> {

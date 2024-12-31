@@ -1,5 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithReauth } from "./baseQueries";
+import { UploadFile } from "../../types/request";
 
 interface SignedUrl {
   url: string;
@@ -17,14 +18,14 @@ export const fileUpload = createApi({
       }),
     }),
 
-    uploadFile: builder.mutation<void, { url: string; file: File }>({
-      queryFn: async ({ url, file }) => {
+    uploadFile: builder.mutation<void, UploadFile>({
+      queryFn: async (uploadFile) => {
         try {
-          const response = await fetch(url, {
+          const response = await fetch(uploadFile.url, {
             method: "PUT",
-            body: file,
+            body: uploadFile.file,
             headers: {
-              "Content-Type": file.type,
+              "Content-Type": uploadFile.file.type,
             },
           });
           if (!response.ok) throw new Error("Upload failed");
@@ -34,7 +35,34 @@ export const fileUpload = createApi({
         }
       },
     }),
+
+    batchUploadFiles: builder.mutation<void, UploadFile[]>({
+      queryFn: async (uploadFiles) => {
+        try {
+          const uploadPromises = uploadFiles.map((uploadFile) =>
+            fetch(uploadFile.url, {
+              method: "PUT",
+              body: uploadFile.file,
+              headers: {
+                "Content-Type": uploadFile.file.type,
+              },
+            })
+          );
+          const responses = await Promise.all(uploadPromises);
+          responses.forEach((response) => {
+            if (!response.ok) throw new Error("Batch upload failed");
+          });
+          return { data: undefined };
+        } catch (error) {
+          return { error: error as Error };
+        }
+      },
+    }),
   }),
 });
 
-export const { useGetSignedUrlMutation, useUploadFileMutation } = fileUpload;
+export const {
+  useGetSignedUrlMutation,
+  useUploadFileMutation,
+  useBatchUploadFilesMutation,
+} = fileUpload;

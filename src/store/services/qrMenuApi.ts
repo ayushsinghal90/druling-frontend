@@ -8,14 +8,14 @@ export const qrMenuApi = createApi({
   reducerPath: "qrMenuApi",
   baseQuery: baseQueryWithReauth,
   endpoints: (builder) => ({
-    getUploadUrl: builder.mutation<ApiResponse<SignedUrl>, UploadMenu>({
+    getUploadUrl: builder.mutation<ApiResponse<SignedUrl[]>, UploadMenu>({
       query: (data) => ({
         url: "/menu/qr/upload_url/",
         method: "POST",
         body: data,
       }),
     }),
-    createQrMenu: builder.mutation<ApiResponse<QrMenu>, QrMenu>({
+    createQrMenu: builder.mutation<ApiResponse<QrMenu>, UploadMenu>({
       query: (data) => ({
         url: "/menu/qr/create/",
         method: "POST",

@@ -3,46 +3,46 @@ import {
   useCreateQrMenuMutation,
   useGetUploadUrlMutation,
 } from "../store/services/qrMenuApi";
-import { UploadMenu } from "../types/request";
-import { useUploadFileMutation } from "../store/services/fileUpload";
-import { QrMenu } from "../types";
+import { UploadFile, UploadMenu, UploadMenuImage } from "../types/request";
+import { useBatchUploadFilesMutation } from "../store/services/fileUpload";
+import { Branch } from "../types";
+import { ImageData } from "../components/qr/utils/ImageData";
+import { SignedUrl } from "../types/response";
 
 export const useCreateQrMenu = () => {
   const [createQrMenu] = useCreateQrMenuMutation();
-  const [uploadFile] = useUploadFileMutation();
+  const [batchUploadFiles] = useBatchUploadFilesMutation();
   const [getUploadUrl] = useGetUploadUrlMutation();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
-  const createMenu = async (menuData: QrMenu, file: File) => {
+  const createMenu = async (branch: Branch, imagesData: ImageData[]) => {
     setLoading(true);
     setError(null);
 
     try {
-      const requestUploadUrl: UploadMenu = {
-        file_key: menuData.file_key,
+      const requestUploadMenu: UploadMenu = {
+        branch_id: branch.id || "",
+        files: imagesData.map(
+          (image) =>
+            ({
+              file_key: image.file.name,
+              category: image.category,
+              order: image.order,
+            } as UploadMenuImage)
+        ),
       };
-      const uploadUrlData = await getUploadUrl(requestUploadUrl).unwrap();
+      const fileToSingedUrlMap = await getSignedUrls(requestUploadMenu);
 
-      if (!uploadUrlData?.success) {
-        throw new Error(
-          typeof uploadUrlData?.message === "string"
-            ? uploadUrlData.message
-            : "An unexpected error occurred."
-        );
-      }
+      await uploadFilesToS3(
+        getUploadFileRequest(imagesData, fileToSingedUrlMap)
+      );
 
-      const renamedFile = new File([file], uploadUrlData.data.file_key, {
-        type: file.type,
+      requestUploadMenu.files.forEach((file) => {
+        file.file_key = fileToSingedUrlMap[file.file_key].new_file_key;
       });
-      await uploadFileToS3(uploadUrlData.data.upload_url, renamedFile);
 
-      const request: QrMenu = {
-        ...menuData,
-        file_key: uploadUrlData.data.file_key,
-      };
-
-      const response = await createQrMenu(request).unwrap();
+      const response = await createQrMenu(requestUploadMenu).unwrap();
       return response;
     } catch (err) {
       setError(err as Error);
@@ -51,9 +51,50 @@ export const useCreateQrMenu = () => {
     }
   };
 
-  const uploadFileToS3 = async (uploadUrl: string, file: File) => {
+  const getUploadFileRequest = (
+    imagesData: ImageData[],
+    fileToSingedUrlMap: { [key: string]: SignedUrl }
+  ) => {
+    return imagesData.map((imageData) => {
+      const signedUrl = fileToSingedUrlMap[imageData.file.name];
+      if (!signedUrl) {
+        throw new Error("No signed url found for file.");
+      }
+
+      const renamedFile = new File([imageData.file], signedUrl.new_file_key, {
+        type: imageData.file.type,
+      });
+
+      return {
+        url: signedUrl.upload_url,
+        file: renamedFile,
+      } as UploadFile;
+    });
+  };
+
+  const getSignedUrls = async (requestUploadMenu: UploadMenu) => {
+    const singedUrlResponse = await getUploadUrl(requestUploadMenu).unwrap();
+
+    if (!singedUrlResponse?.success) {
+      throw new Error(
+        typeof singedUrlResponse?.message === "string"
+          ? singedUrlResponse.message
+          : "An unexpected error occurred."
+      );
+    }
+
+    return singedUrlResponse.data.reduce(
+      (acc: { [key: string]: SignedUrl }, signedUrl) => {
+        acc[signedUrl.file_key] = signedUrl;
+        return acc;
+      },
+      {}
+    );
+  };
+
+  const uploadFilesToS3 = async (uploadFiles: UploadFile[]) => {
     try {
-      const response = await uploadFile({ url: uploadUrl, file }).unwrap();
+      const response = await batchUploadFiles(uploadFiles).unwrap();
       return response;
     } catch (error) {
       throw new Error((error as Error).message);

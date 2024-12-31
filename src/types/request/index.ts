@@ -1,7 +1,8 @@
 import { CreateBranch, UpdateBranch } from "./branch";
 import { LoginRequest } from "./login";
 import { RegisterRequest } from "./register";
-import { UploadMenu } from "./qrMenu";
+import { UploadMenu, UploadMenuImage } from "./qrMenu";
+import { UploadFile } from "./uploadFile";
 
 export type {
   RegisterRequest,
@@ -9,4 +10,6 @@ export type {
   CreateBranch,
   UpdateBranch,
   UploadMenu,
+  UploadFile,
+  UploadMenuImage,
 };

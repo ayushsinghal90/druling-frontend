@@ -167,32 +167,33 @@ const GenerateQR = () => {
       return;
     }
 
-    // try {
-    //   const menuData: QrMenu = {
-    //     branch_id: selectedBranch?.id || "",
-    //     file_key: uploadedFile.name,
-    //   };
-    //   const result = await createMenu(menuData, uploadedFile);
+    if (!selectedBranch) {
+      toast.error("No branch selected.");
+      return;
+    }
 
-    //   if (result?.success) {
-    //     setQrCode(
-    //       "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=example"
-    //     );
-    //     setMenuUrl(
-    //       `https://menu.druling.com/${selectedRestaurant?.id}/${selectedBranch?.id}`
-    //     );
-    //     setShowSuccessModal(true);
-    //   } else {
-    //     const errorMessage =
-    //       typeof result?.message === "string"
-    //         ? result.message
-    //         : "An unexpected error occurred.";
-    //     toast.error(errorMessage);
-    //   }
-    // } catch (error) {
-    //   console.error("Error submitting form:", error);
-    //   toast.error("An unexpected error occurred.");
-    // }
+    try {
+      const result = await createMenu(selectedBranch, uploadedFiles);
+
+      if (result?.success) {
+        setQrCode(
+          "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=example"
+        );
+        setMenuUrl(
+          `https://menu.druling.com/${selectedRestaurant?.id}/${selectedBranch?.id}`
+        );
+        setShowSuccessModal(true);
+      } else {
+        const errorMessage =
+          typeof result?.message === "string"
+            ? result.message
+            : "An unexpected error occurred.";
+        toast.error(errorMessage);
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast.error("An unexpected error occurred.");
+    }
   };
 
   const handleClose = () => {
