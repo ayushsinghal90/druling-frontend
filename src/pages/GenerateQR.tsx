@@ -111,7 +111,7 @@ const GenerateQR = () => {
   const [selectedRestaurant, setSelectedRestaurant] =
     useState<Restaurant | null>(() => {
       if (restaurantId) {
-        return restaurants.find((r) => r.id === Number(restaurantId)) || null;
+        return restaurants.find((r) => r.id === restaurantId) || null;
       }
       return null;
     });
@@ -119,8 +119,7 @@ const GenerateQR = () => {
   const [selectedBranch, setSelectedBranch] = useState<Branch | null>(() => {
     if (restaurantId && branchId && selectedRestaurant) {
       return (
-        selectedRestaurant.branches.find((b) => b.id === Number(branchId)) ||
-        null
+        selectedRestaurant?.branches?.find((b) => b.id === branchId) || null
       );
     }
     return null;
@@ -136,11 +135,9 @@ const GenerateQR = () => {
 
   useEffect(() => {
     if (restaurantId && branchId) {
-      const restaurant = restaurants.find((r) => r.id === Number(restaurantId));
+      const restaurant = restaurants.find((r) => r.id === restaurantId);
       if (restaurant) {
-        const branch = restaurant.branches.find(
-          (b) => b.id === Number(branchId)
-        );
+        const branch = restaurant?.branches?.find((b) => b.id === branchId);
         if (branch) {
           setSelectedRestaurant(restaurant);
           setSelectedBranch(branch);
