@@ -1,6 +1,6 @@
-import React from 'react';
-import Sidebar from './Sidebar';
-import { useSidebar } from './SidebarContext';
+import React from "react";
+import Sidebar from "./Sidebar";
+import { useSidebar } from "./SidebarContext";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -16,7 +16,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       {/* Main content */}
       <div
         className={`flex-1 transition-[margin] duration-300 ease-in-out ${
-          isExpanded ? 'ml-48' : 'ml-16'
+          isExpanded ? "ml-48" : "ml-16"
         }`}
       >
         <main className="h-full overflow-y-auto bg-gray-50">

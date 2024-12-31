@@ -97,12 +97,8 @@ const AddRestaurant = () => {
     criteriaMode: "all",
   });
 
-  const [createBranch, { isLoading }] = useCreateBranchMutation();
-  if (isLoading) {
-    return <LoadingScreen />;
-  }
-
   const { restaurants } = useRestaurant();
+  const [createBranch, { isLoading }] = useCreateBranchMutation();
 
   useEffect(() => {
     if (restaurantId) {
@@ -110,6 +106,10 @@ const AddRestaurant = () => {
       setSelectedRestaurant(restaurant || null);
     }
   }, [restaurantId, restaurants]);
+
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -174,7 +174,6 @@ const AddRestaurant = () => {
   };
 
   const handleNext = async () => {
-    console.log(selectedRestaurant);
     if (currentStep === 0) {
       const isValid = await form.trigger(["restaurant.name"]);
       if (isValid || selectedRestaurant) {

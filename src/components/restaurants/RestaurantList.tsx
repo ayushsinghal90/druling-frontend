@@ -9,6 +9,7 @@ import BranchItem from "./BranchItem";
 import AddRestaurantButton from "./buttons/AddRestaurantButton";
 import AddBranchButton from "./buttons/AddBranchButton";
 import ContactUsButton from "./buttons/ContactUsButton";
+import ActionRequired from "../common/ActionRequired";
 
 const RestaurantList = () => {
   const navigate = useNavigate();
@@ -62,7 +63,18 @@ const RestaurantList = () => {
     }
   };
 
-  if (!selectedRestaurant) return null;
+  if (!selectedRestaurant || !restaurants.length) {
+    return (
+      <div className="space-y-6">
+        <ActionRequired
+          icon={<Building2 className="h-32 w-32 text-gray-400" />}
+          description={"Please add restaurant before proceeding"}
+          buttonText="Add Restaurant"
+          onButtonClick={addRestaurant}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
