@@ -1,8 +1,9 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
-import { Image as ImageIcon, GripHorizontal } from "lucide-react";
+import { Image as ImageIcon } from "lucide-react";
 import { Restaurant, Branch } from "../../types";
 import { ImageData } from "./utils/ImageData";
 import { validateFile } from "./utils/useValidateFile";
+import UploadMenuItem from "./UploadMenuItem";
 
 interface UploadMenuProps {
   restaurant: Restaurant;
@@ -10,51 +11,6 @@ interface UploadMenuProps {
   imagesData: ImageData[];
   onUpload: (imagesData: ImageData[]) => void;
 }
-
-const Item = ({
-  image,
-  index,
-  handleCategoryChange,
-  removeImage,
-}: {
-  image: ImageData;
-  index: number;
-  handleCategoryChange: (imageIndex: number, category: string) => void;
-  removeImage: (imageIndex: number) => void;
-}) => {
-  return (
-    <div className="relative p-2">
-      <div className="absolute top-2 left-2 cursor-grab">
-        <GripHorizontal className="w-4 h-4 text-gray-400" />
-      </div>
-      <img
-        src={image.preview}
-        alt={`Menu preview ${index}`}
-        id={index.toString()}
-        className="w-full h-52 rounded-lg"
-      />
-      <span className="absolute top-1 left-1 bg-indigo-600 text-white text-xs rounded-full px-2 py-1">
-        {index + 1}
-      </span>
-      <input
-        type="text"
-        placeholder="Add a category"
-        value={image.category}
-        onChange={(e) => handleCategoryChange(index, e.target.value)}
-        className="mt-2 block w-full text-sm text-gray-600 focus:outline-none"
-      />
-      <button
-        onClick={(e) => {
-          e.preventDefault();
-          removeImage(index);
-        }}
-        className="absolute -top-1 -right-1 bg-red-600 text-white text-xs rounded-full px-2 py-1"
-      >
-        X
-      </button>
-    </div>
-  );
-};
 
 const UploadMenu = ({
   restaurant,
@@ -68,7 +24,7 @@ const UploadMenu = ({
   const fileInputRefs = useRef<HTMLInputElement[]>([]);
   const [sourceIndex, setSourceIndex] = useState<number | null>(null);
 
-  const allowMoreSpots = useCallback(() => {
+  const addEmptySpot = useCallback(() => {
     const validFiles = images.filter((img) => img.file);
     if (images.length === 0 || validFiles.length === images.length) {
       setImages([...validFiles, {} as ImageData]);
@@ -76,8 +32,8 @@ const UploadMenu = ({
   }, [images]);
 
   useEffect(() => {
-    allowMoreSpots();
-  }, [allowMoreSpots]);
+    addEmptySpot();
+  }, [addEmptySpot]);
 
   const processFiles = useCallback(
     async (files: File[]) => {
@@ -148,7 +104,7 @@ const UploadMenu = ({
     setImages((prevImages) =>
       prevImages.filter((_, iIdx) => iIdx !== imageIndex)
     );
-    allowMoreSpots();
+    addEmptySpot();
   };
 
   const handleCategoryChange = (imageIndex: number, category: string) => {
@@ -199,7 +155,7 @@ const UploadMenu = ({
               <div className="mt-1 flex justify-center p-5 bg-white border-1 rounded-lg shadow-lg  border-gray-300 cursor-pointer transition-colors duration-200">
                 <div className="space-y-1 text-center">
                   {image.file ? (
-                    <Item
+                    <UploadMenuItem
                       key={index.toString()}
                       index={index}
                       image={image}

@@ -127,7 +127,7 @@ const RestaurantBranchSelect = ({
                 style={{ maxHeight: "200px", overflowY: "auto" }}
               >
                 <div className="py-1">
-                  {selectedRestaurant.branches.map((branch) => (
+                  {selectedRestaurant?.branches?.map((branch) => (
                     <div
                       key={branch.id}
                       className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
