@@ -16,7 +16,7 @@ import {
   RestaurantProvider,
   useRestaurant,
 } from "../contexts/RestaurantContext";
-import { Restaurant, Branch, QrMenu } from "../types";
+import { Restaurant, Branch } from "../types";
 import { useCreateQrMenu } from "../hooks/useCreateQrMenu";
 import { toast } from "react-toastify";
 import { ImageData } from "../components/qr/utils/ImageData";
@@ -103,7 +103,7 @@ const GenerateQR = () => {
   const [searchParams] = useSearchParams();
   const { restaurantId, branchId } = useParams();
   const { restaurants } = useRestaurant();
-  const { createMenu, loading, error } = useCreateQrMenu();
+  const { createMenu, loading } = useCreateQrMenu();
 
   const [currentStep, setCurrentStep] = useState(() => {
     return restaurantId && branchId ? 2 : 1;
