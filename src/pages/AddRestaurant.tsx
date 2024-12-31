@@ -165,8 +165,7 @@ const AddRestaurant = () => {
             : "An unexpected error occurred.";
         toast.error(errorMessage);
       }
-    } catch (error) {
-      console.error("Error submitting form:", error);
+    } catch {
       toast.error("An unexpected error occurred.");
     } finally {
       setIsSubmitting(false);
