@@ -91,7 +91,9 @@ const AddRestaurant = () => {
     useMultiStepForm(FORM_STEPS, restaurantId ? 1 : 0);
 
   const form = useForm<FormData>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(
+      selectedRestaurant ? formSchema.omit({ restaurant: true }) : formSchema
+    ),
     defaultValues: DEFAULT_VALUES,
     mode: "onTouched",
     criteriaMode: "all",
