@@ -178,7 +178,11 @@ const GenerateQR = () => {
     }
 
     try {
-      const result = await createMenu(selectedBranch, menuDetails.imagesData);
+      const result = await createMenu(
+        selectedBranch,
+        menuDetails.theme,
+        menuDetails.imagesData
+      );
 
       if (result?.success) {
         setMenuId(result.data.id);

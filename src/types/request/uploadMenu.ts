@@ -2,6 +2,7 @@ import { MenuImage } from "../menuImage";
 
 export interface UploadMenu {
   branch_id: string;
+  theme?: string;
   files: UploadMenuImage[];
 }
 

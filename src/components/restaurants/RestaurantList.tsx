@@ -52,10 +52,10 @@ const RestaurantList = () => {
   };
 
   const handleMenuClick = (branch: Branch) => {
-    if (!branch.menu_id) {
+    if (!branch?.menu?.id) {
       navigate(`/qr/menu/${selectedRestaurant?.id}/${branch.id}`);
     } else {
-      navigate(`/menu/${branch.menu_id}`);
+      navigate(`/menu/${branch.menu.id}?theme=${branch.menu.theme}`);
     }
   };
 
@@ -320,7 +320,7 @@ const BranchItem = ({
             className="px-4 py-2 text-sm font-medium text-white rounded-lg transition-colors duration-200 
                  bg-gray-900 hover:bg-gray-800"
           >
-            {branch.menu_id ? "Menu" : "Add Menu"}
+            {branch?.menu?.id ? "Menu" : "Add Menu"}
           </Button>
         </div>
         <div className="absolute bottom-4 right-4 flex items-center gap-2">

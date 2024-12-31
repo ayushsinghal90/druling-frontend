@@ -9,7 +9,7 @@ export interface Branch {
   description?: string;
   location?: BranchLocation;
   manager?: string;
-  menu_id?: string;
+  menu?: MenuData;
   contact_info?: Contact;
   restaurant?: Restaurant;
 }

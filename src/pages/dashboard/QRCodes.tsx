@@ -7,8 +7,7 @@ import LoadingScreen from "../../components/common/LoadingScreen";
 import { MenuData } from "../../types";
 
 const QRCode = ({ menu }: { menu: MenuData }) => {
-  // ?theme=${theme}
-  const url = `${window.location.origin}/menu/${menu.id}`;
+  const url = `${window.location.origin}/menu/${menu.id}?theme=${menu.theme}`;
   const code = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${url}`;
 
   return <img src={code} alt="Menu QR Code" className="h-full w-full" />;

@@ -15,12 +15,17 @@ export const useCreateQrMenu = () => {
   const [getUploadUrl] = useGetUploadUrlMutation();
   const [loading, setLoading] = useState(false);
 
-  const createMenu = async (branch: Branch, imagesData: ImageData[]) => {
+  const createMenu = async (
+    branch: Branch,
+    theme: string,
+    imagesData: ImageData[]
+  ) => {
     setLoading(true);
 
     try {
       const requestUploadMenu: UploadMenu = {
         branch_id: branch.id || "",
+        theme,
         files: imagesData.map(
           (image) =>
             ({
