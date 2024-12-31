@@ -128,8 +128,7 @@ const GenerateQR = () => {
 
   const [uploadedFiles, setUploadedFiles] = useState<ImageData[]>([]);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [qrCode, setQrCode] = useState<string>("");
-  const [menuUrl, setMenuUrl] = useState<string>("");
+  const [menuId, setMenuId] = useState<string>("");
 
   const isAddMenu = searchParams.get("type") === "menu" || !!restaurantId;
 
@@ -176,12 +175,7 @@ const GenerateQR = () => {
       const result = await createMenu(selectedBranch, uploadedFiles);
 
       if (result?.success) {
-        setQrCode(
-          "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=example"
-        );
-        setMenuUrl(
-          `https://menu.druling.com/${selectedRestaurant?.id}/${selectedBranch?.id}`
-        );
+        setMenuId(result.data.id);
         setShowSuccessModal(true);
       } else {
         const errorMessage =
@@ -296,8 +290,7 @@ const GenerateQR = () => {
       <SuccessModal
         isOpen={showSuccessModal}
         onClose={handleClose}
-        qrCode={qrCode}
-        menuUrl={menuUrl}
+        menuId={menuId}
       />
     </div>
   );

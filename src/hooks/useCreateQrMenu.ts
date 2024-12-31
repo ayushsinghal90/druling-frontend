@@ -18,27 +18,33 @@ export const useCreateQrMenu = () => {
   const createMenu = async (branch: Branch, imagesData: ImageData[]) => {
     setLoading(true);
 
-    const requestUploadMenu: UploadMenu = {
-      branch_id: branch.id || "",
-      files: imagesData.map(
-        (image) =>
-          ({
-            file_key: image.file.name,
-            category: image.category,
-            order: image.order,
-          } as UploadMenuImage)
-      ),
-    };
-    const fileToSingedUrlMap = await getSignedUrls(requestUploadMenu);
+    try {
+      const requestUploadMenu: UploadMenu = {
+        branch_id: branch.id || "",
+        files: imagesData.map(
+          (image) =>
+            ({
+              file_key: image.file.name,
+              category: image.category,
+              order: image.order,
+            } as UploadMenuImage)
+        ),
+      };
+      const fileToSingedUrlMap = await getSignedUrls(requestUploadMenu);
 
-    await uploadFilesToS3(getUploadFileRequest(imagesData, fileToSingedUrlMap));
+      await uploadFilesToS3(
+        getUploadFileRequest(imagesData, fileToSingedUrlMap)
+      );
 
-    requestUploadMenu.files.forEach((file) => {
-      file.file_key = fileToSingedUrlMap[file.file_key].new_file_key;
-    });
+      requestUploadMenu.files.forEach((file) => {
+        file.file_key = fileToSingedUrlMap[file.file_key].new_file_key;
+      });
 
-    const response = await createQrMenu(requestUploadMenu).unwrap();
-    return response;
+      const response = await createQrMenu(requestUploadMenu).unwrap();
+      return response;
+    } finally {
+      setLoading(false);
+    }
   };
 
   const getUploadFileRequest = (
