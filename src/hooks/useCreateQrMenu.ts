@@ -3,7 +3,7 @@ import {
   useCreateQrMenuMutation,
   useGetUploadUrlMutation,
 } from "../store/services/qrMenuApi";
-import { UploadUrl } from "../types/request";
+import { UploadMenu } from "../types/request";
 import { useUploadFileMutation } from "../store/services/fileUpload";
 import { QrMenu } from "../types";
 
@@ -19,7 +19,7 @@ export const useCreateQrMenu = () => {
     setError(null);
 
     try {
-      const requestUploadUrl: UploadUrl = {
+      const requestUploadUrl: UploadMenu = {
         file_key: menuData.file_key,
       };
       const uploadUrlData = await getUploadUrl(requestUploadUrl).unwrap();

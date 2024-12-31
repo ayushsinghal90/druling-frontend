@@ -1,11 +1,11 @@
 import { AuthTokens, AuthResponse, RefreshTokenResponse } from "./auth";
 import { ApiResponse } from "./apiResponse";
-import { SignedUrlMenuUpload } from "./qrMenu";
+import { SignedUrl } from "./singnedUrl";
 
 export type {
   ApiResponse,
   AuthTokens,
   AuthResponse,
   RefreshTokenResponse,
-  SignedUrlMenuUpload,
+  SignedUrl,
 };
