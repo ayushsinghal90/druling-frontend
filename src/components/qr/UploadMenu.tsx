@@ -7,6 +7,7 @@ import { validateFile } from "./utils/useValidateFile";
 interface UploadMenuProps {
   restaurant: Restaurant;
   branch: Branch;
+  imagesData: ImageData[];
   onUpload: (imagesData: ImageData[]) => void;
 }
 
@@ -55,23 +56,28 @@ const Item = ({
   );
 };
 
-const UploadMenu = ({ restaurant, branch, onUpload }: UploadMenuProps) => {
-  const [images, setImages] = useState<ImageData[]>([{} as ImageData]);
+const UploadMenu = ({
+  restaurant,
+  branch,
+  imagesData,
+  onUpload,
+}: UploadMenuProps) => {
+  const [images, setImages] = useState<ImageData[]>(
+    imagesData.length > 0 ? imagesData : [{} as ImageData]
+  );
   const fileInputRefs = useRef<HTMLInputElement[]>([]);
   const [sourceIndex, setSourceIndex] = useState<number | null>(null);
 
   const allowMoreSpots = useCallback(() => {
-    if (
-      images.length === 0 ||
-      images.filter((img) => img.file).length === images.length
-    ) {
-      setImages((prevImages) => [...prevImages, {} as ImageData]);
+    const validFiles = images.filter((img) => img.file);
+    if (images.length === 0 || validFiles.length === images.length) {
+      setImages([...validFiles, {} as ImageData]);
     }
   }, [images]);
 
   useEffect(() => {
     allowMoreSpots();
-  }, [images, allowMoreSpots]);
+  }, [allowMoreSpots]);
 
   const processFiles = useCallback(
     async (files: File[]) => {

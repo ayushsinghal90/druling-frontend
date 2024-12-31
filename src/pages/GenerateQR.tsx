@@ -229,6 +229,7 @@ const GenerateQR = () => {
           <UploadMenu
             restaurant={selectedRestaurant}
             branch={selectedBranch}
+            imagesData={menuDetails.imagesData}
             onUpload={handleMenuUpload}
           />
         ) : null;
