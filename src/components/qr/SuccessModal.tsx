@@ -1,19 +1,34 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { QrCode, X, Download, Share2, Copy, ExternalLink } from "lucide-react";
+import { MenuTypes } from "../menu/utils/MenuTypes";
 
 interface SuccessModalProps {
   isOpen: boolean;
   onClose: () => void;
-  qrCode: string;
-  menuUrl: string;
+  menuId: string;
+  theme: MenuTypes;
 }
 
 const SuccessModal = ({
   isOpen,
   onClose,
-  qrCode,
-  menuUrl,
+  menuId,
+  theme,
 }: SuccessModalProps) => {
+  const [menuUrl, setMenuUrl] = useState<string>("");
+  const [qrCode, setQrCode] = useState<string>("");
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const url = `${window.location.origin}/menu/${menuId}?theme=${theme}`;
+
+    setQrCode(
+      `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${url}`
+    );
+    setMenuUrl(url);
+  }, [isOpen, menuId, setMenuUrl, setQrCode, theme]);
+
   if (!isOpen) return null;
 
   const handleClose = (e: React.MouseEvent) => {

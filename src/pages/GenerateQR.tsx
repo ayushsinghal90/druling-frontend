@@ -16,10 +16,13 @@ import {
   RestaurantProvider,
   useRestaurant,
 } from "../contexts/RestaurantContext";
-import { Restaurant, Branch, QrMenu } from "../types";
+import { Restaurant, Branch } from "../types";
 import { useCreateQrMenu } from "../hooks/useCreateQrMenu";
 import { toast } from "react-toastify";
 import { ImageData } from "../components/qr/utils/ImageData";
+import LoadingScreen from "../components/common/LoadingScreen";
+import { MenuTypes } from "../components/menu/utils/MenuTypes";
+import { MenuDetails } from "../components/qr/utils/MenuDetails";
 
 interface Step {
   number: number;
@@ -102,7 +105,7 @@ const GenerateQR = () => {
   const [searchParams] = useSearchParams();
   const { restaurantId, branchId } = useParams();
   const { restaurants } = useRestaurant();
-  const { createMenu, loading, error } = useCreateQrMenu();
+  const { createMenu, loading } = useCreateQrMenu();
 
   const [currentStep, setCurrentStep] = useState(() => {
     return restaurantId && branchId ? 2 : 1;
@@ -125,11 +128,12 @@ const GenerateQR = () => {
     return null;
   });
 
-  const [menuImage, setMenuImage] = useState<string>("");
-  const [uploadedFiles, setUploadedFiles] = useState<ImageData[]>([]);
+  const [menuDetails, setMenuDetails] = useState<MenuDetails>({
+    theme: MenuTypes.DEFAULT,
+    imagesData: [],
+  });
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [qrCode, setQrCode] = useState<string>("");
-  const [menuUrl, setMenuUrl] = useState<string>("");
+  const [menuId, setMenuId] = useState<string>("");
 
   const isAddMenu = searchParams.get("type") === "menu" || !!restaurantId;
 
@@ -157,47 +161,48 @@ const GenerateQR = () => {
   };
 
   const handleMenuUpload = (imagesData: ImageData[]) => {
-    setUploadedFiles(imagesData);
+    menuDetails.imagesData = imagesData;
+    setMenuDetails(menuDetails);
     setCurrentStep(3);
   };
 
   const handlePublish = async () => {
-    if (!uploadedFiles.length) {
+    if (!menuDetails.imagesData.length) {
       toast.error("No file uploaded.");
       return;
     }
 
-    // try {
-    //   const menuData: QrMenu = {
-    //     branch_id: selectedBranch?.id || "",
-    //     file_key: uploadedFile.name,
-    //   };
-    //   const result = await createMenu(menuData, uploadedFile);
+    if (!selectedBranch) {
+      toast.error("No branch selected.");
+      return;
+    }
 
-    //   if (result?.success) {
-    //     setQrCode(
-    //       "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=example"
-    //     );
-    //     setMenuUrl(
-    //       `https://menu.druling.com/${selectedRestaurant?.id}/${selectedBranch?.id}`
-    //     );
-    //     setShowSuccessModal(true);
-    //   } else {
-    //     const errorMessage =
-    //       typeof result?.message === "string"
-    //         ? result.message
-    //         : "An unexpected error occurred.";
-    //     toast.error(errorMessage);
-    //   }
-    // } catch (error) {
-    //   console.error("Error submitting form:", error);
-    //   toast.error("An unexpected error occurred.");
-    // }
+    try {
+      const result = await createMenu(selectedBranch, menuDetails.imagesData);
+
+      if (result?.success) {
+        setMenuId(result.data.id);
+        setShowSuccessModal(true);
+      } else {
+        const errorMessage =
+          typeof result?.message === "string"
+            ? result.message
+            : "An unexpected error occurred.";
+        toast.error(errorMessage);
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast.error("An unexpected error occurred.");
+    }
   };
 
   const handleClose = () => {
     navigate("/dashboard/restaurants");
   };
+
+  if (loading) {
+    return <LoadingScreen />;
+  }
 
   const handleBack = () => {
     if (currentStep > 1) {
@@ -232,7 +237,7 @@ const GenerateQR = () => {
           <PreviewStep
             restaurant={selectedRestaurant}
             branch={selectedBranch}
-            imagesData={uploadedFiles}
+            menuDetails={menuDetails}
             onSubmit={handlePublish}
             onBack={() => setCurrentStep(2)}
           />
@@ -291,8 +296,8 @@ const GenerateQR = () => {
       <SuccessModal
         isOpen={showSuccessModal}
         onClose={handleClose}
-        qrCode={qrCode}
-        menuUrl={menuUrl}
+        menuId={menuId}
+        theme={menuDetails.theme}
       />
     </div>
   );
