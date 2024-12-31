@@ -24,7 +24,7 @@ export const qrMenuApi = createApi({
     }),
     getAllMenus: builder.query<ApiResponse<MenuData[]>, void>({
       query: () => ({
-        url: "/menu/qr/list/",
+        url: "/menu/qr/",
         method: "GET",
       }),
     }),

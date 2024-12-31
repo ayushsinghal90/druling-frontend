@@ -1,41 +1,37 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { QrCode, Download, Share2 } from "lucide-react";
 import DashboardLayout from "../../components/dashboard/DashboardLayout";
-import GenerateQRModal from "../../components/qr/GenerateQRModal";
+import { useGetAllMenusQuery } from "../../store/services/qrMenuApi";
+import LoadingScreen from "../../components/common/LoadingScreen";
+import { MenuData } from "../../types";
 
-const qrCodes = [
-  {
-    id: 1,
-    name: "Main Menu",
-    description: "Primary restaurant menu QR code",
-    scans: 1234,
-    lastUpdated: "2024-03-15",
-  },
-  {
-    id: 2,
-    name: "Table Service",
-    description: "QR code for table-specific ordering",
-    scans: 856,
-    lastUpdated: "2024-03-14",
-  },
-  {
-    id: 3,
-    name: "Special Offers",
-    description: "Promotional menu and deals",
-    scans: 432,
-    lastUpdated: "2024-03-13",
-  },
-];
+const QRCode = ({ menu }: { menu: MenuData }) => {
+  // ?theme=${theme}
+  const url = `${window.location.origin}/menu/${menu.id}`;
+  const code = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${url}`;
+
+  return <img src={code} alt="Menu QR Code" className="h-full w-full" />;
+};
 
 const QRCodes = () => {
   const navigate = useNavigate();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const restaurantName = "The Fine Diner"; // For demo purposes
+  const [menuData, setMenuData] = useState<MenuData[]>([]);
+  const { data: qrCodesResponse, isLoading } = useGetAllMenusQuery();
 
   const handleGenerateQR = () => {
     navigate("/qr/generate");
   };
+
+  useEffect(() => {
+    if (qrCodesResponse?.success) {
+      setMenuData(qrCodesResponse.data);
+    }
+  }, [qrCodesResponse]);
+
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
 
   return (
     <DashboardLayout>
@@ -57,17 +53,19 @@ const QRCodes = () => {
         </div>
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {qrCodes.map((qr) => (
+          {menuData.map((data) => (
             <div
-              key={qr.id}
+              key={data.id}
               className="relative overflow-hidden rounded-xl bg-white p-6 shadow-sm hover:shadow-md transition-all duration-200"
             >
               <div className="flex justify-between items-start">
                 <div className="flex-1">
                   <h3 className="text-lg font-semibold text-gray-900">
-                    {qr.name}
+                    {data.branch?.name}
                   </h3>
-                  <p className="mt-1 text-sm text-gray-500">{qr.description}</p>
+                  <p className="mt-1 text-sm text-gray-500">
+                    {data.branch?.description}
+                  </p>
                 </div>
                 <div className="flex space-x-2">
                   <button className="rounded-lg p-2 text-gray-400 hover:bg-gray-50 hover:text-gray-600 transition-colors duration-200">
@@ -81,7 +79,7 @@ const QRCodes = () => {
 
               <div className="mt-6 flex justify-center">
                 <div className="h-48 w-48 bg-gray-100 rounded-lg flex items-center justify-center">
-                  <QrCode className="h-32 w-32 text-gray-400" />
+                  <QRCode menu={data} />
                 </div>
               </div>
 
@@ -91,25 +89,19 @@ const QRCodes = () => {
                     Total Scans
                   </p>
                   <p className="mt-1 text-lg font-semibold text-gray-900">
-                    {qr.scans}
+                    {2}
                   </p>
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-500">
                     Last Updated
                   </p>
-                  <p className="mt-1 text-sm text-gray-900">{qr.lastUpdated}</p>
+                  <p className="mt-1 text-sm text-gray-900">{data.updatedAt}</p>
                 </div>
               </div>
             </div>
           ))}
         </div>
-
-        <GenerateQRModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          restaurantName={restaurantName}
-        />
       </div>
     </DashboardLayout>
   );
