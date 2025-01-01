@@ -6,7 +6,7 @@ import { getStoredTokens } from "../utils/auth";
 
 export const useAuth = () => {
   const dispatch = useDispatch();
-  const { user, isAuthenticated } = useSelector(
+  const { profile, isAuthenticated } = useSelector(
     (state: RootState) => state.auth
   );
   const [loading, setLoading] = useState(true);
@@ -26,5 +26,5 @@ export const useAuth = () => {
     setLoading(false); // Authentication check is complete
   }, [dispatch]);
 
-  return { user, isAuthenticated, loading };
+  return { profile, isAuthenticated, loading };
 };

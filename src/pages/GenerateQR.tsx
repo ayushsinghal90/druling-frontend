@@ -104,7 +104,7 @@ const GenerateQR = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { restaurantId, branchId } = useParams();
-  const { restaurants } = useRestaurant();
+  const { restaurants, restaurantsExists } = useRestaurant();
   const { createMenu, loading } = useCreateQrMenu();
 
   const [currentStep, setCurrentStep] = useState(() => {
@@ -202,6 +202,10 @@ const GenerateQR = () => {
   const handleClose = () => {
     navigate("/dashboard/restaurants");
   };
+
+  if (!restaurantsExists) {
+    navigate("/dashboard/restaurants");
+  }
 
   if (loading) {
     return <LoadingScreen />;

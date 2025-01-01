@@ -1,33 +1,39 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AuthTokens } from "../../types/response";
-import { User } from "../../types";
-import { storeTokens, clearTokens } from "../../utils/auth";
+import { Profile } from "../../types";
+import { storeTokens, clearTokens, getStoredTokens } from "../../utils/auth";
+
+// Get initial state from localStorage if available
+const getInitialState = (): AuthState => {
+  const storedTokens = getStoredTokens();
+  const storedProfile = localStorage.getItem("userProfile");
+
+  return {
+    profile: storedProfile ? JSON.parse(storedProfile) : null,
+    accessToken: storedTokens?.access || null,
+    refreshToken: storedTokens?.refresh || null,
+    isAuthenticated: !!storedTokens?.access,
+  };
+};
 
 interface AuthState {
-  user: User | null;
+  profile: Profile | null;
   accessToken: string | null;
   refreshToken: string | null;
   isAuthenticated: boolean;
 }
 
-const initialState: AuthState = {
-  user: null,
-  accessToken: null,
-  refreshToken: null,
-  isAuthenticated: false,
-};
-
 const authSlice = createSlice({
   name: "auth",
-  initialState,
+  initialState: getInitialState(),
   reducers: {
     setCredentials: (
       state,
-      action: PayloadAction<{ user?: User; tokens: AuthTokens }>
+      action: PayloadAction<{ profile?: Profile; tokens: AuthTokens }>
     ) => {
-      const { user, tokens } = action.payload;
-      if (user) {
-        state.user = user;
+      const { profile, tokens } = action.payload;
+      if (profile) {
+        state.profile = profile;
       }
       state.accessToken = tokens.access;
       state.refreshToken = tokens.refresh;
@@ -35,7 +41,7 @@ const authSlice = createSlice({
       storeTokens(tokens);
     },
     logout: (state) => {
-      state.user = null;
+      state.profile = null;
       state.accessToken = null;
       state.refreshToken = null;
       state.isAuthenticated = false;

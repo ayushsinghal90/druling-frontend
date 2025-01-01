@@ -80,7 +80,10 @@ const PreviewStep = ({
           Back
         </button>
         <button
-          onClick={onSubmit}
+          onClick={() => {
+            localStorage.removeItem("menuData");
+            onSubmit();
+          }}
           className="inline-flex items-center rounded-lg bg-black px-4 py-2 text-sm font-medium text-white hover:bg-gray-800 transition-colors duration-200"
         >
           Publish Menu
