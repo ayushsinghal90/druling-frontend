@@ -2,7 +2,7 @@ import { fetchBaseQuery, BaseQueryFn } from "@reduxjs/toolkit/query/react";
 import { RefreshTokenResponse } from "../../types/response";
 import { config } from "../../config/env";
 import { RootState } from "../index";
-import { setCredentials, logout } from "../slices/authSlice";
+import { setCredentials } from "../slices/authSlice";
 import { getStoredTokens } from "../../utils/auth";
 
 export const baseQuery = fetchBaseQuery({
@@ -29,33 +29,36 @@ export const baseQueryWithReauth: BaseQueryFn = async (
     const { refresh } = getStoredTokens();
 
     if (!refresh) {
-      api.dispatch(logout());
-      return result;
+      window.location.replace("/logout");
     }
 
-    const refreshResult = await baseQuery(
-      {
-        url: "/token/refresh/",
-        method: "POST",
-        body: { refresh },
-      },
-      api,
-      extraOptions
-    );
-
-    if (refreshResult.data) {
-      const data = refreshResult.data as RefreshTokenResponse;
-      api.dispatch(
-        setCredentials({
-          tokens: {
-            access: data.access,
-            refresh: data.refresh,
-          },
-        })
+    try {
+      const refreshResult = await baseQuery(
+        {
+          url: "/token/refresh/",
+          method: "POST",
+          body: { refresh },
+        },
+        api,
+        extraOptions
       );
-      result = await baseQuery(args, api, extraOptions);
-    } else {
-      api.dispatch(logout());
+
+      if (refreshResult.data) {
+        const data = refreshResult.data as RefreshTokenResponse;
+        api.dispatch(
+          setCredentials({
+            tokens: {
+              access: data.access,
+              refresh: data.refresh,
+            },
+          })
+        );
+        result = await baseQuery(args, api, extraOptions);
+      } else {
+        window.location.replace("/logout");
+      }
+    } catch {
+      window.location.replace("/logout");
     }
   }
 

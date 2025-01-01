@@ -1,33 +1,30 @@
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { useLogoutMutation } from "../../store/services/authApi";
-import { logout } from "../../store/slices/authSlice";
+import { useLogout } from "../../hooks/useLogout";
+import LoadingScreen from "../../components/common/LoadingScreen";
 
 const Logout = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const [logoutApi] = useLogoutMutation();
+  const { logoutUser, isLoading } = useLogout();
+
+  const handleLogout = useCallback(async () => {
+    try {
+      await logoutUser();
+    } catch (error) {
+      console.error("Logout error:", error);
+    } finally {
+      navigate("/login", { replace: true });
+    }
+  }, [logoutUser, navigate]);
 
   useEffect(() => {
-    const performLogout = async () => {
-      try {
-        // Call logout API endpoint
-        await logoutApi().unwrap();
-      } catch (error) {
-        console.error("Logout API error:", error);
-      } finally {
-        // Clear local auth state regardless of API success
-        dispatch(logout());
-        // Redirect to login page
-        navigate("/login", { replace: true });
-      }
-    };
+    handleLogout();
+  }, [handleLogout]);
 
-    performLogout();
-  }, [dispatch, navigate, logoutApi]);
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
 
-  // Return null as this is just a functional component
   return null;
 };
 
