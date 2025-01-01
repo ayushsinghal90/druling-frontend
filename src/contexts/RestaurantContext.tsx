@@ -6,6 +6,7 @@ import LoadingScreen from "../components/common/LoadingScreen";
 
 interface RestaurantContextType {
   restaurants: Restaurant[];
+  restaurantsExists: boolean;
   selectedRestaurant: Restaurant | null;
   selectRestaurant: (restaurant: Restaurant) => void;
   addBranch: (restaurantId: string) => void;
@@ -29,12 +30,17 @@ export const RestaurantProvider: React.FC<{ children: React.ReactNode }> = ({
     refetch,
   } = useGetAllRestaurantsQuery();
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
+  const [restaurantsExists, setRestaurantsExists] = useState<boolean>(true);
   const [selectedRestaurant, setSelectedRestaurant] =
     useState<Restaurant | null>(null);
 
   // Update restaurants state when data is fetched
   useEffect(() => {
     if (restaurantsData?.data) {
+      if (restaurantsData.data.length === 0) {
+        setRestaurantsExists(false);
+      }
+
       setRestaurants(restaurantsData.data);
       setSelectedRestaurant(restaurantsData.data[0] || null); // Set the first restaurant as selected
     }
@@ -88,6 +94,7 @@ export const RestaurantProvider: React.FC<{ children: React.ReactNode }> = ({
     <RestaurantContext.Provider
       value={{
         restaurants,
+        restaurantsExists,
         selectedRestaurant,
         selectRestaurant,
         addBranch,
