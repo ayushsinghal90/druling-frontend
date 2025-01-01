@@ -83,7 +83,7 @@ const QRCodes = () => {
     window.open(`/menu/${data.id}?theme=${data.theme}`, "_blank");
   };
 
-  if (isLoading || !menuData.length || !Object.keys(qrToMenuMap).length) {
+  if (isLoading && (!menuData.length || !Object.keys(qrToMenuMap).length)) {
     return <LoadingScreen />;
   }
 
