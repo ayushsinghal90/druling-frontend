@@ -1,4 +1,4 @@
-import { User } from "../user";
+import { Profile } from "../profile";
 
 export interface AuthTokens {
   access: string;
@@ -6,7 +6,7 @@ export interface AuthTokens {
 }
 
 export interface AuthResponse {
-  payload: User;
+  profile: Profile;
   access: string;
   refresh: string;
 }

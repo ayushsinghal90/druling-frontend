@@ -25,7 +25,7 @@ const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [allowSave, setAllowSave] = useState(false);
-  const { user, loading } = useAuth();
+  const { profile, loading } = useAuth();
 
   const {
     register,
@@ -38,10 +38,10 @@ const Profile = () => {
   } = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
-      email: "",
-      phone: "",
+      firstName: profile?.first_name || "",
+      lastName: profile?.last_name || "",
+      email: profile?.contact_info?.email || "",
+      phone: profile?.contact_info?.phone_number || "",
       avatarUrl: "",
     },
     mode: "onSubmit",
@@ -51,9 +51,9 @@ const Profile = () => {
   const isFormChanged = useCallback(() => {
     const currentValues = getValues();
     const initialValues = {
-      firstName: user?.first_name || "",
-      lastName: user?.last_name || "",
-      email: user?.email || "",
+      firstName: profile?.first_name || "",
+      lastName: profile?.last_name || "",
+      email: profile?.contact_info?.email || "",
       phone: "",
       avatarUrl: "",
     };
@@ -65,20 +65,19 @@ const Profile = () => {
         String(initialValues[typedKey]).trim()
       );
     });
-  }, [getValues, user]);
+  }, [getValues, profile]);
 
   useEffect(() => {
-    console.log("User:", user);
-    if (user) {
+    if (profile) {
       reset({
-        firstName: user?.first_name || "",
-        lastName: user?.last_name || "",
-        email: user?.email || "",
-        phone: "",
+        firstName: profile?.first_name || "",
+        lastName: profile?.last_name || "",
+        email: profile?.contact_info?.email || "",
+        phone: profile?.contact_info?.phone_number || "",
         avatarUrl: "",
       });
     }
-  }, [user, reset]);
+  }, [profile, reset]);
 
   useEffect(() => {
     const subscription = watch(() => {
@@ -195,6 +194,7 @@ const Profile = () => {
                     </label>
                     <input
                       {...register("firstName")}
+                      placeholder="John"
                       disabled={!isEditing}
                       className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:border-black focus:outline-none focus:ring-1 focus:ring-black disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm"
                     />
@@ -215,6 +215,7 @@ const Profile = () => {
                     </label>
                     <input
                       {...register("lastName")}
+                      placeholder="Smith"
                       disabled={!isEditing}
                       className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:border-black focus:outline-none focus:ring-1 focus:ring-black disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm"
                     />
@@ -237,6 +238,7 @@ const Profile = () => {
                   <input
                     {...register("email")}
                     type="email"
+                    placeholder="john.smith@example.com"
                     disabled={!isEditing}
                     className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:border-black focus:outline-none focus:ring-1 focus:ring-black disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm"
                   />
@@ -258,6 +260,7 @@ const Profile = () => {
                   <input
                     {...register("phone")}
                     onChange={handlePhoneChange}
+                    placeholder="+91 98765 43210"
                     disabled={!isEditing}
                     className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:border-black focus:outline-none focus:ring-1 focus:ring-black disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm"
                   />

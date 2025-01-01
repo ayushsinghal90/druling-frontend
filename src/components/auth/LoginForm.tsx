@@ -82,10 +82,10 @@ const LoginForm = () => {
       }).unwrap();
 
       if (result.success) {
-        const { payload, access, refresh } = result.data;
+        const { profile, access, refresh } = result.data;
         dispatch(
           setCredentials({
-            user: payload,
+            profile,
             tokens: { access, refresh },
           })
         );
