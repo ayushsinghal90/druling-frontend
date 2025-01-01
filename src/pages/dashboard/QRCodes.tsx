@@ -1,40 +1,89 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { QrCode, Download, Share2 } from "lucide-react";
+import { QrCode, Download, Share2, Eye } from "lucide-react";
 import DashboardLayout from "../../components/dashboard/DashboardLayout";
 import { useGetAllMenusQuery } from "../../store/services/qrMenuApi";
 import LoadingScreen from "../../components/common/LoadingScreen";
 import { MenuData } from "../../types";
 import ActionRequired from "../../components/common/ActionRequired";
-
-const QRCode = ({ menu }: { menu: MenuData }) => {
-  const url = `${window.location.origin}/menu/${menu.id}?theme=${menu.theme}`;
-  const code = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${url}`;
-
-  return <img src={code} alt="Menu QR Code" className="h-full w-full" />;
-};
+import { toast } from "react-toastify";
+import { QRCode } from "react-qrcode-logo";
 
 const QRCodes = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [menuData, setMenuData] = useState<MenuData[]>([]);
+  const [qrToMenuMap, setQrToMenuMap] = useState<{
+    [key: string]: { url: string };
+  }>({});
   const { data: qrCodesResponse, isLoading, refetch } = useGetAllMenusQuery();
 
-  const handleGenerateQR = () => {
-    navigate("/qr/generate");
-  };
+  const setQrCodes = useCallback(() => {
+    const qrToMenu = menuData.reduce(
+      (acc: { [key: string]: { url: string } }, menu) => {
+        const url = `${window.location.origin}/menu/${menu.id}?theme=${menu.theme}`;
+        acc[menu.id] = { url: url };
+        return acc;
+      },
+      {}
+    );
+
+    setQrToMenuMap(qrToMenu);
+  }, [menuData]);
 
   useEffect(() => {
     if (qrCodesResponse?.success) {
       setMenuData(qrCodesResponse.data);
     }
-  }, [qrCodesResponse]);
+    setQrCodes();
+  }, [qrCodesResponse, setQrCodes]);
 
   useEffect(() => {
     refetch();
   }, [location, refetch]);
 
-  if (isLoading) {
+  const handleGenerateQR = () => {
+    navigate("/qr/generate");
+  };
+
+  const handleShare = async (data: MenuData) => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: "Menu QR Code",
+          text: `Check out the menu for ${data.branch?.name}`,
+          url: qrToMenuMap[data.id].url,
+        });
+      } catch (error) {
+        if (error instanceof Error && error.name !== "AbortError") {
+          toast.error("Error while sharing");
+        }
+      }
+    } else {
+      toast.error("Share not supported on this browser");
+    }
+  };
+
+  const handleDownload = (data: MenuData) => {
+    const canvas = document
+      .getElementById(`qr-canvas-${data.id}`)
+      ?.querySelector("canvas");
+    if (canvas) {
+      const url = canvas.toDataURL("image/png");
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${data.branch?.name}-QRCode.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
+
+  const handleView = (data: MenuData) => {
+    window.open(`/menu/${data.id}?theme=${data.theme}`, "_blank");
+  };
+
+  if (isLoading || !menuData.length || !Object.keys(qrToMenuMap).length) {
     return <LoadingScreen />;
   }
 
@@ -88,10 +137,22 @@ const QRCodes = () => {
                   </p>
                 </div>
                 <div className="flex space-x-2">
-                  <button className="rounded-lg p-2 text-gray-400 hover:bg-gray-50 hover:text-gray-600 transition-colors duration-200">
+                  <button
+                    onClick={() => handleView(data)}
+                    className="rounded-lg p-2 text-gray-400 hover:bg-gray-50 hover:text-gray-600 transition-colors duration-200"
+                  >
+                    <Eye className="h-5 w-5" />
+                  </button>
+                  <button
+                    className="rounded-lg p-2 text-gray-400 hover:bg-gray-50 hover:text-gray-600 transition-colors duration-200"
+                    onClick={() => handleShare(data)}
+                  >
                     <Share2 className="h-5 w-5" />
                   </button>
-                  <button className="rounded-lg p-2 text-gray-400 hover:bg-gray-50 hover:text-gray-600 transition-colors duration-200">
+                  <button
+                    className="rounded-lg p-2 text-gray-400 hover:bg-gray-50 hover:text-gray-600 transition-colors duration-200"
+                    onClick={() => handleDownload(data)}
+                  >
                     <Download className="h-5 w-5" />
                   </button>
                 </div>
@@ -99,7 +160,17 @@ const QRCodes = () => {
 
               <div className="mt-6 flex justify-center">
                 <div className="h-48 w-48 bg-gray-100 rounded-lg flex items-center justify-center">
-                  <QRCode menu={data} />
+                  <div id={`qr-canvas-${data.id}`}>
+                    <QRCode
+                      value={qrToMenuMap[data.id].url}
+                      size={192}
+                      logoPaddingStyle="circle"
+                      qrStyle="dots"
+                      eyeRadius={8}
+                      bgColor="#ffffff"
+                      fgColor="#000000"
+                    />
+                  </div>
                 </div>
               </div>
 

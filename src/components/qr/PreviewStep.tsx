@@ -35,6 +35,7 @@ const PreviewStep = ({
           order: image.order,
           category: image.category,
         })),
+      theme: "",
     },
   };
 

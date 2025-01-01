@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { QrCode, X, Download, Share2, Copy, ExternalLink } from "lucide-react";
 import { MenuTypes } from "../menu/utils/MenuTypes";
+import { QRCode } from "react-qrcode-logo";
 
 interface SuccessModalProps {
   isOpen: boolean;
@@ -16,18 +17,13 @@ const SuccessModal = ({
   theme,
 }: SuccessModalProps) => {
   const [menuUrl, setMenuUrl] = useState<string>("");
-  const [qrCode, setQrCode] = useState<string>("");
 
   useEffect(() => {
     if (!isOpen) return;
 
     const url = `${window.location.origin}/menu/${menuId}?theme=${theme}`;
-
-    setQrCode(
-      `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${url}`
-    );
     setMenuUrl(url);
-  }, [isOpen, menuId, setMenuUrl, setQrCode, theme]);
+  }, [isOpen, menuId, theme]);
 
   if (!isOpen) return null;
 
@@ -95,10 +91,13 @@ const SuccessModal = ({
             <div className="mt-8">
               <div className="relative mx-auto w-48">
                 <div className="aspect-square overflow-hidden rounded-xl bg-white p-2 shadow-lg ring-1 ring-gray-100">
-                  <img
-                    src={qrCode}
-                    alt="Menu QR Code"
-                    className="h-full w-full"
+                  <QRCode
+                    value={menuUrl}
+                    logoPaddingStyle="circle"
+                    qrStyle="dots"
+                    eyeRadius={8}
+                    bgColor="#ffffff"
+                    fgColor="#000000"
                   />
                 </div>
                 {/* Action buttons */}
