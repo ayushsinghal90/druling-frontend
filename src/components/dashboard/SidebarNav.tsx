@@ -26,7 +26,7 @@ interface SidebarNavProps {
 
 const SidebarNav = ({ isExpanded }: SidebarNavProps) => {
   const location = useLocation();
-  const { user } = useAuth();
+  const { profile } = useAuth();
 
   return (
     <nav className={`flex flex-col justify-between p-3`}>
@@ -43,7 +43,7 @@ const SidebarNav = ({ isExpanded }: SidebarNavProps) => {
         >
           <div className="ml-1">
             <UserAvatar
-              imageUrl={user?.avatar_url}
+              imageUrl={profile?.avatar_url}
               size="sm"
               className="items-center flex-shrink-0"
             />
@@ -55,8 +55,8 @@ const SidebarNav = ({ isExpanded }: SidebarNavProps) => {
                 : "opacity-0"
             }`}
           >
-            {user?.first_name
-              ? `${user?.first_name} ${user?.last_name}`
+            {profile?.first_name
+              ? `${profile?.first_name} ${profile?.last_name}`
               : "Profile"}
           </span>
           {!isExpanded && (

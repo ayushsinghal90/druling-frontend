@@ -20,7 +20,7 @@ export const useGoogleAuth = () => {
         const { payload, access, refresh } = result.data;
         dispatch(
           setCredentials({
-            user: payload,
+            profile: payload,
             tokens: { access, refresh },
           })
         );
