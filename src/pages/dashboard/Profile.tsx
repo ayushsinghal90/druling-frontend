@@ -11,6 +11,8 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useUpdateProfileMutation } from "../../store/services/profileApi";
 import { Profile as ProfileType } from "../../types";
+import { useDispatch } from "react-redux";
+import { setProfile } from "../../store/slices/authSlice";
 
 // Define schema for form validation
 const formSchema = z.object({
@@ -29,6 +31,7 @@ const Profile = () => {
   const [allowSave, setAllowSave] = useState(false);
   const { profile, loading } = useAuth();
   const [updateProfile] = useUpdateProfileMutation();
+  const dispatch = useDispatch();
 
   const {
     register,
@@ -105,6 +108,7 @@ const Profile = () => {
       const response = await updateProfile(updateRequest).unwrap();
 
       if (response.success) {
+        dispatch(setProfile(response.data));
         toast.success("Profile updated successfully!");
       } else {
         toast.error("Failed to update profile");

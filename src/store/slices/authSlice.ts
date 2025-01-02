@@ -33,6 +33,10 @@ const authSlice = createSlice({
   name: "auth",
   initialState: getInitialState(),
   reducers: {
+    setProfile: (state, action: PayloadAction<Profile>) => {
+      state.profile = action.payload;
+      storeProfile(action.payload as Profile);
+    },
     setCredentials: (
       state,
       action: PayloadAction<{ profile?: Profile; tokens: AuthTokens }>
@@ -42,6 +46,7 @@ const authSlice = createSlice({
         state.profile = profile;
         storeProfile(profile as Profile);
       }
+
       state.accessToken = tokens.access;
       state.refreshToken = tokens.refresh;
       state.isAuthenticated = true;
@@ -57,5 +62,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { setCredentials, logout } = authSlice.actions;
+export const { setProfile, setCredentials, logout } = authSlice.actions;
 export default authSlice.reducer;
