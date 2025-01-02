@@ -1,5 +1,6 @@
 import { jwtDecode } from "jwt-decode";
 import { AuthTokens } from "../types/response";
+import { Profile } from "../types";
 
 interface JWTPayload {
   exp: number;
@@ -35,6 +36,10 @@ export const storeTokens = (tokens: AuthTokens): void => {
   );
 };
 
+export const storeProfile = (profile: Profile): void => {
+  localStorage.setItem("profile", JSON.stringify(profile));
+};
+
 export const getStoredTokens = (): Partial<AuthTokens> => {
   return {
     access: localStorage.getItem("accessToken") || undefined,
@@ -42,10 +47,16 @@ export const getStoredTokens = (): Partial<AuthTokens> => {
   };
 };
 
-export const clearTokens = (): void => {
+export const clearTokensAndProfile = (): void => {
   localStorage.removeItem("accessToken");
   localStorage.removeItem("refreshToken");
   localStorage.removeItem("tokenExpiration");
+  localStorage.removeItem("profile");
+};
+
+export const getStoredProfile = (): Profile | null => {
+  const profile = localStorage.getItem("profile");
+  return profile ? JSON.parse(profile) : null;
 };
 
 export const createAuthHeaders = (accessToken: string) => ({

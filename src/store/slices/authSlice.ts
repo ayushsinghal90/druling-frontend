@@ -1,15 +1,21 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AuthTokens } from "../../types/response";
 import { Profile } from "../../types";
-import { storeTokens, clearTokens, getStoredTokens } from "../../utils/auth";
+import {
+  storeTokens,
+  clearTokensAndProfile,
+  getStoredTokens,
+  storeProfile,
+  getStoredProfile,
+} from "../../utils/auth";
 
 // Get initial state from localStorage if available
 const getInitialState = (): AuthState => {
   const storedTokens = getStoredTokens();
-  const storedProfile = localStorage.getItem("userProfile");
+  const storedProfile = getStoredProfile();
 
   return {
-    profile: storedProfile ? JSON.parse(storedProfile) : null,
+    profile: storedProfile || null,
     accessToken: storedTokens?.access || null,
     refreshToken: storedTokens?.refresh || null,
     isAuthenticated: !!storedTokens?.access,
@@ -27,6 +33,10 @@ const authSlice = createSlice({
   name: "auth",
   initialState: getInitialState(),
   reducers: {
+    setProfile: (state, action: PayloadAction<Profile>) => {
+      state.profile = action.payload;
+      storeProfile(action.payload as Profile);
+    },
     setCredentials: (
       state,
       action: PayloadAction<{ profile?: Profile; tokens: AuthTokens }>
@@ -34,7 +44,9 @@ const authSlice = createSlice({
       const { profile, tokens } = action.payload;
       if (profile) {
         state.profile = profile;
+        storeProfile(profile as Profile);
       }
+
       state.accessToken = tokens.access;
       state.refreshToken = tokens.refresh;
       state.isAuthenticated = true;
@@ -45,10 +57,10 @@ const authSlice = createSlice({
       state.accessToken = null;
       state.refreshToken = null;
       state.isAuthenticated = false;
-      clearTokens();
+      clearTokensAndProfile();
     },
   },
 });
 
-export const { setCredentials, logout } = authSlice.actions;
+export const { setProfile, setCredentials, logout } = authSlice.actions;
 export default authSlice.reducer;
