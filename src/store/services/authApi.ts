@@ -5,11 +5,11 @@ import {
   ApiResponse,
   RefreshTokenResponse,
 } from "../../types/response";
-import { baseQueryWithReauth } from "./baseQueries";
+import { baseQueryWithoutReauth } from "./baseQueries";
 
 export const authApi = createApi({
   reducerPath: "authApi",
-  baseQuery: baseQueryWithReauth,
+  baseQuery: baseQueryWithoutReauth,
   endpoints: (builder) => ({
     login: builder.mutation<ApiResponse<AuthResponse>, LoginRequest>({
       query: (credentials) => ({

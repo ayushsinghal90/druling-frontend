@@ -1,8 +1,8 @@
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
-import { RootState } from "../store";
-import { setCredentials } from "../store/slices/authSlice";
-import { getStoredTokens } from "../utils/auth";
+import { RootState } from "../../store";
+import { setCredentials } from "../../store/slices/authSlice";
+import { getStoredTokens } from "../../utils/auth";
 
 export const useAuth = () => {
   const dispatch = useDispatch();

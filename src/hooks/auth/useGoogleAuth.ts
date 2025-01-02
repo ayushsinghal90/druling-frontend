@@ -1,8 +1,8 @@
 import { CredentialResponse } from "@react-oauth/google";
 import { useNavigate } from "react-router-dom";
-import { useGoogleLoginMutation } from "../store/services/authApi";
+import { useGoogleLoginMutation } from "../../store/services/authApi";
 import { useDispatch } from "react-redux";
-import { setCredentials } from "../store/slices/authSlice";
+import { setCredentials } from "../../store/slices/authSlice";
 import { toast } from "react-toastify";
 
 export const useGoogleAuth = () => {

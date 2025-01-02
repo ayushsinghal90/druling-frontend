@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { logout } from "../store/slices/authSlice";
-import { getStoredTokens } from "../utils/auth";
-import { useLogoutMutation } from "../store/services/authApi";
+import { logout } from "../../store/slices/authSlice";
+import { getStoredTokens } from "../../utils/auth";
+import { useLogoutMutation } from "../../store/services/authApi";
 
 export const useLogout = () => {
   const dispatch = useDispatch();

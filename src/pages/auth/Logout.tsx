@@ -1,6 +1,6 @@
 import { useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { useLogout } from "../../hooks/useLogout";
+import { useLogout } from "../../hooks/auth/useLogout";
 import LoadingScreen from "../../components/common/LoadingScreen";
 
 const Logout = () => {
@@ -10,8 +10,6 @@ const Logout = () => {
   const handleLogout = useCallback(async () => {
     try {
       await logoutUser();
-    } catch (error) {
-      console.error("Logout error:", error);
     } finally {
       navigate("/login", { replace: true });
     }

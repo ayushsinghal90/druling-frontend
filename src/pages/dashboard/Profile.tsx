@@ -5,7 +5,7 @@ import { User, Lock, Save, Camera } from "lucide-react";
 import { toast } from "react-toastify";
 import DashboardLayout from "../../components/dashboard/DashboardLayout";
 import UserAvatar from "../../components/common/UserAvatar";
-import { useAuth } from "../../hooks/useAuth";
+import { useAuth } from "../../hooks/auth/useAuth";
 import LoadingLogo from "../../components/common/LoadingLogo";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
