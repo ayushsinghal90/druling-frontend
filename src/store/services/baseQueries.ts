@@ -64,3 +64,11 @@ export const baseQueryWithReauth: BaseQueryFn = async (
 
   return result;
 };
+
+export const baseQueryWithoutReauth: BaseQueryFn = async (
+  args,
+  api,
+  extraOptions
+) => {
+  return await baseQuery(args, api, extraOptions);
+};

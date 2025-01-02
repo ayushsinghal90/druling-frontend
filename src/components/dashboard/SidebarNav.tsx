@@ -9,7 +9,7 @@ import {
   Building2,
 } from "lucide-react";
 import UserAvatar from "../common/UserAvatar";
-import { useAuth } from "../../hooks/useAuth";
+import { useAuth } from "../../hooks/auth/useAuth";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },

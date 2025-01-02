@@ -1,4 +1,4 @@
-import { useGoogleAuth } from "../../hooks/useGoogleAuth";
+import { useGoogleAuth } from "../../hooks/auth/useGoogleAuth";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import { config } from "../../config/env";
 

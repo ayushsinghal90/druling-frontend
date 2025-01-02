@@ -90,20 +90,19 @@ const LoginForm = () => {
           })
         );
         navigate(from, { replace: true });
-      }
-    } catch (err: any) {
-      if (err?.data?.code === "USER_NOT_FOUND") {
-        setShowCreateAccount(true);
-        setErrors((prev) => ({
-          ...prev,
-          form: "We couldn't find an account with this email address.",
-        }));
       } else {
+        setShowCreateAccount(true);
         setErrors((prev) => ({
           ...prev,
           form: "Invalid email or password",
         }));
       }
+    } catch {
+      setShowCreateAccount(true);
+      setErrors((prev) => ({
+        ...prev,
+        form: "Invalid email or password",
+      }));
     }
   };
 
