@@ -9,6 +9,8 @@ import { useAuth } from "../../hooks/useAuth";
 import LoadingLogo from "../../components/common/LoadingLogo";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useUpdateProfileMutation } from "../../store/services/profileApi";
+import { Profile as ProfileType } from "../../types";
 
 // Define schema for form validation
 const formSchema = z.object({
@@ -26,6 +28,7 @@ const Profile = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [allowSave, setAllowSave] = useState(false);
   const { profile, loading } = useAuth();
+  const [updateProfile] = useUpdateProfileMutation();
 
   const {
     register,
@@ -91,11 +94,24 @@ const Profile = () => {
   const onSubmit = async (data: FormData) => {
     try {
       setIsSubmitting(true);
-      // API call would go here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API call
-      toast.success("Profile updated successfully!");
+      const updateRequest: ProfileType = {
+        first_name: data.firstName,
+        last_name: data.lastName,
+        contact_info: {
+          email: data.email,
+          phone_number: data.phone,
+        },
+      };
+      const response = await updateProfile(updateRequest).unwrap();
+
+      if (response.success) {
+        toast.success("Profile updated successfully!");
+      } else {
+        toast.error("Failed to update profile");
+      }
+
       setIsEditing(false);
-    } catch (error) {
+    } catch {
       toast.error("Failed to update profile");
     } finally {
       setIsSubmitting(false);
