@@ -1,20 +1,20 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithReauth } from "./baseQueries";
-import { UploadFile } from "../../types/request";
-
-interface SignedUrl {
-  url: string;
-}
+import { FileUploadSignedUrl, UploadFile } from "../../types/request";
+import { ApiResponse, SignedUrl } from "../../types/response";
 
 export const fileUpload = createApi({
   reducerPath: "fileUpload",
   baseQuery: baseQueryWithReauth,
   endpoints: (builder) => ({
-    getSignedUrl: builder.mutation<SignedUrl, string>({
-      query: (fileName) => ({
-        url: "/upload/signed-url/",
+    getSignedUrl: builder.mutation<
+      ApiResponse<SignedUrl[]>,
+      FileUploadSignedUrl
+    >({
+      query: (data) => ({
+        url: "/file/upload_url/",
         method: "POST",
-        body: { fileName },
+        body: data,
       }),
     }),
 

@@ -2,7 +2,7 @@ import { CreateBranch, UpdateBranch } from "./branch";
 import { LoginRequest } from "./login";
 import { RegisterRequest } from "./register";
 import { UploadMenu, UploadMenuImage } from "./uploadMenu";
-import { UploadFile } from "./uploadFile";
+import { UploadFile, FileUploadSignedUrl } from "./uploadFile";
 
 export type {
   RegisterRequest,
@@ -12,4 +12,5 @@ export type {
   UploadMenu,
   UploadFile,
   UploadMenuImage,
+  FileUploadSignedUrl,
 };
