@@ -1,20 +1,24 @@
 import { useState } from "react";
 import { useFileUpload } from "./useFileUpload";
-import { useCreateBranchMutation } from "../store/services/branchApi";
-import { CreateBranchSchema } from "../types/forms/createBranch";
-import { Restaurant } from "../types";
-import { CreateBranch } from "../types/request";
+import {
+  useCreateBranchMutation,
+  useUpdateBranchMutation,
+} from "../store/services/branchApi";
+import { CreateBranchSchema, EditBranchSchema } from "../types/forms/schemas";
+import { Branch, Restaurant } from "../types";
+import { CreateBranch, UpdateBranch } from "../types/request";
 
 export const useCreateBranch = () => {
   const [createBranch] = useCreateBranchMutation();
   const { uploadFiles } = useFileUpload();
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [updateBranch] = useUpdateBranchMutation();
 
   const createBranchOrRestaurant = async (
     selectedRestaurant: Restaurant | null,
     data: CreateBranchSchema
   ) => {
-    setLoading(true);
+    setIsLoading(true);
 
     try {
       const createBranchData: CreateBranch = {
@@ -44,40 +48,72 @@ export const useCreateBranch = () => {
         },
       };
 
-      await uploadRestaurantLogo(data, createBranchData);
-      await uploadBranchLogo(data, createBranchData);
+      await uploadRestaurantLogo(
+        data.restaurant.image,
+        createBranchData.restaurant
+      );
+      await uploadBranchLogo(data.branch.image, createBranchData.branch);
 
       return await createBranch(createBranchData).unwrap();
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
-  const uploadBranchLogo = async (
-    data: CreateBranchSchema,
-    createBranchData: CreateBranch
+  const editBranch = async (
+    selectedBranch: Branch | null,
+    data: EditBranchSchema
   ) => {
-    if (data.branch.image) {
-      const fileToSingedUrlMap = await uploadFiles({}, "branch_logo", [
-        data.branch.image,
-      ]);
-      createBranchData.branch.img_url =
-        fileToSingedUrlMap[data.branch.image.name].new_file_key;
+    setIsLoading(true);
+
+    try {
+      const updateBranchData: UpdateBranch = {
+        branch: {
+          name: data.branch.name,
+          description: data.branch.description,
+        },
+        contact: {
+          email: data.contact.email,
+          phone_number: data.contact.phone,
+        },
+        location: {
+          address: data.location.address,
+          city: data.location.city,
+          state: data.location.state,
+          postal_code: data.location.postalCode,
+          country: data.location.country,
+        },
+      };
+
+      await uploadBranchLogo(data.branch.image, updateBranchData?.branch);
+
+      return await updateBranch({
+        id: selectedBranch?.id || "",
+        data: updateBranchData,
+      }).unwrap();
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const uploadBranchLogo = async (image: File | null, branch: Branch) => {
+    if (image) {
+      const fileToSingedUrlMap = await uploadFiles({}, "branch_logo", [image]);
+      branch.img_url = fileToSingedUrlMap[image.name].new_file_key;
     }
   };
 
   const uploadRestaurantLogo = async (
-    data: CreateBranchSchema,
-    createBranchData: CreateBranch
+    image: File | null,
+    restaurant?: Restaurant
   ) => {
-    if (createBranchData?.restaurant && data.restaurant.image) {
+    if (restaurant && image) {
       const fileToSingedUrlMap = await uploadFiles({}, "restaurant_logo", [
-        data.restaurant.image,
+        image,
       ]);
-      createBranchData.restaurant.img_url =
-        fileToSingedUrlMap[data.restaurant.image.name].new_file_key;
+      restaurant.img_url = fileToSingedUrlMap[image.name].new_file_key;
     }
   };
 
-  return { createBranchOrRestaurant, loading };
+  return { createBranchOrRestaurant, editBranch, isLoading };
 };

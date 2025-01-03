@@ -56,7 +56,7 @@ const AddRestaurant = () => {
   });
 
   const { restaurants } = useRestaurant();
-  const { createBranchOrRestaurant, loading: isLoading } = useCreateBranch();
+  const { createBranchOrRestaurant, isLoading } = useCreateBranch();
 
   useEffect(() => {
     if (restaurantId) {
