@@ -45,7 +45,7 @@ export const useMenuData = (menuId: string | undefined) => {
       restaurant: {
         id: "1",
         name: "The Fine Diner",
-        image_url:
+        img_url:
           "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=500&h=500&fit=crop",
       },
     },

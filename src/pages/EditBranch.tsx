@@ -1,13 +1,12 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { Save, Building2 } from "lucide-react";
+import { Save, Building2, ImageIcon } from "lucide-react";
 import RequireAuth from "../components/auth/RequireAuth";
 import Logo from "../components/common/Logo";
 import { Input } from "../components/ui/Input";
 import { Textarea } from "../components/ui/TextArea";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { Button } from "../components/ui/Button";
 import {
   RestaurantProvider,
@@ -15,9 +14,10 @@ import {
 } from "../contexts/RestaurantContext";
 import { Branch } from "../types";
 import LoadingScreen from "../components/common/LoadingScreen";
-import { useUpdateBranchMutation } from "../store/services/branchApi";
-import { UpdateBranch } from "../types/request";
 import { toast } from "react-toastify";
+import { EditBranchSchema, formSchema } from "../types/forms/editBranch";
+import { useCreateBranch } from "../hooks/useCreateBranch";
+import isEqual from "lodash/isEqual";
 
 // Constants
 const FORM_SECTIONS = {
@@ -25,21 +25,6 @@ const FORM_SECTIONS = {
   CONTACT_INFO: "Contact Information",
   LOCATION_INFO: "Location Information",
 };
-
-// Define schema for form validation
-const formSchema = z.object({
-  name: z.string().min(1, "Branch name is required"),
-  description: z.string().optional(),
-  email: z.string().email("Invalid email address"),
-  phone: z.string().min(1, "Phone number is required"),
-  address: z.string().min(1, "Address is required"),
-  city: z.string().min(1, "City is required"),
-  state: z.string().min(1, "State is required"),
-  postalCode: z.string().min(1, "Postal code is required"),
-  country: z.string().min(1, "Country is required"),
-});
-
-type FormData = z.infer<typeof formSchema>;
 
 const EditBranch = () => {
   const { restaurantId, branchId } = useParams();
@@ -49,20 +34,28 @@ const EditBranch = () => {
   const navigate = useNavigate();
   const { restaurants } = useRestaurant();
 
-  const [updateBranch, { isLoading }] = useUpdateBranchMutation();
+  const [branchLogoImage, setBranchLogoImage] = useState<string>("");
+  const { editBranch, isLoading } = useCreateBranch();
 
-  const form = useForm<FormData>({
+  const form = useForm<EditBranchSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      description: "",
-      email: "",
-      phone: "",
-      address: "",
-      city: "",
-      state: "",
-      postalCode: "",
-      country: "",
+      branch: {
+        name: "",
+        description: "",
+        image: null,
+      },
+      contact: {
+        email: "",
+        phone: "",
+      },
+      location: {
+        address: "",
+        city: "",
+        state: "",
+        postalCode: "",
+        country: "",
+      },
     },
     mode: "onSubmit",
     criteriaMode: "all",
@@ -73,24 +66,41 @@ const EditBranch = () => {
   const isFormChanged = useCallback(() => {
     const currentValues = form.getValues();
     const initialValues = {
-      name: selectedBranch?.name || "",
-      description: selectedBranch?.description || "",
-      email: selectedBranch?.contact_info?.email || "",
-      phone: selectedBranch?.contact_info?.phone_number || "",
-      address: selectedBranch?.location?.address || "",
-      city: selectedBranch?.location?.city || "",
-      state: selectedBranch?.location?.state || "",
-      postalCode: selectedBranch?.location?.postal_code || "",
-      country: selectedBranch?.location?.country || "",
+      branch: {
+        name: selectedBranch?.name || "",
+        description: selectedBranch?.description || "",
+        image: null,
+      },
+      contact: {
+        email: selectedBranch?.contact_info?.email || "",
+        phone: selectedBranch?.contact_info?.phone_number || "",
+      },
+      location: {
+        address: selectedBranch?.location?.address || "",
+        city: selectedBranch?.location?.city || "",
+        state: selectedBranch?.location?.state || "",
+        postalCode: selectedBranch?.location?.postal_code || "",
+        country: selectedBranch?.location?.country || "",
+      },
     };
 
-    return Object.keys(currentValues).some((key) => {
-      const typedKey = key as keyof typeof currentValues; // Type assertion
-      return (
-        String(currentValues[typedKey]).trim() !==
-        String(initialValues[typedKey]).trim()
-      );
-    });
+    const isBranchChanged =
+      !isEqual(
+        { ...currentValues.branch, image: null },
+        initialValues.branch
+      ) || currentValues.branch.image !== initialValues.branch.image;
+
+    const isContactChanged = !isEqual(
+      currentValues.contact,
+      initialValues.contact
+    );
+
+    const isLocationChanged = !isEqual(
+      currentValues.location,
+      initialValues.location
+    );
+
+    return isBranchChanged || isContactChanged || isLocationChanged;
   }, [form, selectedBranch]);
 
   useEffect(() => {
@@ -103,15 +113,22 @@ const EditBranch = () => {
           if (branch) {
             setSelectedBranch(branch);
             reset({
-              name: branch.name || "",
-              description: branch.description || "",
-              email: branch.contact_info?.email || "",
-              phone: branch.contact_info?.phone_number || "",
-              address: branch.location?.address || "",
-              city: branch.location?.city || "",
-              state: branch.location?.state || "",
-              postalCode: branch.location?.postal_code || "",
-              country: branch.location?.country || "",
+              branch: {
+                name: selectedBranch?.name || "",
+                description: selectedBranch?.description || "",
+                image: null,
+              },
+              contact: {
+                email: selectedBranch?.contact_info?.email || "",
+                phone: selectedBranch?.contact_info?.phone_number || "",
+              },
+              location: {
+                address: selectedBranch?.location?.address || "",
+                city: selectedBranch?.location?.city || "",
+                state: selectedBranch?.location?.state || "",
+                postalCode: selectedBranch?.location?.postal_code || "",
+                country: selectedBranch?.location?.country || "",
+              },
             });
             setAllowSave(!isFormChanged());
           } else {
@@ -123,7 +140,15 @@ const EditBranch = () => {
 
       fetchBranch();
     }
-  }, [restaurantId, branchId, restaurants, isFormChanged, navigate, reset]);
+  }, [
+    restaurantId,
+    branchId,
+    restaurants,
+    isFormChanged,
+    navigate,
+    reset,
+    selectedBranch,
+  ]);
 
   useEffect(() => {
     const subscription = watch(() => {
@@ -132,30 +157,9 @@ const EditBranch = () => {
     return () => subscription.unsubscribe();
   }, [watch, isFormChanged]);
 
-  const handleFormSubmit = async (data: FormData) => {
+  const handleFormSubmit = async (data: EditBranchSchema) => {
     try {
-      const updateBranchData: UpdateBranch = {
-        branch: {
-          name: data.name,
-          description: data.description,
-        },
-        contact: {
-          email: data.email,
-          phone_number: data.phone,
-        },
-        location: {
-          address: data.address,
-          city: data.city,
-          state: data.state,
-          postal_code: data.postalCode,
-          country: data.country,
-        },
-      };
-
-      const result = await updateBranch({
-        id: selectedBranch?.id || "",
-        data: updateBranchData,
-      }).unwrap();
+      const result = await editBranch(selectedBranch, data);
 
       if (result?.success) {
         navigate("/dashboard/restaurants");
@@ -169,6 +173,41 @@ const EditBranch = () => {
     } catch {
       toast.error("An unexpected error occurred.");
     }
+  };
+
+  const handleBranchLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (!handleFileChange(file, setBranchLogoImage)) return;
+      form.setValue("branch.image", file);
+      isFormChanged();
+    }
+  };
+
+  const handleFileChange = (
+    file: File,
+    setPreview: {
+      (value: React.SetStateAction<string>): void;
+      (value: React.SetStateAction<string>): void;
+      (arg0: string): void;
+    }
+  ) => {
+    const allowedExtensions = ["image/png", "image/jpeg"];
+    if (!allowedExtensions.includes(file.type)) {
+      toast.error("Only PNG and JPG files are allowed");
+      return false;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image size should be less than 1MB");
+      return false;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPreview(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+    return true;
   };
 
   if (loading || isLoading) {
@@ -187,6 +226,8 @@ const EditBranch = () => {
           form={form}
           handleFormSubmit={handleFormSubmit}
           allowSave={allowSave}
+          previewImage={branchLogoImage}
+          handleImageChange={handleBranchLogoChange}
         />
       </div>
     </div>
@@ -197,27 +238,65 @@ const BranchForm = ({
   form,
   handleFormSubmit,
   allowSave,
+  previewImage,
+  handleImageChange,
 }: {
-  form: ReturnType<typeof useForm<FormData>>;
-  handleFormSubmit: (data: FormData) => void;
+  form: ReturnType<typeof useForm<EditBranchSchema>>;
+  handleFormSubmit: (data: EditBranchSchema) => void;
   allowSave: boolean;
+  handleImageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  previewImage: string;
 }) => (
   <form onSubmit={form.handleSubmit(handleFormSubmit)} className="mt-6">
     <div className="space-y-8">
       <FormSection title={FORM_SECTIONS.BRANCH_DETAILS}>
-        <Input
-          label="Branch Name"
-          placeholder="Downtown Branch"
-          required
-          {...form.register("name")}
-          error={form.formState.errors.name?.message}
-        />
-        <Textarea
-          label="Branch Description"
-          placeholder="This branch is located in the heart of the city..."
-          {...form.register("description")}
-          error={form.formState.errors.description?.message}
-        />
+        <div className="flex flex-col md:flex-row gap-6">
+          <div className="w-1/3 md:w-1/4">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Branch Image
+            </label>
+            <div className="relative">
+              <div className="aspect-square w-full rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden">
+                {previewImage ? (
+                  <img
+                    src={previewImage}
+                    alt="Preview"
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <div className="text-center p-4">
+                    <ImageIcon className="mx-auto h-8 w-8 text-gray-400" />
+                    <p className="mt-1 text-sm text-gray-500">
+                      Click to upload
+                    </p>
+                    <p className="text-xs text-gray-400">PNG, JPG up to 1MB</p>
+                  </div>
+                )}
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                />
+              </div>
+            </div>
+          </div>
+          <div className="flex-1 space-y-4">
+            <Input
+              label="Branch Name"
+              placeholder="Downtown Branch"
+              required
+              {...form.register("branch.name")}
+              error={form.formState.errors.branch?.name?.message}
+            />
+            <Textarea
+              label="Branch Description"
+              placeholder="This branch is located in the heart of the city..."
+              {...form.register("branch.description")}
+              error={form.formState.errors.branch?.description?.message}
+            />
+          </div>
+        </div>
       </FormSection>
 
       <FormSection title={FORM_SECTIONS.CONTACT_INFO}>
@@ -226,16 +305,16 @@ const BranchForm = ({
           type="email"
           placeholder="contact@branch.com"
           required
-          {...form.register("email")}
-          error={form.formState.errors.email?.message}
+          {...form.register("contact.email")}
+          error={form.formState.errors.contact?.email?.message}
         />
         <Input
           label="Phone Number"
           type="tel"
           placeholder="+1 234 567 890"
           required
-          {...form.register("phone")}
-          error={form.formState.errors.phone?.message}
+          {...form.register("contact.phone")}
+          error={form.formState.errors.contact?.phone?.message}
         />
       </FormSection>
 
@@ -244,36 +323,36 @@ const BranchForm = ({
           label="Address"
           placeholder="123 Main St, Suite 100"
           required
-          {...form.register("address")}
-          error={form.formState.errors.address?.message}
+          {...form.register("location.address")}
+          error={form.formState.errors.location?.address?.message}
         />
         <Input
           label="City"
           placeholder="New York"
           required
-          {...form.register("city")}
-          error={form.formState.errors.city?.message}
+          {...form.register("location.city")}
+          error={form.formState.errors.location?.city?.message}
         />
         <Input
           label="State"
           placeholder="NY"
           required
-          {...form.register("state")}
-          error={form.formState.errors.state?.message}
+          {...form.register("location.state")}
+          error={form.formState.errors.location?.state?.message}
         />
         <Input
           label="Postal Code"
           placeholder="10001"
           required
-          {...form.register("postalCode")}
-          error={form.formState.errors.postalCode?.message}
+          {...form.register("location.postalCode")}
+          error={form.formState.errors.location?.postalCode?.message}
         />
         <Input
           label="Country"
           placeholder="United States"
           required
-          {...form.register("country")}
-          error={form.formState.errors.country?.message}
+          {...form.register("location.country")}
+          error={form.formState.errors.location?.country?.message}
         />
       </FormSection>
     </div>

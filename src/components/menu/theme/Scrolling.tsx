@@ -44,7 +44,7 @@ const ScrollingMenu = ({ menuData }: MenuProps) => {
       <MenuHeader
         restaurantName={menuData?.branch?.restaurant?.name || ""}
         branchName={menuData?.branch?.name || ""}
-        imageUrl={menuData?.branch?.restaurant?.image_url || ""}
+        imageUrl={menuData?.branch?.restaurant?.img_url || ""}
         variant={MenuTypes.SCROLLING}
       />
 

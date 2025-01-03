@@ -138,7 +138,7 @@ const RestaurantDetails = ({
   <div className="bg-white rounded-lg shadow-sm">
     <div className="relative">
       <RestaurantImage
-        imageUrl={selectedRestaurant.image_url}
+        imageUrl={selectedRestaurant.img_url}
         name={selectedRestaurant.name}
       />
       <div className="p-4 md:p-6 border-b border-gray-100/75">
@@ -212,9 +212,9 @@ const DropdownMenu = ({
         className="w-full flex items-center gap-3 px-4 py-2 hover:bg-gray-50 transition-colors duration-200"
       >
         <div className="w-8 h-8 rounded-lg border border-gray-200 overflow-hidden bg-gray-50 flex items-center justify-center">
-          {restaurant.image_url ? (
+          {restaurant.img_url ? (
             <img
-              src={restaurant.image_url}
+              src={restaurant.img_url}
               alt={restaurant.name}
               className="w-full h-full object-cover"
             />

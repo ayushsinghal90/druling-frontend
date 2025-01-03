@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import RequireAuth from "../components/auth/RequireAuth";
 import Logo from "../components/common/Logo";
 import { Button } from "../components/ui/Button";
@@ -12,8 +11,6 @@ import { FormStepsSidebar } from "../components/form/FormStepsSideBar";
 import { useMultiStepForm } from "../hooks/useMultiStepForm";
 import { StepHeader } from "../components/form/StepHeader";
 import { ImageIcon, Save, Plus, ArrowLeft, Building2 } from "lucide-react";
-import { CreateBranch } from "../types/request";
-import { useCreateBranchMutation } from "../store/services/branchApi";
 import LoadingScreen from "../components/common/LoadingScreen";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -23,66 +20,25 @@ import {
   useRestaurant,
 } from "../contexts/RestaurantContext";
 import Select from "react-select";
+import {
+  CreateBranchSchema,
+  Defaults,
+  formSchema,
+} from "../types/forms/createBranch";
+import { useCreateBranch } from "../hooks/useCreateBranch";
 
 // Constants
 const FORM_STEPS = ["Restaurant", "Branch & Contact", "Location"];
-const DEFAULT_VALUES = {
-  restaurant: {
-    name: "",
-    image: null,
-    description: "",
-  },
-  branch: {
-    name: "",
-    manager: "",
-    description: "",
-  },
-  contact: {
-    email: "",
-    phone: "",
-  },
-  location: {
-    address: "",
-    city: "",
-    state: "",
-    postalCode: "",
-    country: "",
-  },
-};
-
-// Define schema for form validation
-const formSchema = z.object({
-  restaurant: z.object({
-    name: z.string().min(1, "Restaurant name is required"),
-    image: z.instanceof(File).nullable(),
-    description: z.string().optional(),
-  }),
-  branch: z.object({
-    name: z.string().min(1, "Branch name is required"),
-    manager: z.string().optional(),
-    description: z.string().optional(),
-  }),
-  contact: z.object({
-    email: z.string().email("Invalid email address"),
-    phone: z.string().min(1, "Phone number is required"),
-  }),
-  location: z.object({
-    address: z.string().min(1, "Address is required"),
-    city: z.string().min(1, "City is required"),
-    state: z.string().min(1, "State is required"),
-    postalCode: z.string().min(1, "Postal code is required"),
-    country: z.string().min(1, "Country is required"),
-  }),
-});
-
-type FormData = z.infer<typeof formSchema>;
 
 const AddRestaurant = () => {
   const navigate = useNavigate();
+
   const [searchParams] = useSearchParams();
   const restaurantId = searchParams.get("restaurantId");
+
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [previewImage, setPreviewImage] = useState<string>("");
+  const [restLogoImage, setRestLogoImage] = useState<string>("");
+  const [branchLogoImage, setBranchLogoImage] = useState<string>("");
   const [isAddingNew, setIsAddingNew] = useState(false);
   const [selectedRestaurant, setSelectedRestaurant] =
     useState<Restaurant | null>(null);
@@ -90,17 +46,17 @@ const AddRestaurant = () => {
   const { currentStep, next, previous, isLastStep, isFirstStep, goTo } =
     useMultiStepForm(FORM_STEPS, restaurantId ? 1 : 0);
 
-  const form = useForm<FormData>({
+  const form = useForm<CreateBranchSchema>({
     resolver: zodResolver(
       selectedRestaurant ? formSchema.omit({ restaurant: true }) : formSchema
     ),
-    defaultValues: DEFAULT_VALUES,
+    defaultValues: Defaults,
     mode: "onTouched",
     criteriaMode: "all",
   });
 
   const { restaurants } = useRestaurant();
-  const [createBranch, { isLoading }] = useCreateBranchMutation();
+  const { createBranchOrRestaurant, isLoading } = useCreateBranch();
 
   useEffect(() => {
     if (restaurantId) {
@@ -113,50 +69,54 @@ const AddRestaurant = () => {
     return <LoadingScreen />;
   }
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleRestaurantLogoChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = e.target.files?.[0];
     if (file) {
+      if (!handleFileChange(file, setRestLogoImage)) return;
       form.setValue("restaurant.image", file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
     }
   };
 
-  const handleFormSubmit = async (data: FormData) => {
+  const handleBranchLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (!handleFileChange(file, setBranchLogoImage)) return;
+      form.setValue("branch.image", file);
+    }
+  };
+
+  const handleFileChange = (
+    file: File,
+    setPreview: {
+      (value: React.SetStateAction<string>): void;
+      (value: React.SetStateAction<string>): void;
+      (arg0: string): void;
+    }
+  ) => {
+    const allowedExtensions = ["image/png", "image/jpeg"];
+    if (!allowedExtensions.includes(file.type)) {
+      toast.error("Only PNG and JPG files are allowed");
+      return false;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image size should be less than 1MB");
+      return false;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPreview(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+    return true;
+  };
+
+  const handleFormSubmit = async (data: CreateBranchSchema) => {
     try {
       setIsSubmitting(true);
-
-      const createBranchData: CreateBranch = {
-        ...(selectedRestaurant
-          ? { restaurant_id: selectedRestaurant?.id }
-          : {
-              restaurant: {
-                name: data.restaurant.name,
-                description: data.restaurant.description,
-              },
-            }),
-        branch: {
-          name: data.branch.name,
-          manager: data.branch.manager,
-          description: data.branch.description,
-        },
-        contact: {
-          email: data.contact.email,
-          phone_number: data.contact.phone,
-        },
-        location: {
-          address: data.location.address,
-          city: data.location.city,
-          state: data.location.state,
-          postal_code: data.location.postalCode,
-          country: data.location.country,
-        },
-      };
-
-      const result = await createBranch(createBranchData).unwrap();
+      const result = await createBranchOrRestaurant(selectedRestaurant, data);
 
       if (result?.success) {
         navigate("/dashboard/restaurants");
@@ -218,14 +178,20 @@ const AddRestaurant = () => {
                       setSelectedRestaurant={setSelectedRestaurant}
                       isAddingNew={isAddingNew}
                       setIsAddingNew={setIsAddingNew}
-                      handleImageChange={handleImageChange}
-                      previewImage={previewImage}
+                      handleImageChange={handleRestaurantLogoChange}
+                      previewImage={restLogoImage}
                       form={form}
                       restaurants={restaurants}
                     />
                   )}
 
-                  {currentStep === 1 && <BranchContactStep form={form} />}
+                  {currentStep === 1 && (
+                    <BranchContactStep
+                      form={form}
+                      previewImage={branchLogoImage}
+                      handleImageChange={handleBranchLogoChange}
+                    />
+                  )}
 
                   {currentStep === 2 && <LocationStep form={form} />}
 
@@ -313,7 +279,7 @@ const RestaurantStep = ({
   setIsAddingNew: React.Dispatch<React.SetStateAction<boolean>>;
   handleImageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   previewImage: string;
-  form: ReturnType<typeof useForm<FormData>>;
+  form: ReturnType<typeof useForm<CreateBranchSchema>>;
   restaurants: Restaurant[];
 }) => {
   const options = restaurants.map((restaurant) => ({
@@ -394,7 +360,7 @@ const RestaurantStep = ({
                     <p className="mt-1 text-sm text-gray-500">
                       Click to upload
                     </p>
-                    <p className="text-xs text-gray-400">PNG, JPG up to 10MB</p>
+                    <p className="text-xs text-gray-400">PNG, JPG up to 1MB</p>
                   </div>
                 )}
                 <input
@@ -429,8 +395,12 @@ const RestaurantStep = ({
 
 const BranchContactStep = ({
   form,
+  previewImage,
+  handleImageChange,
 }: {
-  form: ReturnType<typeof useForm<FormData>>;
+  form: ReturnType<typeof useForm<CreateBranchSchema>>;
+  previewImage: string;
+  handleImageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) => (
   <div className="space-y-6">
     <div className="border-b border-gray-200 p-8 bg-white rounded-lg shadow-sm">
@@ -439,19 +409,54 @@ const BranchContactStep = ({
         description="Add details about the branch information."
       />
       <div className="space-y-4">
-        <Input
-          label="Branch Name"
-          placeholder="Downtown Branch"
-          required
-          {...form.register("branch.name")}
-          error={form.formState.errors.branch?.name?.message}
-        />
-        <Textarea
-          label="Branch Description"
-          placeholder="This branch is located in the heart of the city..."
-          {...form.register("branch.description")}
-          error={form.formState.errors.branch?.description?.message}
-        />
+        <div className="flex flex-col md:flex-row gap-6">
+          <div className="w-1/3 md:w-1/4">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Branch Image
+            </label>
+            <div className="relative">
+              <div className="aspect-square w-full rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden">
+                {previewImage ? (
+                  <img
+                    src={previewImage}
+                    alt="Preview"
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <div className="text-center p-4">
+                    <ImageIcon className="mx-auto h-8 w-8 text-gray-400" />
+                    <p className="mt-1 text-sm text-gray-500">
+                      Click to upload
+                    </p>
+                    <p className="text-xs text-gray-400">PNG, JPG up to 1MB</p>
+                  </div>
+                )}
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="flex-1 space-y-4">
+            <Input
+              label="Branch Name"
+              placeholder="Downtown Branch"
+              required
+              {...form.register("branch.name")}
+              error={form.formState.errors.branch?.name?.message}
+            />
+            <Textarea
+              label="Branch Description"
+              placeholder="This branch is located in the heart of the city..."
+              {...form.register("branch.description")}
+              error={form.formState.errors.branch?.description?.message}
+            />
+          </div>
+        </div>
       </div>
     </div>
     <div className="border-b border-gray-200 p-8 bg-white rounded-lg shadow-sm">
@@ -484,7 +489,7 @@ const BranchContactStep = ({
 const LocationStep = ({
   form,
 }: {
-  form: ReturnType<typeof useForm<FormData>>;
+  form: ReturnType<typeof useForm<CreateBranchSchema>>;
 }) => (
   <div className="space-y-6 border-b border-gray-200 p-8 bg-white rounded-lg shadow-sm">
     <StepHeader
@@ -546,8 +551,8 @@ const NavigationButtons = ({
   previous: () => void;
   handleNext: () => void;
   isSubmitting: boolean;
-  form: ReturnType<typeof useForm<FormData>>;
-  handleFormSubmit: (data: FormData) => void;
+  form: ReturnType<typeof useForm<CreateBranchSchema>>;
+  handleFormSubmit: (data: CreateBranchSchema) => void;
   selectedRestaurant: Restaurant | null;
 }) => (
   <div className="mt-6 flex justify-end gap-3">
