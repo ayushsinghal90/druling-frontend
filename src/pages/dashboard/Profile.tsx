@@ -147,13 +147,13 @@ const Profile = () => {
   };
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let value = e.target.value.replace(/\D/g, "");
-    if (value.length > 0) {
-      value = `+${value.slice(0, 2)} ${value.slice(2, 7)} ${value.slice(
-        7,
-        12
-      )}`;
-    }
+    const value = e.target.value;
+    // if (value.length > 0) {
+    //   value = `+${value.slice(0, 2)} ${value.slice(2, 7)} ${value.slice(
+    //     7,
+    //     12
+    //   )}`;
+    // }
     setValue("phone", value);
   };
 
