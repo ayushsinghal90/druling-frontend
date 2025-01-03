@@ -1,24 +1,6 @@
-# Druling - Digital Menu Solutions
+# Druling
 
-A modern digital menu solution that helps restaurants create QR code-based menus easily.
-
-## Features
-
-- 🎯 Instant QR code generation
-- 📱 Mobile-optimized menu display
-- 📊 Analytics and insights
-- 🔄 Real-time menu updates
-- 💳 Multiple subscription tiers
-- 🔒 Secure authentication
-
-## Tech Stack
-
-- React 18 with TypeScript
-- Vite for blazing fast development
-- Redux Toolkit for state management
-- TailwindCSS for styling
-- React Router for navigation
-- Zod for runtime type validation
+Your one-stop solution for all you restaurant management.
 
 ## Getting Started
 
@@ -53,15 +35,13 @@ npm run dev
 
 ```
 src/
-├── components/        # Reusable UI components
-│   ├── auth/         # Authentication related components
-│   ├── dashboard/    # Dashboard specific components
-│   └── shared/       # Shared components
+├── assets/           # Images and static files
+├── components/       # Reusable UI components
 ├── config/           # Configuration files
+├── contexts/         # Context for shared pages
 ├── hooks/            # Custom React hooks
-├── layouts/          # Layout components
+├── lib/              # Utils for common func
 ├── pages/            # Page components
-├── services/         # API services
 ├── store/            # Redux store configuration
 ├── types/            # TypeScript type definitions
 └── utils/            # Utility functions
@@ -77,14 +57,6 @@ src/
 ## Environment Variables
 
 See `.env.example` for all available configuration options.
-
-## Contributing
-
-1. Fork the repository
-2. Create your feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
 
 ## License
 

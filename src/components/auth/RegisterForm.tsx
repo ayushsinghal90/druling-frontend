@@ -116,10 +116,10 @@ const RegisterForm = () => {
           form: result.message || "Registration failed",
         }));
       }
-    } catch (err: any) {
+    } catch {
       setErrors((prev) => ({
         ...prev,
-        form: err?.data?.message || "Registration failed. Please try again.",
+        form: "Registration failed. Please try again.",
       }));
     }
   };
