@@ -20,7 +20,7 @@ export const branchApi = createApi({
       { id: string; data: UpdateBranch }
     >({
       query: ({ id, data }) => ({
-        url: `/branch/${id}/`,
+        url: `/branch/update/${id}/`,
         method: "PUT",
         body: data,
       }),

@@ -17,6 +17,7 @@ import LoadingScreen from "../components/common/LoadingScreen";
 import { toast } from "react-toastify";
 import { EditBranchSchema, formSchema } from "../types/forms/editBranch";
 import { useCreateBranch } from "../hooks/useCreateBranch";
+import isEqual from "lodash/isEqual";
 
 // Constants
 const FORM_SECTIONS = {
@@ -82,15 +83,24 @@ const EditBranch = () => {
         country: selectedBranch?.location?.country || "",
       },
     };
-    console.log(currentValues, initialValues);
 
-    return Object.keys(currentValues).some((key) => {
-      const typedKey = key as keyof typeof currentValues; // Type assertion
-      return (
-        String(currentValues[typedKey]).trim() !==
-        String(initialValues[typedKey]).trim()
-      );
-    });
+    const isBranchChanged =
+      !isEqual(
+        { ...currentValues.branch, image: null },
+        initialValues.branch
+      ) || currentValues.branch.image !== initialValues.branch.image;
+
+    const isContactChanged = !isEqual(
+      currentValues.contact,
+      initialValues.contact
+    );
+
+    const isLocationChanged = !isEqual(
+      currentValues.location,
+      initialValues.location
+    );
+
+    return isBranchChanged || isContactChanged || isLocationChanged;
   }, [form, selectedBranch]);
 
   useEffect(() => {
@@ -188,7 +198,7 @@ const EditBranch = () => {
       return false;
     }
     if (file.size > 5 * 1024 * 1024) {
-      toast.error("Image size should be less than 5MB");
+      toast.error("Image size should be less than 1MB");
       return false;
     }
 

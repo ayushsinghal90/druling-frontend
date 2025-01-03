@@ -101,7 +101,7 @@ const AddRestaurant = () => {
       return false;
     }
     if (file.size > 5 * 1024 * 1024) {
-      toast.error("Image size should be less than 5MB");
+      toast.error("Image size should be less than 1MB");
       return false;
     }
 
