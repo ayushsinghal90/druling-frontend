@@ -43,7 +43,7 @@ const SidebarNav = ({ isExpanded }: SidebarNavProps) => {
         >
           <div className="ml-1">
             <UserAvatar
-              imageUrl={profile?.avatar_url}
+              imageUrl={profile?.img_url}
               size="sm"
               className="items-center flex-shrink-0"
             />
