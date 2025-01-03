@@ -23,7 +23,17 @@ const BranchItem = ({
     <div className="flex flex-col md:flex-row justify-between md:pt-0 pt-2">
       <div className="flex flex-col md:flex-row gap-4">
         <div className="w-full md:w-24 h-24 bg-gray-100 rounded-lg flex items-center justify-center">
-          <Building className="w-8 h-8 text-gray-400" />
+          {branch.img_url ? (
+            <img
+              src={branch.img_url}
+              alt={branch.name}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <Building className="w-6 h-6 md:w-8 md:h-8 text-gray-400" />
+            </div>
+          )}
         </div>
         <div className="flex-1 space-y-1">
           <h3 className="text-lg font-medium text-gray-900">{branch.name}</h3>

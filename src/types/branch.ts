@@ -6,6 +6,7 @@ import { MenuData } from "./menu";
 export interface Branch {
   id?: string;
   name: string;
+  img_url?: string;
   description?: string;
   location?: BranchLocation;
   manager?: string;

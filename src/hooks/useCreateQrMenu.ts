@@ -41,8 +41,7 @@ export const useCreateQrMenu = () => {
         file.file_key = fileToSingedUrlMap[file.file_key].new_file_key;
       });
 
-      const response = await createQrMenu(requestUploadMenu).unwrap();
-      return response;
+      return await createQrMenu(requestUploadMenu).unwrap();
     } finally {
       setLoading(false);
     }
