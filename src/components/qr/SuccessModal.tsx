@@ -2,11 +2,13 @@ import React, { useState, useEffect } from "react";
 import { QrCode, X, Download, Share2, Copy, ExternalLink } from "lucide-react";
 import { MenuTypes } from "../menu/utils/MenuTypes";
 import { QRCode } from "react-qrcode-logo";
+import { toast } from "react-toastify";
 
 interface SuccessModalProps {
   isOpen: boolean;
   onClose: () => void;
   menuId: string;
+  branchName: string;
   theme: MenuTypes;
 }
 
@@ -14,6 +16,7 @@ const SuccessModal = ({
   isOpen,
   onClose,
   menuId,
+  branchName,
   theme,
 }: SuccessModalProps) => {
   const [menuUrl, setMenuUrl] = useState<string>("");
@@ -32,21 +35,45 @@ const SuccessModal = ({
     onClose();
   };
 
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: "Menu QR Code",
+          text: `Check out the menu for ${branchName}`,
+          url: menuUrl,
+        });
+      } catch (error) {
+        if (error instanceof Error && error.name !== "AbortError") {
+          toast.error("Error while sharing");
+        }
+      }
+    } else {
+      toast.error("Share not supported on this browser");
+    }
+  };
+
+  const handleDownloadQR = () => {
+    const canvas = document
+      .getElementById(`qr-canvas`)
+      ?.querySelector("canvas");
+    if (canvas) {
+      const url = canvas.toDataURL("image/png");
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${branchName}-QRCode.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
+
   const handleCopyUrl = async () => {
     try {
       await navigator.clipboard.writeText(menuUrl);
     } catch (err) {
       console.error("Failed to copy URL:", err);
     }
-  };
-
-  const handleDownloadQR = () => {
-    const link = document.createElement("a");
-    link.href = qrCode;
-    link.download = "menu-qr-code.png";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
   };
 
   return (
@@ -90,7 +117,10 @@ const SuccessModal = ({
             {/* QR Code */}
             <div className="mt-8">
               <div className="relative mx-auto w-48">
-                <div className="aspect-square overflow-hidden rounded-xl bg-white p-2 shadow-lg ring-1 ring-gray-100">
+                <div
+                  className="aspect-square overflow-hidden rounded-xl bg-white p-2 shadow-lg ring-1 ring-gray-100"
+                  id={`qr-canvas`}
+                >
                   <QRCode
                     value={menuUrl}
                     logoPaddingStyle="circle"
@@ -109,7 +139,7 @@ const SuccessModal = ({
                     <Download className="h-4 w-4 text-gray-600" />
                   </button>
                   <button
-                    onClick={() => {}}
+                    onClick={handleShare}
                     className="flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-lg ring-1 ring-gray-100 transition-all hover:ring-2 hover:ring-gray-200"
                   >
                     <Share2 className="h-4 w-4 text-gray-600" />
