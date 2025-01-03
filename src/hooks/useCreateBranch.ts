@@ -49,10 +49,10 @@ export const useCreateBranch = () => {
       };
 
       await uploadRestaurantLogo(
-        data.restaurant.image,
+        data?.restaurant?.image,
         createBranchData.restaurant
       );
-      await uploadBranchLogo(data.branch.image, createBranchData.branch);
+      await uploadBranchLogo(data?.branch?.image, createBranchData.branch);
 
       return await createBranch(createBranchData).unwrap();
     } finally {
