@@ -59,7 +59,10 @@ const RestaurantList = () => {
     if (!branch?.menu?.id) {
       navigate(`/qr/menu/${selectedRestaurant?.id}/${branch.id}`);
     } else {
-      navigate(`/menu/${branch.menu.id}?theme=${branch.menu.theme}`);
+      window.open(
+        `/menu/${branch.menu.id}?theme=${branch.menu.theme}`,
+        "_blank"
+      );
     }
   };
 
