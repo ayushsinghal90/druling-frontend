@@ -7,30 +7,23 @@ import DashboardLayout from "../../components/dashboard/DashboardLayout";
 import UserAvatar from "../../components/common/UserAvatar";
 import { useAuth } from "../../hooks/auth/useAuth";
 import LoadingLogo from "../../components/common/LoadingLogo";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useUpdateProfileMutation } from "../../store/services/profileApi";
 import { Profile as ProfileType } from "../../types";
 import { useDispatch } from "react-redux";
 import { setProfile } from "../../store/slices/authSlice";
-
-// Define schema for form validation
-const formSchema = z.object({
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
-  email: z.string().email("Invalid email address"),
-  phone: z.string().min(1, "Phone number is required"),
-  avatarUrl: z.string().optional(),
-});
-
-type FormData = z.infer<typeof formSchema>;
+import { useFileUpload } from "../../hooks/useFileUpload";
+import { ProfileSchema, formSchema } from "../../types/forms/profile";
 
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [allowSave, setAllowSave] = useState(false);
   const { profile, loading } = useAuth();
+  const [preview, setPreview] = useState<string | undefined>(undefined);
+
   const [updateProfile] = useUpdateProfileMutation();
+  const { uploadFiles } = useFileUpload();
   const dispatch = useDispatch();
 
   const {
@@ -41,14 +34,14 @@ const Profile = () => {
     watch,
     setValue,
     getValues,
-  } = useForm<FormData>({
+  } = useForm<ProfileSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       firstName: profile?.first_name || "",
       lastName: profile?.last_name || "",
       email: profile?.contact_info?.email || "",
       phone: profile?.contact_info?.phone_number || "",
-      avatarUrl: "",
+      avatarUrl: null,
     },
     mode: "onSubmit",
     criteriaMode: "all",
@@ -60,8 +53,8 @@ const Profile = () => {
       firstName: profile?.first_name || "",
       lastName: profile?.last_name || "",
       email: profile?.contact_info?.email || "",
-      phone: "",
-      avatarUrl: "",
+      phone: profile?.contact_info?.phone_number || "",
+      avatarUrl: null,
     };
 
     return Object.keys(currentValues).some((key) => {
@@ -80,8 +73,10 @@ const Profile = () => {
         lastName: profile?.last_name || "",
         email: profile?.contact_info?.email || "",
         phone: profile?.contact_info?.phone_number || "",
-        avatarUrl: "",
+        avatarUrl: null,
       });
+
+      setPreview(profile?.img_url || undefined);
     }
   }, [profile, reset]);
 
@@ -92,9 +87,7 @@ const Profile = () => {
     return () => subscription.unsubscribe();
   }, [watch, isFormChanged]);
 
-  const avatarUrl = watch("avatarUrl");
-
-  const onSubmit = async (data: FormData) => {
+  const onSubmit = async (data: ProfileSchema) => {
     try {
       setIsSubmitting(true);
       const updateRequest: ProfileType = {
@@ -105,6 +98,15 @@ const Profile = () => {
           phone_number: data.phone,
         },
       };
+
+      if (data.avatarUrl) {
+        const fileToSingedUrlMap = await uploadFiles({}, "user_profile", [
+          data.avatarUrl,
+        ]);
+        updateRequest.img_url =
+          fileToSingedUrlMap[data.avatarUrl.name].new_file_key;
+      }
+
       const response = await updateProfile(updateRequest).unwrap();
 
       if (response.success) {
@@ -125,12 +127,22 @@ const Profile = () => {
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      const allowedExtensions = ["image/png", "image/jpeg"];
+      if (!allowedExtensions.includes(file.type)) {
+        toast.error("Only PNG and JPG files are allowed");
+        return false;
+      }
       if (file.size > 5 * 1024 * 1024) {
         toast.error("Image size should be less than 5MB");
-        return;
+        return false;
       }
-      const url = URL.createObjectURL(file);
-      setValue("avatarUrl", url);
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+      setValue("avatarUrl", file);
     }
   };
 
@@ -180,7 +192,7 @@ const Profile = () => {
               <div className="flex flex-[0.5] justify-center items-center lg:w-48">
                 <div className="relative group">
                   <UserAvatar
-                    imageUrl={avatarUrl}
+                    imageUrl={preview}
                     size="lg"
                     className="border-2 border-gray-200 w-64 h-64"
                   />
