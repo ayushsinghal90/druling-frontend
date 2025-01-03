@@ -23,6 +23,7 @@ import {
   useRestaurant,
 } from "../contexts/RestaurantContext";
 import Select from "react-select";
+import { useFileUpload } from "../hooks/useFileUpload";
 
 // Constants
 const FORM_STEPS = ["Restaurant", "Branch & Contact", "Location"];
@@ -34,6 +35,7 @@ const DEFAULT_VALUES = {
   },
   branch: {
     name: "",
+    image: null,
     manager: "",
     description: "",
   },
@@ -59,6 +61,7 @@ const formSchema = z.object({
   }),
   branch: z.object({
     name: z.string().min(1, "Branch name is required"),
+    image: z.instanceof(File).nullable(),
     manager: z.string().optional(),
     description: z.string().optional(),
   }),
@@ -79,10 +82,13 @@ type FormData = z.infer<typeof formSchema>;
 
 const AddRestaurant = () => {
   const navigate = useNavigate();
+
   const [searchParams] = useSearchParams();
   const restaurantId = searchParams.get("restaurantId");
+
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [previewImage, setPreviewImage] = useState<string>("");
+  const [restLogoImage, setRestLogoImage] = useState<string>("");
+  const [branchLogoImage, setBranchLogoImage] = useState<string>("");
   const [isAddingNew, setIsAddingNew] = useState(false);
   const [selectedRestaurant, setSelectedRestaurant] =
     useState<Restaurant | null>(null);
@@ -101,6 +107,7 @@ const AddRestaurant = () => {
 
   const { restaurants } = useRestaurant();
   const [createBranch, { isLoading }] = useCreateBranchMutation();
+  const { uploadFiles } = useFileUpload();
 
   useEffect(() => {
     if (restaurantId) {
@@ -113,22 +120,43 @@ const AddRestaurant = () => {
     return <LoadingScreen />;
   }
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleRestaurantLogoChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = e.target.files?.[0];
     if (file) {
       form.setValue("restaurant.image", file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+      handleFileChange(file, setRestLogoImage);
     }
+  };
+
+  const handleBranchLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      form.setValue("branch.image", file);
+      handleFileChange(file, setBranchLogoImage);
+    }
+  };
+
+  const handleFileChange = (
+    file: File,
+    setPreview: {
+      (value: React.SetStateAction<string>): void;
+      (value: React.SetStateAction<string>): void;
+      (arg0: string): void;
+    }
+  ) => {
+    form.setValue("restaurant.image", file);
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPreview(reader.result as string);
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleFormSubmit = async (data: FormData) => {
     try {
       setIsSubmitting(true);
-
       const createBranchData: CreateBranch = {
         ...(selectedRestaurant
           ? { restaurant_id: selectedRestaurant?.id }
@@ -155,6 +183,14 @@ const AddRestaurant = () => {
           country: data.location.country,
         },
       };
+
+      if (createBranchData?.restaurant && data.restaurant.image) {
+        const fileToSingedUrlMap = await uploadFiles({}, "restaurant_logo", [
+          data.restaurant.image,
+        ]);
+        createBranchData.restaurant.img_url =
+          fileToSingedUrlMap[data.restaurant.image.name].new_file_key;
+      }
 
       const result = await createBranch(createBranchData).unwrap();
 
@@ -218,14 +254,20 @@ const AddRestaurant = () => {
                       setSelectedRestaurant={setSelectedRestaurant}
                       isAddingNew={isAddingNew}
                       setIsAddingNew={setIsAddingNew}
-                      handleImageChange={handleImageChange}
-                      previewImage={previewImage}
+                      handleImageChange={handleRestaurantLogoChange}
+                      previewImage={restLogoImage}
                       form={form}
                       restaurants={restaurants}
                     />
                   )}
 
-                  {currentStep === 1 && <BranchContactStep form={form} />}
+                  {currentStep === 1 && (
+                    <BranchContactStep
+                      form={form}
+                      previewImage={branchLogoImage}
+                      handleImageChange={handleBranchLogoChange}
+                    />
+                  )}
 
                   {currentStep === 2 && <LocationStep form={form} />}
 
@@ -429,8 +471,12 @@ const RestaurantStep = ({
 
 const BranchContactStep = ({
   form,
+  previewImage,
+  handleImageChange,
 }: {
   form: ReturnType<typeof useForm<FormData>>;
+  previewImage: string;
+  handleImageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) => (
   <div className="space-y-6">
     <div className="border-b border-gray-200 p-8 bg-white rounded-lg shadow-sm">
@@ -439,19 +485,54 @@ const BranchContactStep = ({
         description="Add details about the branch information."
       />
       <div className="space-y-4">
-        <Input
-          label="Branch Name"
-          placeholder="Downtown Branch"
-          required
-          {...form.register("branch.name")}
-          error={form.formState.errors.branch?.name?.message}
-        />
-        <Textarea
-          label="Branch Description"
-          placeholder="This branch is located in the heart of the city..."
-          {...form.register("branch.description")}
-          error={form.formState.errors.branch?.description?.message}
-        />
+        <div className="flex flex-col md:flex-row gap-6">
+          <div className="w-1/3 md:w-1/4">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Branch Image
+            </label>
+            <div className="relative">
+              <div className="aspect-square w-full rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden">
+                {previewImage ? (
+                  <img
+                    src={previewImage}
+                    alt="Preview"
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <div className="text-center p-4">
+                    <ImageIcon className="mx-auto h-8 w-8 text-gray-400" />
+                    <p className="mt-1 text-sm text-gray-500">
+                      Click to upload
+                    </p>
+                    <p className="text-xs text-gray-400">PNG, JPG up to 10MB</p>
+                  </div>
+                )}
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="flex-1 space-y-4">
+            <Input
+              label="Branch Name"
+              placeholder="Downtown Branch"
+              required
+              {...form.register("branch.name")}
+              error={form.formState.errors.branch?.name?.message}
+            />
+            <Textarea
+              label="Branch Description"
+              placeholder="This branch is located in the heart of the city..."
+              {...form.register("branch.description")}
+              error={form.formState.errors.branch?.description?.message}
+            />
+          </div>
+        </div>
       </div>
     </div>
     <div className="border-b border-gray-200 p-8 bg-white rounded-lg shadow-sm">
