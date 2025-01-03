@@ -305,6 +305,7 @@ const GenerateQR = () => {
         isOpen={showSuccessModal}
         onClose={handleClose}
         menuId={menuId}
+        branchName={selectedBranch?.name || ""}
         theme={menuDetails.theme}
       />
     </div>
