@@ -74,16 +74,16 @@ const AddRestaurant = () => {
   ) => {
     const file = e.target.files?.[0];
     if (file) {
+      if (!handleFileChange(file, setRestLogoImage)) return;
       form.setValue("restaurant.image", file);
-      handleFileChange(file, setRestLogoImage);
     }
   };
 
   const handleBranchLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      if (!handleFileChange(file, setBranchLogoImage)) return;
       form.setValue("branch.image", file);
-      handleFileChange(file, setBranchLogoImage);
     }
   };
 
@@ -95,11 +95,22 @@ const AddRestaurant = () => {
       (arg0: string): void;
     }
   ) => {
+    const allowedExtensions = ["image/png", "image/jpeg"];
+    if (!allowedExtensions.includes(file.type)) {
+      toast.error("Only PNG and JPG files are allowed");
+      return false;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image size should be less than 5MB");
+      return false;
+    }
+
     const reader = new FileReader();
     reader.onloadend = () => {
       setPreview(reader.result as string);
     };
     reader.readAsDataURL(file);
+    return true;
   };
 
   const handleFormSubmit = async (data: CreateBranchSchema) => {
@@ -349,7 +360,7 @@ const RestaurantStep = ({
                     <p className="mt-1 text-sm text-gray-500">
                       Click to upload
                     </p>
-                    <p className="text-xs text-gray-400">PNG, JPG up to 10MB</p>
+                    <p className="text-xs text-gray-400">PNG, JPG up to 1MB</p>
                   </div>
                 )}
                 <input
@@ -417,7 +428,7 @@ const BranchContactStep = ({
                     <p className="mt-1 text-sm text-gray-500">
                       Click to upload
                     </p>
-                    <p className="text-xs text-gray-400">PNG, JPG up to 10MB</p>
+                    <p className="text-xs text-gray-400">PNG, JPG up to 1MB</p>
                   </div>
                 )}
                 <input
