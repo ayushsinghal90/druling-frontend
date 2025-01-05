@@ -6,6 +6,7 @@ import {
   fileUpload,
   qrMenuApi,
   profileApi,
+  emailVerify,
 } from "./services";
 import authReducer from "./slices/authSlice";
 
@@ -17,6 +18,7 @@ export const store = configureStore({
     [fileUpload.reducerPath]: fileUpload.reducer,
     [qrMenuApi.reducerPath]: qrMenuApi.reducer,
     [profileApi.reducerPath]: profileApi.reducer,
+    [emailVerify.reducerPath]: emailVerify.reducer,
     auth: authReducer, // Auth state slice
   },
   middleware: (getDefaultMiddleware) =>
@@ -26,7 +28,8 @@ export const store = configureStore({
       .concat(branchApi.middleware)
       .concat(fileUpload.middleware)
       .concat(qrMenuApi.middleware)
-      .concat(profileApi.middleware),
+      .concat(profileApi.middleware)
+      .concat(emailVerify.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;
