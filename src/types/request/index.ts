@@ -3,6 +3,7 @@ import { LoginRequest } from "./login";
 import { RegisterRequest } from "./register";
 import { UploadMenu, UploadMenuImage } from "./uploadMenu";
 import { UploadFile, FileUploadSignedUrl } from "./uploadFile";
+import { EmailVerify } from "./emailVerify";
 
 export type {
   RegisterRequest,
@@ -13,4 +14,5 @@ export type {
   UploadFile,
   UploadMenuImage,
   FileUploadSignedUrl,
+  EmailVerify,
 };
