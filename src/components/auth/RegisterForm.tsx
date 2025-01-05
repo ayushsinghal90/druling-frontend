@@ -15,7 +15,8 @@ import { useEmailVerify } from "../../hooks/useEmailVerify";
 const RegisterForm = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [register, { isLoading }] = useRegisterMutation();
+  const [register, { isLoading: signUpInProcess }] = useRegisterMutation();
+  const [isLoading, setIsLoading] = useState(false);
   const {
     sendVerificationCode,
     verifyCode,
@@ -55,6 +56,10 @@ const RegisterForm = () => {
       setCanResend(true);
     }
   }, [step, timer]);
+
+  useEffect(() => {
+    setIsLoading(signUpInProcess || verificationInProcess);
+  }, [signUpInProcess, verificationInProcess]);
 
   const handleResendCode = () => {
     setTimer(60);
