@@ -28,7 +28,7 @@ jobs:
 
       - name: Set up environment
         run: |
-          printenv > .env
+          vars > .env
           echo "Enviorment setup complete"
 
       - name: Build Vite app
