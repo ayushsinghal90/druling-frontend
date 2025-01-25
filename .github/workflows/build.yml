@@ -2,7 +2,7 @@ name: Build and Deploy
 on:
   push:
     branches:
-      - main
+      - github_actions
 
 jobs:
   build-and-deploy:
@@ -13,11 +13,6 @@ jobs:
     permissions:
       id-token: write
       contents: read
-
-    env:
-      AWS_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
-      S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
-      DISTRIBUTION_ID: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
 
     steps:
       - name: Checkout code
@@ -39,18 +34,20 @@ jobs:
       - name: Build Vite app
         run: npm run build
 
-      - name: Login to Amazon S3
-        id: login-s3
+      - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
 
       - name: Sync files to S3
         run: |
-          aws s3 sync dist/ s3://${{ env.S3_BUCKET_NAME }} --delete
+          aws s3 sync dist/ s3://${{ secrets.S3_BUCKET_NAME }} --delete
 
       # Invalidate CloudFront cache (optional)
       - name: Invalidate CloudFront Cache
-        if: ${{ env.DISTRIBUTION_ID != '' }}
         run: |
-          aws cloudfront create-invalidation \
-            --distribution-id ${{ env.DISTRIBUTION_ID }} \
-            --paths "/*"
+          if [ -n "${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}" ]; then
+            aws cloudfront create-invalidation \
+              --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
+              --paths "/*"
+          fi

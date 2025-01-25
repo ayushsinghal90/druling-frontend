@@ -16,7 +16,6 @@ const envSchema = z.object({
 
   // External Services
   VITE_GOOGLE_CLIENT_ID: z.string(),
-  VITE_GITHUB_CLIENT_ID: z.string(),
 
   // Application
   VITE_APP_NAME: z.string(),
