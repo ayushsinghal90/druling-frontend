@@ -28,8 +28,18 @@ jobs:
 
       - name: Set up environment
         run: |
-          vars > .env
-          echo "Enviorment setup complete"
+          run: |
+            echo "VITE_API_URL=${{ vars.VITE_API_URL }}" > .env
+            echo "VITE_API_TIMEOUT=${{ vars.VITE_API_TIMEOUT }}" >> .env
+            echo "VITE_AUTH_COOKIE_NAME=${{ vars.VITE_AUTH_COOKIE_NAME }}" >> .env
+            echo "VITE_AUTH_COOKIE_EXPIRES=${{ vars.VITE_AUTH_COOKIE_EXPIRES }}" >> .env
+            echo "VITE_ENABLE_SOCIAL_LOGIN=${{ vars.VITE_ENABLE_SOCIAL_LOGIN }}" >> .env
+            echo "VITE_ENABLE_ANALYTICS=${{ vars.VITE_ENABLE_ANALYTICS }}" >> .env
+            echo "VITE_GOOGLE_CLIENT_ID=${{ vars.VITE_GOOGLE_CLIENT_ID }}" >> .env
+            echo "VITE_APP_NAME=${{ vars.VITE_APP_NAME }}" >> .env
+            echo "VITE_APP_DESCRIPTION=${{ vars.VITE_APP_DESCRIPTION }}" >> .env
+            echo "VITE_SUPPORT_EMAIL=${{ vars.VITE_SUPPORT_EMAIL }}" >> .env
+            echo "Environment setup complete"
 
       - name: Build Vite app
         run: npm run build
