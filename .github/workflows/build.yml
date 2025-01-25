@@ -1,53 +1,51 @@
-name: Build and Deploy React App to AWS S3
-
+name: Build and Deploy
 on:
   push:
     branches:
       - main
 
-env:
-  AWS_REGION: us-east-1 # Change to your AWS region
-  S3_BUCKET_NAME: your-s3-bucket-name # Replace with your S3 bucket name
-  DISTRIBUTION_ID: your-cloudfront-distribution-id # Optional, for CloudFront invalidation
-
 jobs:
   build-and-deploy:
+    name: Build and Deploy
     runs-on: ubuntu-latest
+    environment: dev
+
+    permissions:
+      id-token: write
+      contents: read
+
+    env:
+      AWS_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+      S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
+      DISTRIBUTION_ID: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
 
     steps:
-      # Checkout the code
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Set up Node.js
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 16 # Use your Node.js version
+          node-version: 20
 
-      # Install dependencies
       - name: Install dependencies
         run: npm install
 
-      # Inject environment-specific variables
-      - name: Inject environment variables
-        run: echo "REACT_APP_API_URL=${{ secrets.API_URL }}" >> .env
+      - name: Set up environment
+        run: |
+          env > .env
+          echo "Enviorment setup complete"
 
-      # Build the React app
-      - name: Build React app
+      - name: Build Vite app
         run: npm run build
 
-      # Deploy to AWS S3
-      - name: Deploy to AWS S3
+      - name: Login to Amazon S3
+        id: login-s3
         uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
 
       - name: Sync files to S3
         run: |
-          aws s3 sync build/ s3://${{ env.S3_BUCKET_NAME }} --delete
+          aws s3 sync dist/ s3://${{ env.S3_BUCKET_NAME }} --delete
 
       # Invalidate CloudFront cache (optional)
       - name: Invalidate CloudFront Cache
