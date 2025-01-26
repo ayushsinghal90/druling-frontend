@@ -1,0 +1,65 @@
+name: Build and Deploy
+on:
+  push:
+    branches:
+      - github_actions
+
+jobs:
+  build-and-deploy:
+    name: Build and Deploy
+    runs-on: ubuntu-latest
+    environment: dev
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Set up environment
+        run: |
+          { 
+            echo "VITE_API_URL=${{ vars.VITE_API_URL }}"
+            echo "VITE_API_TIMEOUT=${{ vars.VITE_API_TIMEOUT }}"
+            echo "VITE_AUTH_COOKIE_NAME=${{ vars.VITE_AUTH_COOKIE_NAME }}"
+            echo "VITE_AUTH_COOKIE_EXPIRES=${{ vars.VITE_AUTH_COOKIE_EXPIRES }}"
+            echo "VITE_ENABLE_SOCIAL_LOGIN=${{ vars.VITE_ENABLE_SOCIAL_LOGIN }}"
+            echo "VITE_ENABLE_ANALYTICS=${{ vars.VITE_ENABLE_ANALYTICS }}"
+            echo "VITE_GOOGLE_CLIENT_ID=${{ vars.VITE_GOOGLE_CLIENT_ID }}"
+            echo "VITE_APP_NAME=${{ vars.VITE_APP_NAME }}"
+            echo "VITE_APP_DESCRIPTION=${{ vars.VITE_APP_DESCRIPTION }}"
+            echo "VITE_SUPPORT_EMAIL=${{ vars.VITE_SUPPORT_EMAIL }}"
+          } > .env 2>/dev/null
+          echo "Environment setup complete"
+
+      - name: Build Vite app
+        run: npm run build
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+
+      - name: Sync files to S3
+        run: |
+          aws s3 sync dist/ s3://${{ secrets.S3_BUCKET_NAME }} --delete
+
+      # Invalidate CloudFront cache (optional)
+      - name: Invalidate CloudFront Cache
+        run: |
+          if [ -n "${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}" ]; then
+            aws cloudfront create-invalidation \
+              --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
+              --paths "/*"
+          fi
