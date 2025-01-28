@@ -2,7 +2,7 @@ name: Build and Deploy
 on:
   push:
     branches:
-      - github_actions
+      - check_be_Fe
 
 jobs:
   build-and-deploy:
