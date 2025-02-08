@@ -7,7 +7,7 @@ import { SocialContacts } from "./socialContact";
 import { MenuImage } from "./menuImage";
 import { MenuData } from "./menu";
 import { Transaction } from "./transaction";
-import { Subscription } from "react-redux";
+import { Subscription } from "./subscription";
 import { Plan } from "./plan";
 import { ProfileFeature, Feature } from "./feature";
 
