@@ -6,6 +6,8 @@ import { qrMenuApi } from "./qrMenuApi";
 import { profileApi } from "./profileApi";
 import { emailVerify } from "./emailVerify";
 import { transactionApi } from "./transactionApi";
+import { subscriptionApi } from "./subscriptionApi";
+import { featureApi } from "./featureApi";
 
 export {
   authApi,
@@ -16,4 +18,6 @@ export {
   profileApi,
   emailVerify,
   transactionApi,
+  subscriptionApi,
+  featureApi,
 };

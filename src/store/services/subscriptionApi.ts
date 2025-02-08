@@ -14,12 +14,11 @@ export const subscriptionApi = createApi({
       }),
     }),
     getSubscriptionById: builder.query<ApiResponse<Subscription>, { id: string }>({
-    query: ({ id }) => ({
-            url: `/subscription/${id}/`,
-            method: "GET",
-          }),
-        
+      query: ({ id }) => ({
+        url: `/subscription/${id}/`,
+        method: "GET",
       }),
+    }),
   })
 });
 

@@ -8,6 +8,8 @@ import {
   profileApi,
   emailVerify,
   transactionApi,
+  featureApi,
+  subscriptionApi,
 } from "./services";
 import authReducer from "./slices/authSlice";
 
@@ -21,6 +23,8 @@ export const store = configureStore({
     [profileApi.reducerPath]: profileApi.reducer,
     [emailVerify.reducerPath]: emailVerify.reducer,
     [transactionApi.reducerPath]: transactionApi.reducer,
+    [featureApi.reducerPath]: featureApi.reducer,
+    [subscriptionApi.reducerPath]: subscriptionApi.reducer,
     auth: authReducer, // Auth state slice
   },
   middleware: (getDefaultMiddleware) =>
@@ -32,7 +36,9 @@ export const store = configureStore({
       .concat(qrMenuApi.middleware)
       .concat(profileApi.middleware)
       .concat(emailVerify.middleware)
-      .concat(transactionApi.middleware),
+      .concat(transactionApi.middleware)
+      .concat(featureApi.middleware)
+      .concat(subscriptionApi.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;
