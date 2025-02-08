@@ -5,6 +5,7 @@ import { fileUpload } from "./fileUpload";
 import { qrMenuApi } from "./qrMenuApi";
 import { profileApi } from "./profileApi";
 import { emailVerify } from "./emailVerify";
+import { transactionApi } from "./transactionApi";
 
 export {
   authApi,
@@ -14,4 +15,5 @@ export {
   qrMenuApi,
   profileApi,
   emailVerify,
+  transactionApi,
 };
