@@ -12,12 +12,12 @@ import UserAvatar from "../common/UserAvatar";
 import { useAuth } from "../../hooks/auth/useAuth";
 
 const navigation = [
-  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  // { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { name: "QR Codes", href: "/dashboard", icon: QrCode },
   { name: "Restaurants", href: "/dashboard/restaurants", icon: Building2 },
-  { name: "QR Codes", href: "/dashboard/qr-codes", icon: QrCode },
-  { name: "Analytics", href: "/dashboard/analytics", icon: BarChart },
+  // { name: "Analytics", href: "/dashboard/analytics", icon: BarChart },
   { name: "Billing", href: "/dashboard/billing", icon: CreditCard },
-  { name: "Settings", href: "/dashboard/settings", icon: Settings },
+  // { name: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
 
 interface SidebarNavProps {
