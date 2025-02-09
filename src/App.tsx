@@ -20,7 +20,6 @@ import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import Logout from "./pages/auth/Logout";
 
-import Demo from "./pages/Demo";
 import Terms from "./pages/document/Terms";
 import Privacy from "./pages/document/Privacy";
 import Menu from "./pages/Menu/Menu";
@@ -85,7 +84,6 @@ function App() {
               </AuthGuard>
             }
           />
-          <Route path="/demo" element={<Demo />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/logout" element={<Logout />} />
@@ -103,12 +101,12 @@ function App() {
           />
 
           <Route path="/dashboard" element={<DashboardLayout />}>
-            <Route index element={<Dashboard />} />
-            <Route path="qr-codes" element={<QRCodes />} />
-            <Route path="analytics" element={<Analytics />} />
+            <Route index element={<QRCodes />} />
+            {/* <Route path="qr-codes" element={<QRCodes />} /> */}
+            {/* <Route path="analytics" element={<Analytics />} /> */}
             <Route path="restaurants" element={<Restaurants />} />
             <Route path="billing" element={<Billing />} />
-            <Route path="settings" element={<Settings />} />
+            {/* <Route path="settings" element={<Settings />} /> */}
             <Route path="profile" element={<Profile />} />
           </Route>
 

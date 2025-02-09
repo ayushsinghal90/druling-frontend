@@ -8,6 +8,7 @@ import { MenuData } from "../../types";
 import ActionRequired from "../../components/common/ActionRequired";
 import { toast } from "react-toastify";
 import { QRCode } from "react-qrcode-logo";
+import { displayDate } from "../../utils/displayDate";
 
 const QRCodes = () => {
   const navigate = useNavigate();
@@ -178,20 +179,19 @@ const QRCodes = () => {
               </div>
 
               <div className="mt-6 grid grid-cols-2 gap-4 border-t border-gray-100 pt-4">
-                <div>
+                {/* <div>
                   <p className="text-sm font-medium text-gray-500">
-                    Total Scans
+                    Visits
                   </p>
                   <p className="mt-1 text-lg font-semibold text-gray-900">
                     {2}
                   </p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-500">
-                    Last Updated
-                  </p>
-                  <p className="mt-1 text-sm text-gray-900">{data.updatedAt}</p>
-                </div>
+                </div> */}
+                  <div className="text-sm font-semibold text-gray-500">
+                    Last Updated:
+                  </div>
+                  <div className="text-sm text-gray-900 text-end">{displayDate(data.updated_at)}
+                  </div>
               </div>
             </div>
           ))}

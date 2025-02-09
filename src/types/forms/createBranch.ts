@@ -40,14 +40,14 @@ const createBranchSchema = z.object({
   }),
   contact: z.object({
     email: z.string().email("Invalid email address"),
-    phone: z.string().min(1, "Phone number is required"),
+    phone: z.string().length(10, "Phone number must be 10 digit"),
   }),
   location: z.object({
     address: z.string().min(1, "Address is required"),
     city: z.string().min(1, "City is required"),
     state: z.string().min(1, "State is required"),
     postalCode: z.string().min(1, "Postal code is required"),
-    country: z.string().min(1, "Country is required"),
+    country: z.string().length(2, "Country is required"),
   }),
 });
 

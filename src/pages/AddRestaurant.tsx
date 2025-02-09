@@ -26,6 +26,7 @@ import {
   formSchema,
 } from "../types/forms/createBranch";
 import { useCreateBranch } from "../hooks/useCreateBranch";
+import { countries, states } from "../utils/data";
 
 // Constants
 const FORM_STEPS = ["Restaurant", "Branch & Contact", "Location"];
@@ -497,6 +498,44 @@ const LocationStep = ({
       description="Add location details for the branch."
     />
     <div className="space-y-4">
+      <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Country*</label>
+          <Select
+            placeholder="Country"
+            required
+            options={countries}
+            value={countries.find((c) => c.value === form.watch("location.country"))}
+            onChange={(selectedOption) => form.setValue("location.country", selectedOption?.value || "IN")}
+          />
+          {form.formState.errors.location?.country && (
+            <p className="text-red-500 text-sm mt-1">
+              {form.formState.errors.location?.country?.message}
+            </p>
+          )}
+      </div>
+      <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">State*</label>
+          <Select
+            placeholder="Select State"
+            required
+            options={states[form.watch("location.country")] || []}
+            isDisabled={!form.watch("location.country")}
+            value={states[form.watch("location.country")]?.find((s) => s.value === form.watch("location.state")) || null}
+            onChange={(selectedOption) => form.setValue("location.state", selectedOption?.value || "")}
+          />
+          {form.formState.errors.location?.state && (
+            <p className="text-red-500 text-sm mt-1">
+              {form.formState.errors.location?.state?.message}
+            </p>
+          )}
+      </div>
+      <Input
+        label="City"
+        placeholder="New York"
+        required
+        {...form.register("location.city")}
+        error={form.formState.errors.location?.city?.message}
+      />
       <Textarea
         label="Address"
         placeholder="123 Main St, Suite 100"
@@ -505,32 +544,11 @@ const LocationStep = ({
         error={form.formState.errors.location?.address?.message}
       />
       <Input
-        label="City"
-        placeholder="New York"
-        required
-        {...form.register("location.city")}
-        error={form.formState.errors.location?.city?.message}
-      />
-      <Input
-        label="State"
-        placeholder="NY"
-        required
-        {...form.register("location.state")}
-        error={form.formState.errors.location?.state?.message}
-      />
-      <Input
         label="Postal Code"
         placeholder="10001"
         required
         {...form.register("location.postalCode")}
         error={form.formState.errors.location?.postalCode?.message}
-      />
-      <Input
-        label="Country"
-        placeholder="United States"
-        required
-        {...form.register("location.country")}
-        error={form.formState.errors.location?.country?.message}
       />
     </div>
   </div>

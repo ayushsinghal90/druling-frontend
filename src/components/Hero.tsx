@@ -1,10 +1,16 @@
+import { get } from 'lodash';
 import React from 'react';
-import { ArrowRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 const Hero = () => {
+  const navigate = useNavigate();
+  
   const openCalendly = () => {
     window.open('https://calendly.com/druling/demo', '_blank');
+  };
+
+  const getStarted = () => {
+    navigate("/register");
   };
 
   return (
@@ -20,15 +26,18 @@ const Hero = () => {
                 Create an elegant digital menu with QR code in minutes. Enhance your customers' dining experience and streamline your operations.
               </p>
               <div className="mt-10 flex items-center gap-x-6">
-                <button
+                {/* <button
                   onClick={openCalendly}
                   className="rounded-md bg-black px-6 py-3 text-lg font-semibold text-white shadow-sm hover:bg-gray-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
                 >
                   Schedule Demo
+                </button> */}
+                <button
+                  onClick={getStarted}
+                  className="rounded-md bg-black px-6 py-3 text-lg font-semibold text-white shadow-sm hover:bg-gray-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+                >
+                  Get Started
                 </button>
-                <Link to="/demo" className="group flex items-center text-lg font-semibold leading-6 text-black">
-                  Try Live Demo <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                </Link>
               </div>
             </div>
           </div>

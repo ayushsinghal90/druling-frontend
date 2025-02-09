@@ -67,7 +67,7 @@ const BranchItem = ({
           >
             <Pencil className="h-4 w-4" />
           </button>
-          <button
+          {/* <button
             onClick={(event) => {
               event.stopPropagation();
               handleDeleteClick(branch);
@@ -75,7 +75,7 @@ const BranchItem = ({
             className="p-2 text-gray-400 hover:text-red-600 transition-colors duration-200"
           >
             <Trash2 className="h-4 w-4" />
-          </button>
+          </button> */}
         </div>
       </div>
     </div>
