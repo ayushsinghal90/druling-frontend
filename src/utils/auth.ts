@@ -1,6 +1,6 @@
 import { jwtDecode } from "jwt-decode";
 import { AuthTokens } from "../types/response";
-import { Profile } from "../types";
+import { Profile, ProfileFeature } from "../types";
 
 interface JWTPayload {
   exp: number;
@@ -40,11 +40,8 @@ export const storeProfile = (profile: Profile): void => {
   localStorage.setItem("profile", JSON.stringify(profile));
 };
 
-export const getStoredTokens = (): Partial<AuthTokens> => {
-  return {
-    access: localStorage.getItem("accessToken") || undefined,
-    refresh: localStorage.getItem("refreshToken") || undefined,
-  };
+export const storeProfileFeatures = (features: ProfileFeature[]): void => {
+  localStorage.setItem("feature", JSON.stringify(features));
 };
 
 export const clearTokensAndProfile = (): void => {
@@ -52,11 +49,24 @@ export const clearTokensAndProfile = (): void => {
   localStorage.removeItem("refreshToken");
   localStorage.removeItem("tokenExpiration");
   localStorage.removeItem("profile");
+  localStorage.removeItem("feature");
+};
+
+export const getStoredTokens = (): Partial<AuthTokens> => {
+  return {
+    access: localStorage.getItem("accessToken") || undefined,
+    refresh: localStorage.getItem("refreshToken") || undefined,
+  };
 };
 
 export const getStoredProfile = (): Profile | null => {
   const profile = localStorage.getItem("profile");
   return profile ? JSON.parse(profile) : null;
+};
+
+export const getStoredProfileFeatures = (): ProfileFeature[] | null => {
+  const features = localStorage.getItem("feature");
+  return features ? JSON.parse(features) : null;
 };
 
 export const createAuthHeaders = (accessToken: string) => ({
