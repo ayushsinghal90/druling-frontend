@@ -6,6 +6,6 @@ export interface MenuData {
   theme: string;
   files: MenuImage[];
   branch: Branch;
-  createdAt?: string;
-  updatedAt?: string;
+  created_at: string;
+  updated_at: string;
 }
