@@ -69,7 +69,7 @@ const EditBranch = () => {
       branch: {
         name: selectedBranch?.name || "",
         description: selectedBranch?.description || "",
-        image: null,
+        image: selectedBranch?.img_url || null,
       },
       contact: {
         email: selectedBranch?.contact_info?.email || "",
@@ -130,6 +130,8 @@ const EditBranch = () => {
                 country: selectedBranch?.location?.country || "",
               },
             });
+
+            setBranchLogoImage(selectedBranch?.img_url || "");
             setAllowSave(!isFormChanged());
           } else {
             navigate(`/dashboard/restaurants`);
