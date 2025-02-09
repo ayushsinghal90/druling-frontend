@@ -71,7 +71,7 @@ const EditBranch = () => {
       branch: {
         name: selectedBranch?.name || "",
         description: selectedBranch?.description || "",
-        image: selectedBranch?.img_url || null,
+        image: null,
       },
       contact: {
         email: selectedBranch?.contact_info?.email || "",
