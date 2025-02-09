@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { Check } from "lucide-react";
 
 const features = {
@@ -22,6 +23,8 @@ const features = {
 };
 
 const Pricing = () => {
+  const navigate = useNavigate();
+
   return (
     <div id="pricing" className="bg-gray-50">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
@@ -64,7 +67,8 @@ const Pricing = () => {
                   </div>
                 </div>
 
-                <button className="mt-8 w-full rounded-lg bg-indigo-600 px-4 py-3 text-center text-sm font-semibold text-white shadow hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-all duration-200">
+                <button className="mt-8 w-full rounded-lg bg-indigo-600 px-4 py-3 text-center text-sm font-semibold text-white shadow hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-all duration-200"
+                        onClick={() => navigate("/register")} >
                   Get started for free
                 </button>
 
@@ -111,8 +115,10 @@ const Pricing = () => {
                   </p>
                 </div>
 
-                <button className="mt-8 w-full rounded-lg bg-gray-900 px-4 py-3 text-center text-sm font-semibold text-white shadow hover:bg-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900 transition-all duration-200">
-                  Contact sales
+                {/* <button className="mt-8 w-full rounded-lg bg-gray-900 px-4 py-3 text-center text-sm font-semibold text-white shadow hover:bg-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900 transition-all duration-200"> */}
+                <button className="mt-8 w-full rounded-lg bg-gray-400 px-4 py-3 text-center text-sm font-semibold text-white shadow focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900 transition-all duration-200">
+                  {/* Contact sales */}
+                  Comming Soon
                 </button>
                 <p className="mt-3 text-sm text-center w-full text-gray-500">
                   Custom solutions available for 5+ websites
