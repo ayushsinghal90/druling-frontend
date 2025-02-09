@@ -12,7 +12,7 @@ const ContactModal = ({ isOpen, onClose, restaurant }: ContactModalProps) => {
   if (!isOpen) return null;
 
   // Use the first branch as the main contact information
-  const mainContact = restaurant.contactInfo;
+  const mainContact = restaurant.contact_info;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
@@ -41,7 +41,7 @@ const ContactModal = ({ isOpen, onClose, restaurant }: ContactModalProps) => {
             </div>
             <div>
               <p className="text-sm font-medium text-gray-900">Email</p>
-              <p className="text-base text-gray-600">{mainContact.email}</p>
+              <p className="text-base text-gray-600">{mainContact?.email}</p>
             </div>
           </div>
 
@@ -52,7 +52,7 @@ const ContactModal = ({ isOpen, onClose, restaurant }: ContactModalProps) => {
             <div>
               <p className="text-sm font-medium text-gray-900">Phone</p>
               <p className="text-base text-gray-600">
-                {mainContact.phoneNumber}
+                {mainContact?.phone_number}
               </p>
             </div>
           </div>
