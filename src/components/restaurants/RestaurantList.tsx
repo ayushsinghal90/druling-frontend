@@ -10,6 +10,8 @@ import AddRestaurantButton from "./buttons/AddRestaurantButton";
 import AddBranchButton from "./buttons/AddBranchButton";
 import ContactUsButton from "./buttons/ContactUsButton";
 import ActionRequired from "../common/ActionRequired";
+import { useProfileFeature } from "../../hooks/useProfileFeature";
+import { toast } from "react-toastify";
 
 const RestaurantList = () => {
   const navigate = useNavigate();
@@ -28,6 +30,7 @@ const RestaurantList = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [branchToDelete, setBranchToDelete] = useState<Branch | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const { checkFeature } = useProfileFeature();
 
   const handleClickOutside = useCallback((event: MouseEvent) => {
     if (
@@ -55,14 +58,18 @@ const RestaurantList = () => {
     }
   };
 
-  const handleMenuClick = (branch: Branch) => {
-    if (!branch?.menu?.id) {
-      navigate(`/qr/menu/${selectedRestaurant?.id}/${branch.id}`);
+  const handleMenuClick = async (branch: Branch) => {
+    if (!await checkFeature("QR_MENU")) {
+      toast.error("Not enough credits to create menu");
     } else {
-      window.open(
-        `/menu/${branch.menu.id}?theme=${branch.menu.theme}`,
-        "_blank"
-      );
+      if (!branch?.menu?.id) {
+        navigate(`/qr/menu/${selectedRestaurant?.id}/${branch.id}`);
+      } else {
+        window.open(
+          `/menu/${branch.menu.id}?theme=${branch.menu.theme}`,
+          "_blank"
+        );
+      }
     }
   };
 

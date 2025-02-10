@@ -2,13 +2,15 @@ name: Build and Deploy
 on:
   push:
     branches:
-      - check_be_Fe
+      - dev
+      - master
+      - gamma
 
 jobs:
   build-and-deploy:
     name: Build and Deploy
     runs-on: ubuntu-latest
-    environment: dev
+    environment: ${{ github.ref == 'refs/heads/master' && 'prod' || (github.ref == 'refs/heads/dev' && 'dev' || 'staging') }}
 
     permissions:
       id-token: write
