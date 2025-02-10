@@ -30,6 +30,7 @@ const UploadMenuItem = ({
       <input
         type="text"
         placeholder="Add a category"
+        required={true}
         value={image.category}
         onChange={(e) => handleCategoryChange(index, e.target.value)}
         className="mt-2 block w-full text-sm text-gray-600 focus:outline-none"
