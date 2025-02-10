@@ -59,18 +59,19 @@ const RestaurantList = () => {
   };
 
   const handleMenuClick = async (branch: Branch) => {
-    if (!await checkFeature("QR_MENU")) {
-      toast.error("Not enough credits to create menu");
-    } else {
-      if (!branch?.menu?.id) {
-        navigate(`/qr/menu/${selectedRestaurant?.id}/${branch.id}`);
+    if (!branch?.menu?.id) {
+      if (!await checkFeature("QR_MENU")) {
+        toast.error("Not enough credits to create menu");
       } else {
-        window.open(
-          `/menu/${branch.menu.id}?theme=${branch.menu.theme}`,
-          "_blank"
-        );
+        navigate(`/qr/menu/${selectedRestaurant?.id}/${branch.id}`);
       }
+    } else {
+      window.open(
+        `/menu/${branch.menu.id}?theme=${branch.menu.theme}`,
+        "_blank"
+      );
     }
+  
   };
 
   if (!selectedRestaurant || !restaurants.length) {
