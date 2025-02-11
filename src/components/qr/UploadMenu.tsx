@@ -21,6 +21,8 @@ const UploadMenu = ({
   const [images, setImages] = useState<ImageData[]>(
     imagesData.length > 0 ? imagesData : [{} as ImageData]
   );
+
+  const [disable, setDisable] = useState(true);
   const fileInputRefs = useRef<HTMLInputElement[]>([]);
   const [sourceIndex, setSourceIndex] = useState<number | null>(null);
 
@@ -31,9 +33,26 @@ const UploadMenu = ({
     }
   }, [images]);
 
+  const isChanged = useCallback(() => {
+    if (images.length === 1) { 
+      setDisable(true);
+      return;
+    }
+    
+    let disabledCount = 0;
+    images.forEach((img) => {
+      if (!img.file || !img.category) {
+        disabledCount++;
+      }
+    });
+
+    setDisable(disabledCount > 1);
+  }, [images]);
+
   useEffect(() => {
     addEmptySpot();
-  }, [addEmptySpot]);
+    isChanged();
+  }, [addEmptySpot, isChanged]);
 
   const processFiles = useCallback(
     async (files: File[]) => {
@@ -194,8 +213,13 @@ const UploadMenu = ({
       <div className="flex justify-end space-x-4">
         <button
           onClick={handleContinue}
-          className="inline-flex items-center rounded-lg bg-black px-4 py-2 text-sm font-medium text-white hover:bg-gray-800 transition-colors duration-200"
-        >
+          disabled={disable}
+          className={`inline-flex items-center rounded-lg px-4 py-2 text-sm font-medium transition-colors duration-200 ${
+            disable 
+              ? 'bg-gray-200 text-gray-500 cursor-not-allowed' 
+              : 'bg-black text-white hover:bg-gray-800'
+            }`}
+          >
           Continue
         </button>
       </div>

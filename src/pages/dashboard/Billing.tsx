@@ -74,10 +74,10 @@ const Billing = () => {
                 </div>
                 <div className="mt-4">
                   <p className="text-sm text-gray-500">
-                    Your plan will renew on {subscriptionData?.next_billing_date}
+                    Your plan will renew on <span className="text-sm font-bold text-gray-600">{subscriptionData?.next_billing_date}</span>
                   </p>
                   <p className="mt-2 text-2xl font-bold text-gray-900">
-                    ₹{subscriptionData?.transaction?.total_amount}
+                    ₹{subscriptionData?.plan?.amount || 0}
                     <span className="text-sm font-normal text-gray-500">/year</span>
                   </p>
                 </div>
@@ -93,7 +93,7 @@ const Billing = () => {
         </div>
 
         {/* Payment Method */}
-        <div className="rounded-xl bg-white shadow-sm">
+        {/* <div className="rounded-xl bg-white shadow-sm">
           <div className="p-6 border-b border-gray-100">
             <div className="flex items-center gap-3">
               <CreditCard className="h-5 w-5 text-gray-400" />
@@ -120,7 +120,7 @@ const Billing = () => {
               </button>
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Billing History */}
         <div className="rounded-xl bg-white shadow-sm">

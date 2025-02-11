@@ -9,6 +9,7 @@ import ActionRequired from "../../components/common/ActionRequired";
 import { toast } from "react-toastify";
 import { QRCode } from "react-qrcode-logo";
 import { displayDate } from "../../utils/displayDate";
+import { useProfileFeature } from "../../hooks/useProfileFeature";
 
 const QRCodes = () => {
   const navigate = useNavigate();
@@ -18,6 +19,7 @@ const QRCodes = () => {
     [key: string]: { url: string };
   }>({});
   const { data: qrCodesResponse, isLoading, refetch } = useGetAllMenusQuery();
+  const { checkFeature } = useProfileFeature();
 
   const setQrCodes = useCallback(() => {
     const qrToMenu = menuData.reduce(
@@ -43,8 +45,12 @@ const QRCodes = () => {
     refetch();
   }, [location, refetch]);
 
-  const handleGenerateQR = () => {
-    navigate("/qr/generate");
+  const handleGenerateQR = async () => {
+    if (!await checkFeature("QR_MENU")) {
+      toast.error("Not enough credits to create menu");
+    } else {
+      navigate("/qr/generate");
+    }
   };
 
   const handleShare = async (data: MenuData) => {
